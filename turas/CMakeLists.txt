@@ -23,10 +23,7 @@ foreach(source IN LISTS CORE_SRC_FILES)
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
 
-add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES}
-        include/Core/Scene.h
-        include/Core/Project.h
-        src/STL/Memory.cpp)
+add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES})
 
 set(TURAS_INCLUDES ${LVK_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
 
@@ -34,7 +31,7 @@ target_include_directories (${PROJECT_NAME} PUBLIC ${TURAS_INCLUDES} ${CEREAL_IN
 
 if (MSVC)
     # compile options (bigobjs, compile on multiple cores, Zi allows release builds to be debugged, /X removes STL
-    target_compile_options(${PROJECT_NAME} PRIVATE "/bigobj" "/MP" "/Zi" "/X")
+    target_compile_options(${PROJECT_NAME} PRIVATE "/bigobj" "/MP" "/Zi")
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,Release>:ProgramDatabase>")
 endif ()
 
