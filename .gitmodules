@@ -1,0 +1,9 @@
+[submodule "submodules/cereal"]
+	path = submodules/cereal
+	url = https://github.com/USCiLab/cereal.git
+[submodule "submodules/lvk"]
+	path = submodules/lvk
+	url = https://github.com/tadgem/lvk
+[submodule "submodules/entt"]
+	path = submodules/entt
+	url = https://github.com/skypjack/entt.git
