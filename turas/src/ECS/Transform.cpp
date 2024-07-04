@@ -16,7 +16,6 @@ void turas::TransformSystem::OnSceneClosed(Scene *scene) {
 }
 
 void turas::TransformSystem::OnUpdate(Scene *scene) {
-    log::info("TransformSystem: Update");
 }
 
 void turas::TransformSystem::OnShutdown() {
