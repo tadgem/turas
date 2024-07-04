@@ -1,6 +1,7 @@
 #include "STL/Memory.h"
 #include "Core/Engine.h"
 #include "spdlog/spdlog.h"
+#include "Debug/StatsWindow.h"
 
 turas::Engine::Engine() {
 }
@@ -17,13 +18,11 @@ void turas::Engine::Shutdown() {
         scene.reset();
     }
     m_ActiveScenes.clear();
-
     for(auto& sys : m_EngineSubSystems)
     {
         sys.reset();
     }
     m_EngineSubSystems.clear();
-
     m_AssetManager.Shutdown();
 }
 
@@ -34,7 +33,7 @@ void turas::Engine::Run()
         m_VK.PreFrame();
         Im3d::NewFrame();
 
-        // Main frame loop
+        StatsWindow::OnImGuiStatsWindow(m_VK);
 
         Im3d::EndFrame();
         m_VK.PostFrame();

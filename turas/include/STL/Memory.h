@@ -19,7 +19,9 @@ namespace turas {
         DebugMemoryTracker();
 
         HashMap<String, AllocInfo> s_AllocationInfo;
-        inline static DebugMemoryTracker *s_Instance = nullptr;
+
+        inline static uint64_t             s_UntrackedSize = 0;
+        inline static DebugMemoryTracker*  s_Instance = nullptr;
     };
 
 #endif

@@ -56,18 +56,29 @@ namespace turas {
 
         }
 
+        TURAS_IMPL_ALLOC(ModelAsset)
         Vector<CPUMesh> m_MeshData;
     };
 
-    class TextureAsset : public Asset {};
+    class TextureAsset : public Asset {
+    public:
+        TURAS_IMPL_ALLOC(TextureAsset)
+    };
 
-    class AudioAsset : public Asset {};
+    class AudioAsset : public Asset {
+    public:
+        TURAS_IMPL_ALLOC(AudioAsset)
+    };
 
-    class TextAsset : public Asset {};
+    class TextAsset : public Asset {
+    public:
+        TURAS_IMPL_ALLOC(TextAsset)
+    };
 
-    class BinaryAsset : public Asset {};
-
-
+    class BinaryAsset : public Asset {
+    public:
+        TURAS_IMPL_ALLOC(BinaryAsset)
+    };
 }
 
 /* required to hash a container */
