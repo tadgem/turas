@@ -7,7 +7,7 @@ turas::Engine::Engine() {
 
 void turas::Engine::Init() {
     spdlog::info("Initialising Turas");
-    m_VK.Start(1280, 720);
+    m_VK.Start("Turas", 1280, 720);
     m_Im3dState = lvk::LoadIm3D(m_VK);
 }
 
