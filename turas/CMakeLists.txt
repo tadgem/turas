@@ -23,7 +23,8 @@ foreach(source IN LISTS CORE_SRC_FILES)
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
 
-add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES})
+add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES}
+        include/Rendering/Texture.h)
 
 set(TURAS_INCLUDES ${LVK_INCLUDES} ${CEREAL_INCLUDES} ${ENTT_INCLUDES} ${ASSIMP_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
 
