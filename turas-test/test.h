@@ -8,6 +8,7 @@
 #include "Core/Utils.h"
 #include "STL/Vector.h"
 #include "STL/Functional.h"
+#include "ECS/Transform.h"
 
 inline static turas::Vector<turas::Procedure> s_Tests = {};
 

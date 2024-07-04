@@ -2,7 +2,7 @@
 // Created by liam_ on 7/4/2024.
 //
 #include "ECS/Transform.h"
-
+#include "Core/Log.h"
 void turas::TransformSystem::OnEngineReady() {
 
 }
@@ -16,7 +16,7 @@ void turas::TransformSystem::OnSceneClosed(Scene *scene) {
 }
 
 void turas::TransformSystem::OnUpdate(Scene *scene) {
-
+    log::info("TransformSystem: Update");
 }
 
 void turas::TransformSystem::OnShutdown() {

@@ -6,6 +6,7 @@
 #include "Assets/AssetManager.h"
 #include "VulkanAPI_SDL.h"
 #include "Im3D/im3d_lvk.h"
+#include <type_traits>
 
 namespace turas
 {
@@ -17,6 +18,10 @@ namespace turas
         void Init();
         void Shutdown();
         void Run();
+
+        Scene*  CreateScene();
+        void    CloseScene(Scene* scene);
+        void    CloseAllScenes();
 
         TURAS_IMPL_ALLOC(Engine)
 
@@ -35,7 +40,16 @@ namespace turas
         // backend for IM3D
         lvk::LvkIm3dState       m_Im3dState;
 
+        template<typename _Ty, typename ... Args>
+        _Ty* AddSystem(Args &&... args)
+        {
+            static_assert(std::is_base_of<System, _Ty>());
+            return static_cast<_Ty*>(m_EngineSubSystems.emplace_back(std::move(CreateUnique<_Ty>(std::forward<Args>(args)...))).get());
+        }
+
     protected:
+#ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;
+#endif
     };
 }

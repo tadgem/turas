@@ -28,6 +28,7 @@ void turas::StatsWindow::OnImGuiStatsWindow(lvk::VulkanAPI &vk) {
                 ImGui::TreePop();
             }
         }
+#ifdef TURAS_ENABLE_MEMORY_TRACKING
         ImGui::Separator();
         if(ImGui::TreeNode("CPU Memory"))
         {
@@ -38,7 +39,7 @@ void turas::StatsWindow::OnImGuiStatsWindow(lvk::VulkanAPI &vk) {
             }
             ImGui::TreePop();
         }
-
+#endif
     }
     ImGui::End();
 

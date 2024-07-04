@@ -1,11 +1,12 @@
 #pragma once
 
 #include <memory>
+#include "STL/HashMap.h"
+#include "STL/String.h"
 
 #define TURAS_ENABLE_MEMORY_TRACKING
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
-#include "STL/HashMap.h"
-#include "STL/String.h"
+
 #endif
 namespace turas {
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
