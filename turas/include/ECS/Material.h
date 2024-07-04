@@ -9,7 +9,7 @@ namespace turas
 {
     struct MaterialComponent
     {
-
+        TURAS_IMPL_ALLOC(MaterialComponent)
     };
 }
 

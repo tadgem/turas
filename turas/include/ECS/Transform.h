@@ -16,6 +16,8 @@ namespace turas
         glm::vec3 m_Scale;
 
         glm::mat4 m_ModelMatrix;
+
+        TURAS_IMPL_ALLOC(TransformComponent)
     };
 
     class TransformSystem : public System
@@ -31,7 +33,7 @@ namespace turas
 
         void OnShutdown() override;
 
-    public:
+        TURAS_IMPL_ALLOC(TransformSystem)
 
     };
 }

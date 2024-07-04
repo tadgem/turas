@@ -7,11 +7,9 @@
 #include "STL/HashMap.h"
 #include "STL/String.h"
 #endif
-namespace turas
-{
+namespace turas {
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
-    struct AllocInfo
-    {
+    struct AllocInfo {
         size_t count;
         size_t size;
     };
@@ -19,8 +17,9 @@ namespace turas
     class DebugMemoryTracker {
     public:
         DebugMemoryTracker();
+
         HashMap<String, AllocInfo> s_AllocationInfo;
-        inline static DebugMemoryTracker* s_Instance = nullptr;
+        inline static DebugMemoryTracker *s_Instance = nullptr;
     };
 
 #endif
@@ -28,9 +27,9 @@ namespace turas
     template<typename T>
     using UPtr = std::unique_ptr<T>;
 
-    template<typename T, typename ... Args>
-    constexpr UPtr<T> CreateUnique(Args &&... args) {
-        return std::make_unique<T>(std::forward<Args>(args)...);
+    template<typename _Ty, typename ... Args>
+    constexpr UPtr<_Ty> CreateUnique(Args &&... args) {
+        return std::make_unique<_Ty>(std::forward<Args>(args)...);
     }
 
 }

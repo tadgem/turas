@@ -20,3 +20,4 @@ set(ENTT_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/submodules/entt/src)
 
 add_subdirectory(turas)
 add_subdirectory(turas-editor)
+add_subdirectory(turas-test)

@@ -3,6 +3,7 @@
 #include "STL/Vector.h"
 #include "Core/System.h"
 #include "Core/Scene.h"
+#include "Assets/AssetManager.h"
 
 namespace turas
 {
@@ -21,6 +22,10 @@ namespace turas
 
         // Collection of all running scenes, each Scene in this collection will be processed + rendered each frame
         Vector<UPtr<Scene>>     m_ActiveScenes;
+
+        // main service for retrieving data from disk
+        AssetManager            m_AssetManager;
+
 
     protected:
         DebugMemoryTracker p_DebugMemoryTracker;

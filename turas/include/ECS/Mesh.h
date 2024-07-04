@@ -9,7 +9,7 @@ namespace turas
 {
     struct MeshComponent
     {
-
+        TURAS_IMPL_ALLOC(MeshComponent)
     };
 }
 #endif //TURAS_ALL_MESH_H
