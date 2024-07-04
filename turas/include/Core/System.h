@@ -16,13 +16,7 @@ namespace turas
         virtual void OnUpdate(Scene* scene) = 0;
         virtual void OnShutdown() = 0;
 
-        // TURAS_SYSTEM_SERIALIZATION_IMPL(System)
+        // outside of class scope add EXPAND(TURAS_SYSTEM_SERIALIZATION_IMPL(NameOfYourSystem))
     };
 
-    class DummySystem : public System
-    {
-    public:
-    };
 }
-
-EXPAND(TURAS_SYSTEM_SERIALIZATION_IMPL(turas::DummySystem))
