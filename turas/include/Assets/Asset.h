@@ -4,13 +4,13 @@
 
 #pragma once
 #include "STL/Memory.h"
-#include "lvk/Mesh.h"
+#include "STL/Vector.h"
 #include "Rendering/VertexLayouts.h"
+#include "Rendering/Mesh.h"
 
 namespace turas {
     enum class AssetType : uint32_t
     {
-        Mesh,
         Model,
         Texture,
         Audio,
@@ -49,18 +49,14 @@ namespace turas {
         const AssetHandle   m_Handle;
     };
 
-    class MeshAsset : public Asset {
-    public:
-        lvk::Mesh       m_GPUMesh;
-        VertexLayout    m_VertexLayout;
-
-    };
-
     class ModelAsset : public Asset {
     public:
+
         ModelAsset(const String &path, const AssetHandle &handle) : Asset(path, handle) {
 
         }
+
+        Vector<CPUMesh> m_MeshData;
     };
 
     class TextureAsset : public Asset {};

@@ -18,7 +18,7 @@ void ProcessNode(const aiScene* assimpScene, aiNode* currentNode, turas::ModelAs
 
 }
 
-turas::Asset* LoadModel(const turas::String& path)
+turas::AssetLoadReturn LoadModel(const turas::String& path)
 {
     turas::log::info("LoadModel : Loading Model : {}", path);
 
@@ -37,7 +37,7 @@ turas::Asset* LoadModel(const turas::String& path)
     if(scene == nullptr)
     {
         turas::log::error("LoadModel : Failed to open model at path : {}", path);
-        return nullptr;
+        return {nullptr, {}};
     }
     auto* model = new turas::ModelAsset(
             path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Model));
@@ -46,7 +46,7 @@ turas::Asset* LoadModel(const turas::String& path)
 
     turas::log::info("LoadModel : Finished Loading Model : {}", path);
 
-    return model;
+    return {model, {}};
 }
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
@@ -54,9 +54,6 @@ turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, con
 
     switch(assetType)
     {
-        case AssetType::Mesh:
-            log::error("AssetManager : Please load meshes as models : {}", path);
-            break;
         case AssetType::Model:
             p_PendingLoads.emplace(handle, std::move(std::async(std::launch::async, LoadModel, path)));
             break;
@@ -116,8 +113,13 @@ void turas::AssetManager::OnUpdate() {
     }
 
     for(auto& handle : pending) {
-        Asset* asset = p_PendingLoads[handle].get();
-        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(asset)));
+        AssetLoadReturn asyncReturn  = p_PendingLoads[handle].get();
+        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(asyncReturn.m_LoadedAsset)));
+        // add new loads
+        for(auto& newLoad : asyncReturn.m_NewAssetsToLoad)
+        {
+            LoadAsset(newLoad.m_Path, newLoad.m_Type);
+        }
         p_PendingLoads.erase(handle);
     }
 }

@@ -23,4 +23,6 @@ void turas::Engine::Shutdown() {
         sys.reset();
     }
     m_EngineSubSystems.clear();
+
+    m_AssetManager.Shutdown();
 }

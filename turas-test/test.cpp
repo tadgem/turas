@@ -6,11 +6,12 @@ BEGIN_TESTS()
         turas::log::info("Assets");
         turas::log::info("Current Path : {}", std::filesystem::current_path().string());
         turas::Engine e;
+        e.Init();
         e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
         while (e.m_AssetManager.AnyAssetsLoading()) {
             e.m_AssetManager.OnUpdate();
         }
-        e.m_AssetManager.Shutdown();
+        e.Shutdown();
         turas::log::info("End Assets");
     });
 

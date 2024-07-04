@@ -19,6 +19,18 @@ namespace turas {
         Loaded
     };
 
+    struct AssetLoadInfo
+    {
+        String      m_Path;
+        AssetType   m_Type;
+    };
+
+    struct AssetLoadReturn
+    {
+        Asset*                  m_LoadedAsset;
+        Vector<AssetLoadInfo>   m_NewAssetsToLoad;
+    };
+
     class AssetManager {
     public:
         AssetHandle         LoadAsset(const String& path, const AssetType& assetType);
@@ -35,7 +47,7 @@ namespace turas {
 
     protected:
         // Move the Asset* into a UPtr once returned from the future
-        HashMap<AssetHandle, Future<Asset*>>    p_PendingLoads;
-        HashMap<AssetHandle, UPtr<Asset>>       p_LoadedAssets;
+        HashMap<AssetHandle, Future<AssetLoadReturn>>   p_PendingLoads;
+        HashMap<AssetHandle, UPtr<Asset>>               p_LoadedAssets;
     };
 }
