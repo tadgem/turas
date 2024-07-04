@@ -23,11 +23,11 @@ foreach(source IN LISTS CORE_SRC_FILES)
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
 
-add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES})
-
+add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES}
+        src/Core/Scene.cpp)
 set(TURAS_INCLUDES ${LVK_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
 
-target_include_directories (${PROJECT_NAME} PUBLIC ${TURAS_INCLUDES} ${CEREAL_INCLUDES})
+target_include_directories (${PROJECT_NAME} PUBLIC ${TURAS_INCLUDES} ${CEREAL_INCLUDES} ${ENTT_INCLUDES})
 
 if (MSVC)
     # compile options (bigobjs, compile on multiple cores, Zi allows release builds to be debugged, /X removes STL
@@ -36,3 +36,4 @@ if (MSVC)
 endif ()
 
 target_link_libraries (${PROJECT_NAME} lvk cereal)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

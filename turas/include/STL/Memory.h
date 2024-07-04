@@ -1,24 +1,32 @@
-#ifndef TURAS_STL_MEMORY_H
-#define TURAS_STL_MEMORY_H
+#pragma once
+
 #include <memory>
 
-#define ENABLED_MEMORY_TRACKER
-#if defined ENABLED_MEMORY_TRACKER
-#undef new
-
-void *operator new (size_t size, char *file, int line, char *function);
-// other operators
-
-#define NEW new (__FILE__, __LINE__, __FUNCTION__)
-#else
-#define NEW new
+#define TURAS_ENABLE_MEMORY_TRACKING
+#ifdef TURAS_ENABLE_MEMORY_TRACKING
+#include "STL/HashMap.h"
+#include "STL/String.h"
 #endif
-
 namespace turas
 {
+#ifdef TURAS_ENABLE_MEMORY_TRACKING
+    struct AllocInfo
+    {
+        size_t count;
+        size_t size;
+    };
+
+    class DebugMemoryTracker {
+    public:
+        DebugMemoryTracker();
+        HashMap<String, AllocInfo> s_AllocationInfo;
+        inline static DebugMemoryTracker* s_Instance = nullptr;
+    };
+
+#endif
+
     template<typename T>
     using UPtr = std::unique_ptr<T>;
-
 
     template<typename T, typename ... Args>
     constexpr UPtr<T> CreateUnique(Args &&... args) {
@@ -27,4 +35,21 @@ namespace turas
 
 }
 
+#ifdef TURAS_ENABLE_MEMORY_TRACKING
+#define TURAS_IMPL_ALLOC(X) void * operator new(size_t size) \
+{                                                            \
+if(turas::DebugMemoryTracker::s_Instance->s_AllocationInfo.find(#X)==turas::DebugMemoryTracker::s_Instance->s_AllocationInfo.end()) {turas::DebugMemoryTracker::s_Instance->s_AllocationInfo.emplace(#X, AllocInfo{0,0});} \
+turas::DebugMemoryTracker::s_Instance->s_AllocationInfo[#X].count++;                         \
+turas::DebugMemoryTracker::s_Instance->s_AllocationInfo[#X].size += size;                                                             \
+return malloc (size);\
+}\
+void operator delete(void* p)\
+{                                                            \
+free(p);                                                     \
+if(!turas::DebugMemoryTracker::s_Instance) return;           \
+turas::DebugMemoryTracker::s_Instance->s_AllocationInfo[#X].count--;                         \
+turas::DebugMemoryTracker::s_Instance->s_AllocationInfo[#X].size -= sizeof(X);                                                                  \
+}
+#else
+#define TURAS_IMPL_ALLOC(X)
 #endif

@@ -12,6 +12,9 @@ namespace turas
         Engine();
 
         void Init();
+        void Shutdown();
+
+        TURAS_IMPL_ALLOC(Engine)
 
         // Subsystems of the engine, used to have ProgramComponents and Systems, roll them into a system
         Vector<UPtr<System>>    m_EngineSubSystems;
@@ -19,6 +22,7 @@ namespace turas
         // Collection of all running scenes, each Scene in this collection will be processed + rendered each frame
         Vector<UPtr<Scene>>     m_ActiveScenes;
 
-
+    protected:
+        DebugMemoryTracker p_DebugMemoryTracker;
     };
 }
