@@ -129,10 +129,7 @@ bool turas::AssetManager::AnyAssetsLoading() {
 }
 
 void turas::AssetManager::Shutdown() {
-    while(AnyAssetsLoading())
-    {
-        log::info("AssetManager : Shutdown : Waiting for pending asset tasks to finish");
-    }
+    WaitAllAssets();
 
     for(auto&[ handle, asset] : p_LoadedAssets)
     {
@@ -140,4 +137,34 @@ void turas::AssetManager::Shutdown() {
     }
 
     p_LoadedAssets.clear();
+}
+
+void turas::AssetManager::WaitAllAssets() {
+
+    Vector<AssetLoadInfo> newAssetsToLoad {};
+
+    for(auto& [handle, pending] : p_PendingLoads)
+    {
+        pending.wait();
+        auto asset = pending.get();
+        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(asset.m_LoadedAsset)));
+
+        newAssetsToLoad.insert(newAssetsToLoad.end(),
+                               asset.m_NewAssetsToLoad.begin(), asset.m_NewAssetsToLoad.end());
+    }
+
+    p_PendingLoads.clear();
+
+    if(newAssetsToLoad.empty())
+    {
+        return;
+    }
+
+    for(auto& loadInfo : newAssetsToLoad)
+    {
+        LoadAsset(loadInfo.m_Path, loadInfo.m_Type);
+    }
+
+    WaitAllAssets();
+
 }

@@ -43,6 +43,10 @@ namespace turas {
 
         // clear up any remaining assets
         void                Shutdown();
+
+        // synchronous call to wait for all pending assets;
+        void                WaitAllAssets();
+
         TURAS_IMPL_ALLOC(AssetManager)
 
     protected:

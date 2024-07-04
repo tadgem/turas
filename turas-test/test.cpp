@@ -1,23 +1,40 @@
 #include "test.h"
 #include <filesystem>
 BEGIN_TESTS()
+TEST(
+        {
+            turas::Engine e;
+            e.Init();
+            e.Shutdown();
+        }
+)
 
-    s_Tests.push_back([]() {
-        turas::log::info("Assets");
-        turas::log::info("Current Path : {}", std::filesystem::current_path().string());
+TEST(
+        {
+            turas::Engine e;
+            e.Init();
+            auto path = "../Sponza/Sponza.gltf";
+            auto handle = e.m_AssetManager.LoadAsset(path, turas::AssetType::Model);
+            e.m_AssetManager.WaitAllAssets();
+            assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
+            e.Shutdown();
+        }
+)
+
+TEST(
+        {
         turas::Engine e;
         e.Init();
-        e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
-        while (e.m_AssetManager.AnyAssetsLoading()) {
-            e.m_AssetManager.OnUpdate();
-        }
+        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        e.m_AssetManager.WaitAllAssets();
+        e.m_AssetManager.UnloadAsset(handle);
+
         e.Shutdown();
-        turas::log::info("End Assets");
-    });
+    }
+)
 
 TEST(
     {
-
         turas::log::info("again!");
     }
 )

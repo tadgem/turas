@@ -14,4 +14,9 @@ turas::DebugMemoryTracker::DebugMemoryTracker()
 
     s_Instance = this;
 }
+
+turas::DebugMemoryTracker::~DebugMemoryTracker() {
+    s_Instance = nullptr;
+}
+
 #endif

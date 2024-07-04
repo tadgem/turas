@@ -17,6 +17,7 @@ namespace turas {
     class DebugMemoryTracker {
     public:
         DebugMemoryTracker();
+        ~DebugMemoryTracker();
 
         HashMap<String, AllocInfo> s_AllocationInfo;
 

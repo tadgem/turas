@@ -13,6 +13,10 @@ void turas::Engine::Init() {
 }
 
 void turas::Engine::Shutdown() {
+
+    lvk::FreeIm3d(m_VK, m_Im3dState);
+    m_VK.Quit();
+
     for(auto& scene : m_ActiveScenes)
     {
         scene.reset();
