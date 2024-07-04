@@ -70,6 +70,21 @@ TEST(
         e.Shutdown();
     }
 )
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        turas::Scene* s1 = e.CreateScene();
+        auto e1 = s1->CreateEntity();
+        auto e2 = s1->CreateEntity();
+        assert(s1->NumEntities() == 2);
+        s1->DestroyEntity(e1);
+        assert(s1->NumEntities() == 1);
+        s1->DestroyEntity(e2);
+        assert(s1->NumEntities() == 0);
+        e.Shutdown();
+    }
+)
 
 TEST(
     {
@@ -81,6 +96,40 @@ TEST(
         e.Shutdown();
     }
 )
+
+TEST(
+    {
+        turas::Engine e;
+        auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
+        assert(transformSystem);
+        e.Init();
+        auto* s = e.CreateScene();
+        auto ent = s->CreateEntity();
+
+        auto& trans = s->AddComponent<turas::TransformComponent>(ent);
+
+        assert(s->HasComponent<turas::TransformComponent>(ent));
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
+        assert(transformSystem);
+        e.Init();
+        auto* s = e.CreateScene();
+        auto ent = s->CreateEntity();
+
+        auto& trans = s->AddComponent<turas::TransformComponent>(ent);
+        assert(s->HasComponent<turas::TransformComponent>(ent));
+        s->RemoveComponent<turas::TransformComponent>(ent);
+        assert(!s->HasComponent<turas::TransformComponent>(ent));
+        e.Shutdown();
+    }
+)
+
 
 RUN_TESTS()
 

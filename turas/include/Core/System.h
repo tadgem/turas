@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Scene.h"
+#include "Core/ECS.h"
 #include "Core/Serialization.h"
 
 #define TURAS_SYSTEM_SERIALIZATION_IMPL(X) DEFER(CEREAL_REGISTER_TYPE(X)); \

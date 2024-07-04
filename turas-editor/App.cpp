@@ -2,7 +2,7 @@
 #include "Core/Engine.h"
 #include "STL/HashMap.h"
 #include "STL/String.h"
-#include "ECS/Transform.h"
+#include "Systems/Transform.h"
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
 void* operator new(size_t size)
@@ -22,6 +22,7 @@ int main(int argc, char** argv)
 {
     turas::Engine app;
     app.AddSystem<turas::TransformSystem>();
+    app.CreateScene();
     app.CreateScene();
     app.Init();
     app.Run();
