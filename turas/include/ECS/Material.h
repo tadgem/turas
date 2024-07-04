@@ -4,5 +4,13 @@
 
 #ifndef TURAS_ALL_MATERIAL_H
 #define TURAS_ALL_MATERIAL_H
+#include "STL/Memory.h"
+namespace turas
+{
+    struct MaterialComponent
+    {
+
+    };
+}
 
 #endif //TURAS_ALL_MATERIAL_H

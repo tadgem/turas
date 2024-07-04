@@ -27,7 +27,8 @@ add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE
         src/Core/Scene.cpp
         include/ECS/Transform.h
         include/ECS/Mesh.h
-        include/ECS/Material.h)
+        include/ECS/Material.h
+        include/Core/Serialization.h)
 set(TURAS_INCLUDES ${LVK_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
 
 target_include_directories (${PROJECT_NAME} PUBLIC ${TURAS_INCLUDES} ${CEREAL_INCLUDES} ${ENTT_INCLUDES})
