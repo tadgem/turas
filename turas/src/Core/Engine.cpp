@@ -7,8 +7,8 @@ turas::Engine::Engine() {
 
 void turas::Engine::Init() {
     spdlog::info("Initialising Turas");
-
-    m_ActiveScenes.push_back(std::move(CreateUnique<Scene>()));
+    m_VK.Start(1280, 720);
+    m_Im3dState = lvk::LoadIm3D(m_VK);
 }
 
 void turas::Engine::Shutdown() {
@@ -25,4 +25,19 @@ void turas::Engine::Shutdown() {
     m_EngineSubSystems.clear();
 
     m_AssetManager.Shutdown();
+}
+
+void turas::Engine::Run()
+{
+    while(m_VK.ShouldRun())
+    {
+        m_VK.PreFrame();
+        Im3d::NewFrame();
+
+        // Main frame loop
+
+        Im3d::EndFrame();
+        m_VK.PostFrame();
+    }
+    lvk::FreeIm3d(m_VK, m_Im3dState);
 }
