@@ -6,18 +6,47 @@
 #include <filesystem>
 #include "lvk/VulkanAPI.h"
 #include "Core/Log.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/cimport.h"
+#include "assimp/mesh.h"
+#include "assimp/scene.h"
 
+
+void ProcessNode(const aiScene* assimpScene, aiNode* currentNode, turas::ModelAsset* model)
+{
+
+}
 
 turas::Asset* LoadModel(const turas::String& path)
 {
-    int count = 0;
-    for(int i = 0; i < INT32_MAX; i++)
-    {
-        turas::log::info("LoadModel: i : {}", i);
-        count++;
-    }
+    turas::log::info("LoadModel : Loading Model : {}", path);
 
-    return nullptr;
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path.c_str(),
+                                             aiProcess_Triangulate |
+                                             aiProcess_CalcTangentSpace |
+                                             aiProcess_OptimizeMeshes |
+                                             aiProcess_GenSmoothNormals |
+                                             aiProcess_OptimizeGraph |
+                                             aiProcess_FixInfacingNormals |
+                                             aiProcess_FindInvalidData |
+                                             aiProcess_GenBoundingBoxes
+    );
+
+    if(scene == nullptr)
+    {
+        turas::log::error("LoadModel : Failed to open model at path : {}", path);
+        return nullptr;
+    }
+    auto* model = new turas::ModelAsset(
+            path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Model));
+
+    ProcessNode( scene, scene->mRootNode, model);
+
+    turas::log::info("LoadModel : Finished Loading Model : {}", path);
+
+    return model;
 }
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
@@ -95,4 +124,18 @@ void turas::AssetManager::OnUpdate() {
 
 bool turas::AssetManager::AnyAssetsLoading() {
     return !p_PendingLoads.empty();
+}
+
+void turas::AssetManager::Shutdown() {
+    while(AnyAssetsLoading())
+    {
+        log::info("AssetManager : Shutdown : Waiting for pending asset tasks to finish");
+    }
+
+    for(auto&[ handle, asset] : p_LoadedAssets)
+    {
+        asset.reset();
+    }
+
+    p_LoadedAssets.clear();
 }

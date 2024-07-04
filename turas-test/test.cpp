@@ -2,21 +2,17 @@
 #include <filesystem>
 BEGIN_TESTS()
 
-TEST(
-    {
+    s_Tests.push_back([]() {
         turas::log::info("Assets");
         turas::log::info("Current Path : {}", std::filesystem::current_path().string());
         turas::Engine e;
         e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
-        while(e.m_AssetManager.AnyAssetsLoading())
-        {
+        while (e.m_AssetManager.AnyAssetsLoading()) {
             e.m_AssetManager.OnUpdate();
-            turas::log::info("Processing Futures");
-
         }
+        e.m_AssetManager.Shutdown();
         turas::log::info("End Assets");
-    }
-)
+    });
 
 TEST(
     {

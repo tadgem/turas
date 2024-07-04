@@ -29,6 +29,8 @@ namespace turas {
         // used to process async loaded assets
         void                OnUpdate();
 
+        // clear up any remaining assets
+        void                Shutdown();
         TURAS_IMPL_ALLOC(AssetManager)
 
     protected:

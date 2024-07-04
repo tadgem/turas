@@ -41,6 +41,10 @@ namespace turas {
 
     class Asset {
     public:
+        Asset(const String &path, const AssetHandle &handle) : m_Path(path), m_Handle(handle)
+        {
+
+        }
         const String        m_Path;
         const AssetHandle   m_Handle;
     };
@@ -52,7 +56,12 @@ namespace turas {
 
     };
 
-    class ModelAsset : public Asset {};
+    class ModelAsset : public Asset {
+    public:
+        ModelAsset(const String &path, const AssetHandle &handle) : Asset(path, handle) {
+
+        }
+    };
 
     class TextureAsset : public Asset {};
 
