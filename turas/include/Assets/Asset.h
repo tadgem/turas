@@ -4,6 +4,8 @@
 
 #pragma once
 #include "STL/Memory.h"
+#include "lvk/Mesh.h"
+#include "Rendering/VertexLayouts.h"
 
 namespace turas {
     enum class AssetType : uint32_t
@@ -37,21 +39,18 @@ namespace turas {
         }
     };
 
-    /* required to hash a container */
-    template<> struct std::hash<AssetHandle> {
-        std::size_t operator()(const AssetHandle& ah) const {
-            return std::hash<uint64_t>()(ah._Data);
-        }
-    };
-
-
     class Asset {
     public:
         const String        m_Path;
         const AssetHandle   m_Handle;
     };
 
-    class MeshAsset : public Asset {};
+    class MeshAsset : public Asset {
+    public:
+        lvk::Mesh       m_GPUMesh;
+        VertexLayout    m_VertexLayout;
+
+    };
 
     class ModelAsset : public Asset {};
 
@@ -65,3 +64,10 @@ namespace turas {
 
 
 }
+
+/* required to hash a container */
+template<> struct std::hash<turas::AssetHandle> {
+    std::size_t operator()(const turas::AssetHandle& ah) const {
+        return std::hash<uint64_t>()(ah._Data);
+    }
+};

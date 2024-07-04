@@ -3,9 +3,45 @@
 //
 #include "Assets/AssetManager.h"
 #include "Core/Utils.h"
+#include <filesystem>
+#include "lvk/VulkanAPI.h"
+#include "Core/Log.h"
+
+
+turas::Asset* LoadModel(const turas::String& path)
+{
+    int count = 0;
+    for(int i = 0; i < INT32_MAX; i++)
+    {
+        turas::log::info("LoadModel: i : {}", i);
+        count++;
+    }
+
+    return nullptr;
+}
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
     AssetHandle handle (Utils::Hash(path), assetType);
+
+    switch(assetType)
+    {
+        case AssetType::Mesh:
+            log::error("AssetManager : Please load meshes as models : {}", path);
+            break;
+        case AssetType::Model:
+            p_PendingLoads.emplace(handle, std::move(std::async(std::launch::async, LoadModel, path)));
+            break;
+        case AssetType::Texture:
+            break;
+        case AssetType::Audio:
+            break;
+        case AssetType::Text:
+            break;
+        case AssetType::Binary:
+            break;
+        default:
+            break;
+    }
 
 
     return handle;
@@ -52,7 +88,7 @@ void turas::AssetManager::OnUpdate() {
 
     for(auto& handle : pending) {
         Asset* asset = p_PendingLoads[handle].get();
-        p_LoadedAssets.emplace(handle, std::move(CreateUnique<Asset>(asset)));
+        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(asset)));
         p_PendingLoads.erase(handle);
     }
 }

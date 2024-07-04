@@ -4,6 +4,7 @@
 
 #pragma once
 #include "Core/Log.h"
+#include "Core/Engine.h"
 #include "STL/Vector.h"
 #include "STL/Functional.h"
 

@@ -37,3 +37,4 @@
 vs22-debug
 vs22-release
 vs22
+*.pdb
