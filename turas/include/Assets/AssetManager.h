@@ -7,7 +7,7 @@
 #include "STL/Future.h"
 #include "Assets/Asset.h"
 #include "STL/Vector.h"
-
+#include "STL/Functional.h"
 
 
 namespace turas {
@@ -29,6 +29,7 @@ namespace turas {
     {
         Asset*                  m_LoadedAsset;
         Vector<AssetLoadInfo>   m_NewAssetsToLoad;
+        Function<void(lvk::VulkanAPI&, Asset*)> m_GPUTask = nullptr;
     };
 
     class AssetManager {

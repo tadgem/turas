@@ -38,3 +38,6 @@ vs22-debug
 vs22-release
 vs22
 *.pdb
+docs/turas/.obsidian/appearance.json
+docs/turas/.obsidian/app.json
+docs/turas/.obsidian/graph.json

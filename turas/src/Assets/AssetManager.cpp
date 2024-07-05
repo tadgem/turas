@@ -46,7 +46,7 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
 
     turas::log::info("LoadModel : Finished Loading Model : {}", path);
 
-    return {model, {}};
+    return {model, {}, nullptr};
 }
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
