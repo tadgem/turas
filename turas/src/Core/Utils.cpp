@@ -16,7 +16,9 @@ uint64_t turas::Utils::Hash(const String &string) {
 
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
 {
-
+#ifdef TURAS_TRACK_HASHSTRINGS
+    Utils::s_OriginalStrings.emplace(*this, input);
+#endif
 }
 
 turas::HashString::HashString(uint64_t input) : m_Value(input)
