@@ -4,6 +4,8 @@
 #include "Systems/Transform.h"
 #include "Core/ECS.h"
 #include "Core/Log.h"
+#include "Core/Utils.h"
+
 
 void turas::TransformSystem::OnEngineReady() {
 
@@ -18,8 +20,14 @@ void turas::TransformSystem::OnSceneClosed(Scene *scene) {
 }
 
 void turas::TransformSystem::OnUpdate(Scene *scene) {
+
 }
 
 void turas::TransformSystem::OnShutdown() {
+
+}
+
+turas::TransformSystem::TransformSystem() : System(GetTypeHash<TransformSystem>())
+{
 
 }

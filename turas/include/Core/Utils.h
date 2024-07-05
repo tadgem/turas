@@ -7,14 +7,13 @@
 #include "ThirdParty/ctti/type_id.hpp"
 
 namespace turas {
-    template <typename T>
+    template<typename T>
     String GetTypeName() {
         return ctti::type_id<T>().name();
     }
 
     template<typename T>
-    uint64_t GetTypeHash()
-    {
+    uint64_t GetTypeHash() {
         return ctti::type_id<T>().hash();
     }
 
@@ -52,12 +51,10 @@ namespace turas
 {
     class Utils {
     public:
-
 #define TURAS_TRACK_HASHSTRINGS
 #ifdef TURAS_TRACK_HASHSTRINGS
 inline static HashMap<HashString, String> s_OriginalStrings = {};
 #endif
         static uint64_t Hash(const String& string);
-
     };
 }

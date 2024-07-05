@@ -58,6 +58,7 @@ namespace turas
         template<class Archive>
         void serialize(Archive & archive)
         {
+            HashMap<uint64_t, Archive> m_SerializedSystems;
             for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
             {
 

@@ -1,7 +1,3 @@
-//
-// Created by liam_ on 7/4/2024.
-//
-
 #ifndef TURAS_ALL_TRANSFORM_H
 #define TURAS_ALL_TRANSFORM_H
 #include "Core/System.h"
@@ -24,20 +20,21 @@ namespace turas
     class TransformSystem : public System
     {
     public:
+
+        TransformSystem();
+
         void OnEngineReady() override;
-
         void OnSceneLoaded(Scene *scene) override;
-
         void OnSceneClosed(Scene *scene) override;
-
         void OnUpdate(Scene *scene) override;
-
         void OnShutdown() override;
 
         TURAS_IMPL_ALLOC(TransformSystem)
 
+        template<typename Archive>
+        void serialize(Archive& ar) {
+            ar( cereal::base_class<System>(this));
+        }
     };
 }
-
-EXPAND(TURAS_SYSTEM_SERIALIZATION_IMPL(turas::TransformSystem))
 #endif //TURAS_ALL_TRANSFORM_H
