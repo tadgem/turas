@@ -36,3 +36,10 @@ void turas::TransformSystem::SerializeBinary(turas::Scene *scene, turas::BinaryO
     output(*this);
     s_CurrentSerializingScene = nullptr;
 }
+
+void turas::TransformSystem::DeserializeBinary(turas::Scene *scene, turas::BinaryInputArchive &input)
+{
+    s_CurrentSerializingScene = scene;
+    input(*this);
+    s_CurrentSerializingScene = nullptr;
+}

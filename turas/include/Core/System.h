@@ -21,6 +21,7 @@ namespace turas
         virtual void OnUpdate(Scene* scene) = 0;
         virtual void OnShutdown() = 0;
         virtual void SerializeBinary(Scene* scene, BinaryOutputArchive& output) const = 0;
+        virtual void DeserializeBinary(Scene* scene, BinaryInputArchive& output) = 0;
 
         static entt::registry& GetSceneRegistry(Scene* scene);
 

@@ -39,22 +39,35 @@ namespace turas
         void OnUpdate(Scene *scene) override;
         void OnShutdown() override;
         void SerializeBinary(Scene* scene, BinaryOutputArchive& output) const override;
+        void DeserializeBinary(Scene* scene, BinaryInputArchive& input) override;
 
         TURAS_IMPL_ALLOC(TransformSystem)
         template<typename Archive>
 
         void save(Archive& ar) const {
             auto transform_view = GetSceneRegistry(s_CurrentSerializingScene).view<TransformComponent>();
+            HashMap<uint32_t, TransformComponent> transforms {};
             for(auto [ent, trans] : transform_view.each())
             {
-                ar(static_cast<uint32_t>(ent), trans);
+                transforms.emplace(static_cast<uint32_t>(ent), trans);
             }
+            ar(transforms);
         }
 
         template<typename Archive>
         void load(Archive& ar) {
-
-            // ar( cereal::base_class<System>(this));
+            HashMap<uint32_t, TransformComponent> transforms {};
+            ar(transforms);
+            auto& reg = GetSceneRegistry(s_CurrentSerializingScene);
+            for(auto& [handle, trans] : transforms)
+            {
+                auto ent = entt::entity(handle);
+                if(!reg.valid(ent)) {
+                    ent = reg.create(ent);
+                }
+                Entity e {ent};
+                s_CurrentSerializingScene->AddComponent<TransformComponent>(e, trans);
+            }
         }
     };
 }

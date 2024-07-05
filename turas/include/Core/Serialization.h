@@ -14,6 +14,7 @@
 #include "cereal/archives/xml.hpp"
 #include "cereal/archives/json.hpp"
 #include "cereal/types/polymorphic.hpp"
+#include "cereal/types/unordered_map.hpp"
 
 namespace turas
 {

@@ -43,6 +43,14 @@ turas::HashMap<uint64_t, turas::String> turas::Scene::SaveBinary() {
 void turas::Scene::LoadBinary(turas::HashMap<uint64_t, turas::String> sceneData)
 {
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
+        for(auto& [hash, serialized_stream] : sceneData)
+        {
+            if(sys->m_Hash != hash) continue;
+            std::stringstream stream {};
+            stream << serialized_stream;
+            BinaryInputArchive input(stream);
+            sys->DeserializeBinary((Scene*) this, input);
+        }
 
     }
 }
