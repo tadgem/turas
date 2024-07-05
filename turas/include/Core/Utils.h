@@ -4,26 +4,18 @@
 
 #pragma once
 #include "STL/Memory.h"
-
-namespace typehash_internal
-{
-    static const unsigned int FRONT_SIZE = sizeof("typehash_internal::GetTypeNameHelper<") - 1u;
-    static const unsigned int BACK_SIZE = sizeof(">::GetTypeName") - 1u;
-
-    template <typename T>
-    struct GetTypeNameHelper {
-        static turas::String GetTypeName() {
-            static const size_t size = sizeof(__FUNCTION__) - FRONT_SIZE - BACK_SIZE;
-            turas::String typeString = turas::String(__FUNCTION__ + FRONT_SIZE, size - 1u);
-            return typeString;
-        }
-    };
-}
+#include "ThirdParty/ctti/type_id.hpp"
 
 namespace turas {
     template <typename T>
-    String GetTypeName(void) {
-        return typehash_internal::GetTypeNameHelper<T>::GetTypeName();
+    String GetTypeName() {
+        return ctti::type_id<T>().name();
+    }
+
+    template<typename T>
+    uint64_t GetTypeHash()
+    {
+        return ctti::type_id<T>().hash();
     }
 
     struct HashString {
@@ -31,6 +23,14 @@ namespace turas {
 
         HashString(const String &input);
         HashString(uint64_t value);
+
+        template<typename T>
+        HashString() : m_Value(GetTypeHash<T>())
+        {
+#ifdef TURAS_TRACK_HASHSTRINGS
+            Utils::s_OriginalStrings.emplace(*this, GetTypeName<T>());
+#endif
+        }
 
         uint64_t m_Value;
 
