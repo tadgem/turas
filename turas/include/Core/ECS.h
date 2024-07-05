@@ -55,6 +55,12 @@ namespace turas
             return p_Registry.any_of<_Ty>(entity.m_Handle);
         }
 
+        template<typename _Ty>
+        _Ty&    GetComponent(Entity& entity)
+        {
+            return p_Registry.get<_Ty>(entity.m_Handle);
+        }
+
 
         HashMap<uint64_t , String>  SaveBinary();
         void                        LoadBinary(HashMap<uint64_t, String> sceneData);
