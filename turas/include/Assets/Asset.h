@@ -9,7 +9,7 @@
 #include "Rendering/Mesh.h"
 
 namespace turas {
-    enum class AssetType : uint32_t
+    enum class AssetType : uint8_t
     {
         Model,
         Texture,
@@ -19,23 +19,25 @@ namespace turas {
     };
 
     union AssetHandle {
-        uint64_t _Data;
+        uint64_t _DataA;
+        uint64_t _DataB;
+
         struct {
-            uint32_t    m_Hash;
+            uint64_t    m_Hash;
             AssetType   m_Type;
         };
 
-        AssetHandle(const uint32_t& hash, const AssetType& type) : m_Hash(hash), m_Type(type)
+        AssetHandle(const uint64_t& hash, const AssetType& type) : m_Hash(hash), m_Type(type)
         {
 
         }
 
         bool operator==(const AssetHandle &o) const {
-            return _Data == o._Data;
+            return _DataA == o._DataA && _DataB == o._DataB;
         }
 
         bool operator<(const AssetHandle &o) const {
-            return _Data < o._Data;
+            return _DataA < o._DataA && _DataB < o._DataB;
         }
     };
 
@@ -84,6 +86,6 @@ namespace turas {
 /* required to hash a container */
 template<> struct std::hash<turas::AssetHandle> {
     std::size_t operator()(const turas::AssetHandle& ah) const {
-        return std::hash<uint64_t>()(ah._Data);
+        return std::hash<uint64_t>()(ah._DataA) ^ std::hash<uint64_t>()(ah._DataB);
     }
 };

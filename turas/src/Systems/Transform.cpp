@@ -4,6 +4,7 @@
 #include "Systems/Transform.h"
 #include "Core/ECS.h"
 #include "Core/Log.h"
+
 void turas::TransformSystem::OnEngineReady() {
 
 }
