@@ -22,6 +22,15 @@ void turas::TransformSystem::OnSceneClosed(Scene *scene) {
 
 void turas::TransformSystem::OnUpdate(Scene *scene) {
     ZoneScoped;
+    auto view = GetSceneRegistry(scene).view<TransformComponent>();
+
+    for(auto [ent, t] : view.each())
+    {
+        t.m_ModelMatrix = glm::translate(glm::mat4(1), t.m_Position);
+        glm::vec3 radians = glm::radians(t.m_Rotation);
+        t.m_ModelMatrix *= glm::mat4_cast(glm::quat(radians));
+        t.m_ModelMatrix = glm::scale(t.m_ModelMatrix, t.m_Scale);
+    }
 }
 
 void turas::TransformSystem::OnShutdown() {

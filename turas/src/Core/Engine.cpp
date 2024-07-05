@@ -46,23 +46,15 @@ void turas::Engine::Run()
     while(m_VK.ShouldRun())
     {
         FrameMark;
-        ZoneScoped;
+        ZoneScopedN("Frame");
 
-        m_VK.PreFrame();
-        Im3d::NewFrame();
+        PrepFrame();
 
-        for(auto& sys : m_EngineSubSystems)
-        {
-            for(auto& scene : m_ActiveScenes)
-            {
-                sys->OnUpdate(scene.get());
-            }
-        }
+        SystemsUpdate();
 
         StatsWindow::OnImGuiStatsWindow(m_VK);
 
-        Im3d::EndFrame();
-        m_VK.PostFrame();
+        SubmitFrame();
     }
 }
 
@@ -113,4 +105,27 @@ void turas::Engine::CloseAllScenes() {
 
     m_ActiveScenes.clear();
 
+}
+
+void turas::Engine::PrepFrame() {
+    ZoneScoped;
+    m_VK.PreFrame();
+    Im3d::NewFrame();
+}
+
+void turas::Engine::SubmitFrame() {
+    ZoneScoped;
+    Im3d::EndFrame();
+    m_VK.PostFrame();
+}
+
+void turas::Engine::SystemsUpdate() {
+    ZoneScoped;
+    for(auto& sys : m_EngineSubSystems)
+    {
+        for(auto& scene : m_ActiveScenes)
+        {
+            sys->OnUpdate(scene.get());
+        }
+    }
 }

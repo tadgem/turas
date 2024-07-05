@@ -52,6 +52,10 @@ namespace turas
         }
 
     protected:
+        void PrepFrame();
+        void SubmitFrame();
+        void SystemsUpdate();
+
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;
 #endif
