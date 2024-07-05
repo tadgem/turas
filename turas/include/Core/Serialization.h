@@ -9,6 +9,8 @@
 #define DEFER(...) __VA_ARGS__ EMPTY()
 # define OBSTRUCT(...) __VA_ARGS__ DEFER(EMPTY)()
 # define EXPAND(...) __VA_ARGS__
+
+#define CEREAL_THREAD_SAFE
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>

@@ -5,6 +5,7 @@
 #ifndef TURAS_ALL_TRANSFORM_H
 #define TURAS_ALL_TRANSFORM_H
 #include "Core/System.h"
+#include "STL/Memory.h"
 #include "glm/glm.hpp"
 
 namespace turas

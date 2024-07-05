@@ -2,7 +2,6 @@
 #include "STL/Memory.h"
 #include "STL/Vector.h"
 #include "Core/System.h"
-#include "Core/ECS.h"
 #include "Assets/AssetManager.h"
 #include "VulkanAPI_SDL.h"
 #include "Im3D/im3d_lvk.h"
@@ -10,6 +9,7 @@
 
 namespace turas
 {
+    class Scene;
     class Engine
     {
     public:
@@ -24,6 +24,8 @@ namespace turas
         void    CloseAllScenes();
 
         TURAS_IMPL_ALLOC(Engine)
+
+        inline static Engine* INSTANCE = nullptr;
 
         // Subsystems of the engine, used to have ProgramComponents and Systems, roll them into a system
         Vector<UPtr<System>>    m_EngineSubSystems;

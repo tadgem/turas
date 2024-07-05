@@ -113,6 +113,7 @@ TEST(
     }
 )
 
+
 TEST(
     {
         turas::Engine e;
@@ -126,6 +127,24 @@ TEST(
         assert(s->HasComponent<turas::TransformComponent>(ent));
         s->RemoveComponent<turas::TransformComponent>(ent);
         assert(!s->HasComponent<turas::TransformComponent>(ent));
+        e.Shutdown();
+    }
+)
+TEST(
+    {
+        turas::Engine e;
+        auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
+        assert(transformSystem);
+        e.Init();
+        auto* s = e.CreateScene();
+        auto ent = s->CreateEntity();
+
+        auto& trans = s->AddComponent<turas::TransformComponent>(ent);
+
+        std::stringstream stream;
+        cereal::BinaryOutputArchive oarchive(stream);
+        oarchive(*s);
+        turas::log::info("output string stream : {}", stream.str());
         e.Shutdown();
     }
 )

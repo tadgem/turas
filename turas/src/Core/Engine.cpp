@@ -1,10 +1,11 @@
 #include "STL/Memory.h"
 #include "Core/Engine.h"
+#include "Core/ECS.h"
 #include "spdlog/spdlog.h"
 #include "Debug/StatsWindow.h"
 
 turas::Engine::Engine() {
-
+    INSTANCE = this;
 }
 
 void turas::Engine::Init() {
@@ -35,6 +36,7 @@ void turas::Engine::Shutdown() {
     }
     m_EngineSubSystems.clear();
     m_AssetManager.Shutdown();
+    INSTANCE = nullptr;
 }
 
 void turas::Engine::Run()

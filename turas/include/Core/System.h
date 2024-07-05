@@ -1,5 +1,4 @@
 #pragma once
-#include "Core/ECS.h"
 #include "Core/Serialization.h"
 
 #define TURAS_SYSTEM_SERIALIZATION_IMPL(X) DEFER(CEREAL_REGISTER_TYPE(X)); \
@@ -7,6 +6,7 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(turas::System, X)
 
 namespace turas
 {
+    class Scene;
     class System
     {
     public:

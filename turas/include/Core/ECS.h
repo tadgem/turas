@@ -4,7 +4,10 @@
 
 #pragma once
 #include "STL/Memory.h"
+#include "STL/HashMap.h"
 #include "entt/entt.hpp"
+#include "Core/Serialization.h"
+#include "Core/Engine.h"
 
 namespace turas
 {
@@ -52,6 +55,14 @@ namespace turas
             return p_Registry.any_of<_Ty>(entity.m_Handle);
         }
 
+        template<class Archive>
+        void serialize(Archive & archive)
+        {
+            for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
+            {
+
+            }
+        }
 
 
         TURAS_IMPL_ALLOC(Scene)
