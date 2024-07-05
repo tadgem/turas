@@ -27,3 +27,23 @@ uint32_t turas::Scene::NumEntities() {
     return p_EntityCount;
 }
 
+turas::HashMap<uint64_t, turas::String> turas::Scene::SaveBinary() {
+    HashMap<uint64_t, String> serialized {};
+    for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
+    {
+        std::stringstream       stream;
+        BinaryOutputArchive     archive(stream);
+        sys->SerializeBinary((Scene*) this, archive);
+
+        serialized.emplace(sys->m_Hash, stream.str());
+    }
+    return serialized;
+}
+
+void turas::Scene::LoadBinary(turas::HashMap<uint64_t, turas::String> sceneData)
+{
+    for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
+
+    }
+}
+

@@ -55,19 +55,12 @@ namespace turas
             return p_Registry.any_of<_Ty>(entity.m_Handle);
         }
 
-        template<class Archive>
-        void serialize(Archive & archive)
-        {
-            HashMap<uint64_t, Archive> m_SerializedSystems;
-            for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
-            {
 
-            }
-        }
-
-
+        HashMap<uint64_t , String>  SaveBinary();
+        void                        LoadBinary(HashMap<uint64_t, String> sceneData);
         TURAS_IMPL_ALLOC(Scene)
     protected:
+        friend class System;
         entt::registry  p_Registry;
         uint32_t        p_EntityCount = 0;
     };

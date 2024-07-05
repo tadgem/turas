@@ -130,24 +130,16 @@ TEST(
         e.Shutdown();
     }
 )
-TEST(
-    {
+    s_Tests.push_back([]() {
         turas::Engine e;
-        auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
-        assert(transformSystem);
+        auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
         e.Init();
-        auto* s = e.CreateScene();
-        auto ent = s->CreateEntity();
-
-        auto& trans = s->AddComponent<turas::TransformComponent>(ent);
-
-        std::stringstream stream;
-        cereal::BinaryOutputArchive oarchive(stream);
-        oarchive(*s);
-        turas::log::info("output string stream : {}", stream.str());
+        auto &s = *e.CreateScene();
+        auto ent = s.CreateEntity();
+        auto &trans = s.AddComponent<turas::TransformComponent>(ent);
+        auto data = s.SaveBinary();
         e.Shutdown();
-    }
-)
+    });
 
 
 RUN_TESTS()

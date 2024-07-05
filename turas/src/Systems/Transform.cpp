@@ -29,5 +29,10 @@ void turas::TransformSystem::OnShutdown() {
 
 turas::TransformSystem::TransformSystem() : System(GetTypeHash<TransformSystem>())
 {
+}
 
+void turas::TransformSystem::SerializeBinary(turas::Scene *scene, turas::BinaryOutputArchive &output) const {
+    s_CurrentSerializingScene = scene;
+    output(*this);
+    s_CurrentSerializingScene = nullptr;
 }

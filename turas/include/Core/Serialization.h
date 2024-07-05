@@ -10,9 +10,14 @@
 # define OBSTRUCT(...) __VA_ARGS__ DEFER(EMPTY)()
 # define EXPAND(...) __VA_ARGS__
 #define CEREAL_THREAD_SAFE 1
-#include "cereal/archives/binary.hpp"
+#include "cereal/archives/portable_binary.hpp"
 #include "cereal/archives/xml.hpp"
 #include "cereal/archives/json.hpp"
 #include "cereal/types/polymorphic.hpp"
 
+namespace turas
+{
+    using BinaryOutputArchive = cereal::PortableBinaryOutputArchive;
+    using BinaryInputArchive = cereal::PortableBinaryInputArchive;
+}
 #endif //TURAS_ALL_SERIALIZATION_H
