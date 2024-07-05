@@ -5,9 +5,9 @@
 #include "Core/Utils.h"
 #include "Debug/Profile.h"
 
-uint64_t turas::Utils::Hash(const String &string) {
+turas::u64 turas::Utils::Hash(const String &string) {
     ZoneScoped;
-    uint64_t ret = 0;
+    u64 ret = 0;
     for(auto& c : string)
     {
         ret ^= 2305 * c;
@@ -23,7 +23,7 @@ turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(
 #endif
 }
 
-turas::HashString::HashString(uint64_t input) : m_Value(input)
+turas::HashString::HashString(u64 input) : m_Value(input)
 {
     ZoneScoped;
 }

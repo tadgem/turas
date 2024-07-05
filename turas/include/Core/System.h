@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Serialization.h"
 #include "entt/entt.hpp"
+#include "Core/Types.h"
 
 #define TURAS_SYSTEM_SERIALIZATION_IMPL(X) DEFER(CEREAL_REGISTER_TYPE(X)); \
 CEREAL_REGISTER_POLYMORPHIC_RELATION(turas::System, X)
@@ -11,9 +12,9 @@ namespace turas
     class System
     {
     public:
-        const uint64_t  m_Hash;
+        const u64  m_Hash;
 
-        System(uint64_t hash) : m_Hash(hash) {};
+        System(u64 hash) : m_Hash(hash) {};
 
         virtual void OnEngineReady() = 0;
         virtual void OnSceneLoaded(Scene* scene) = 0;

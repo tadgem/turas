@@ -49,10 +49,10 @@ namespace turas
         void save(Archive& ar) const {
             ZoneScoped;
             auto transform_view = GetSceneRegistry(s_CurrentSerializingScene).view<TransformComponent>();
-            HashMap<uint32_t, TransformComponent> transforms {};
+            HashMap<u32, TransformComponent> transforms {};
             for(auto [ent, trans] : transform_view.each())
             {
-                transforms.emplace(static_cast<uint32_t>(ent), trans);
+                transforms.emplace(static_cast<u32>(ent), trans);
             }
             ar(transforms);
         }
@@ -60,7 +60,7 @@ namespace turas
         template<typename Archive>
         void load(Archive& ar) {
             ZoneScoped;
-            HashMap<uint32_t, TransformComponent> transforms {};
+            HashMap<u32, TransformComponent> transforms {};
             ar(transforms);
             auto& reg = GetSceneRegistry(s_CurrentSerializingScene);
             for(auto& [handle, trans] : transforms)

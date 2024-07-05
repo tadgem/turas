@@ -19,20 +19,20 @@ void turas::Scene::DestroyEntity(turas::Entity &e) {
     ZoneScoped;
     if(!p_Registry.destroy(e.m_Handle))
     {
-        log::error("Scene : failed to destroy entity {}", e.operator uint32_t());
+        log::error("Scene : failed to destroy entity {}", e.operator u32());
         return;
     }
     p_EntityCount--;
 }
 
-uint32_t turas::Scene::NumEntities() {
+turas::u32 turas::Scene::NumEntities() {
     ZoneScoped;
     return p_EntityCount;
 }
 
-turas::HashMap<uint64_t, turas::String> turas::Scene::SaveBinary() {
+turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
     ZoneScoped;
-    HashMap<uint64_t, String> serialized {};
+    HashMap<u64, String> serialized {};
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
     {
         std::stringstream       stream;
@@ -44,7 +44,7 @@ turas::HashMap<uint64_t, turas::String> turas::Scene::SaveBinary() {
     return serialized;
 }
 
-void turas::Scene::LoadBinary(turas::HashMap<uint64_t, turas::String> sceneData)
+void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String> sceneData)
 {
     ZoneScoped;
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {

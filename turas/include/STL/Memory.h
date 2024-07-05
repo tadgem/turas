@@ -3,6 +3,7 @@
 #include <memory>
 #include "STL/HashMap.h"
 #include "STL/String.h"
+#include "Core/Types.h"
 
 #define TURAS_ENABLE_MEMORY_TRACKING
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
@@ -22,7 +23,7 @@ namespace turas {
 
         HashMap<String, AllocInfo> s_AllocationInfo;
 
-        inline static uint64_t             s_UntrackedSize = 0;
+        inline static u64             s_UntrackedSize = 0;
         inline static DebugMemoryTracker*  s_Instance = nullptr;
     };
 

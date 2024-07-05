@@ -15,7 +15,7 @@ namespace turas
     {
         entt::entity    m_Handle;
 
-        inline operator uint32_t() {return static_cast<uint32_t>(m_Handle);}
+        inline operator u32() {return static_cast<u32>(m_Handle);}
         inline operator entt::entity&() {return m_Handle;}
         inline operator entt::entity() {return m_Handle;}
 
@@ -30,7 +30,7 @@ namespace turas
         Entity  CreateEntity();
         void    DestroyEntity(Entity& e);
 
-        uint32_t NumEntities();
+        u32 NumEntities();
 
         template<typename _Ty, typename ... Args>
         _Ty&    AddComponent(Entity& entity, Args &&... args)
@@ -66,12 +66,12 @@ namespace turas
         }
 
 
-        HashMap<uint64_t , String>  SaveBinary();
-        void                        LoadBinary(HashMap<uint64_t, String> sceneData);
+        HashMap<u64 , String>  SaveBinary();
+        void                        LoadBinary(HashMap<u64, String> sceneData);
         TURAS_IMPL_ALLOC(Scene)
     protected:
         friend class System;
         entt::registry  p_Registry;
-        uint32_t        p_EntityCount = 0;
+        u32        p_EntityCount = 0;
     };
 }

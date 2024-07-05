@@ -5,6 +5,7 @@
 #pragma once
 #include "STL/Memory.h"
 #include "ThirdParty/ctti/type_id.hpp"
+#include "Core/Types.h"
 
 namespace turas {
     template<typename T>
@@ -13,7 +14,7 @@ namespace turas {
     }
 
     template<typename T>
-    uint64_t GetTypeHash() {
+    u64 GetTypeHash() {
         return ctti::type_id<T>().hash();
     }
 
@@ -21,7 +22,7 @@ namespace turas {
         HashString() { m_Value = 0; }
 
         HashString(const String &input);
-        HashString(uint64_t value);
+        HashString(u64 value);
 
         template<typename T>
         HashString() : m_Value(GetTypeHash<T>())
@@ -31,18 +32,18 @@ namespace turas {
 #endif
         }
 
-        uint64_t m_Value;
+        u64 m_Value;
 
         bool operator==(HashString const &rhs) const { return m_Value == rhs.m_Value; }
         bool operator<(const HashString &o) const { return m_Value < o.m_Value;} ;
-        operator uint64_t() const { return m_Value; };
+        operator u64() const { return m_Value; };
     };
 }
 
 /* required to hash a container */
 template<> struct std::hash<turas::HashString> {
     std::size_t operator()(const turas::HashString& h) const {
-        return std::hash<uint64_t>()(h.m_Value) ^ std::hash<uint64_t>()(h.m_Value);
+        return std::hash<turas::u64>()(h.m_Value) ^ std::hash<turas::u64>()(h.m_Value);
     }
 };
 
@@ -55,6 +56,6 @@ namespace turas
 #ifdef TURAS_TRACK_HASHSTRINGS
 inline static HashMap<HashString, String> s_OriginalStrings = {};
 #endif
-        static uint64_t Hash(const String& string);
+        static u64 Hash(const String& string);
     };
 }
