@@ -24,7 +24,7 @@ void turas::Engine::Shutdown() {
     ZoneScoped;
     CloseAllScenes();
     lvk::FreeIm3d(m_VK, m_Im3dState);
-    m_VK.Quit();
+    m_VK.Cleanup();
 
     for(auto& scene : m_ActiveScenes)
     {

@@ -14,6 +14,6 @@
 inline static turas::Vector<turas::Procedure> s_Tests = {};
 
 #define BEGIN_TESTS() int main(int argc, char** argv) {
-#define TEST(X) s_Tests.push_back([]() X);
+#define TEST(X) s_Tests.emplace_back([]() X);
 
 #define RUN_TESTS() for(auto& t : s_Tests) { t(); } };
