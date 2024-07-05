@@ -47,13 +47,10 @@ void turas::Engine::Run()
     {
         FrameMark;
         ZoneScopedN("Frame");
-
         PrepFrame();
-
+        m_AssetManager.OnUpdate();
         SystemsUpdate();
-
         StatsWindow::OnImGuiStatsWindow(m_VK);
-
         SubmitFrame();
     }
 }

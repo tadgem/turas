@@ -42,17 +42,21 @@ turas::TransformSystem::TransformSystem() : System(GetTypeHash<TransformSystem>(
     ZoneScoped;
 }
 
-void turas::TransformSystem::SerializeBinary(turas::Scene *scene, turas::BinaryOutputArchive &output) const {
+void turas::TransformSystem::SerializeSceneBinary(Scene *scene, BinaryOutputArchive &output) const {
     ZoneScoped;
     s_CurrentSerializingScene = scene;
     output(*this);
     s_CurrentSerializingScene = nullptr;
 }
 
-void turas::TransformSystem::DeserializeBinary(turas::Scene *scene, turas::BinaryInputArchive &input)
+void turas::TransformSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArchive &input)
 {
     ZoneScoped;
     s_CurrentSerializingScene = scene;
     input(*this);
     s_CurrentSerializingScene = nullptr;
+}
+
+turas::Vector<turas::AssetHandle> turas::TransformSystem::GetRequiredAssets() {
+    return turas::Vector<AssetHandle>();
 }

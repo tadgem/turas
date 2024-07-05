@@ -1,7 +1,7 @@
 #ifndef TURAS_ALL_TRANSFORM_H
 #define TURAS_ALL_TRANSFORM_H
 #include "Core/System.h"
-#include "STL/Memory.h"
+#include "Core/ECS.h"
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
@@ -38,20 +38,20 @@ namespace turas
     class TransformSystem : public System
     {
     public:
-
         TransformSystem();
 
-        void OnEngineReady() override;
-        void OnSceneLoaded(Scene *scene) override;
-        void OnSceneClosed(Scene *scene) override;
-        void OnUpdate(Scene *scene) override;
-        void OnShutdown() override;
-        void SerializeBinary(Scene* scene, BinaryOutputArchive& output) const override;
-        void DeserializeBinary(Scene* scene, BinaryInputArchive& input) override;
+        void                    OnEngineReady() override;
+        void                    OnSceneLoaded(Scene *scene) override;
+        void                    OnSceneClosed(Scene *scene) override;
+        void                    OnUpdate(Scene *scene) override;
+        void                    OnShutdown() override;
+        void                    SerializeSceneBinary(Scene* scene, BinaryOutputArchive& output) const override;
+        void                    DeserializeSceneBinary(Scene* scene, BinaryInputArchive& input) override;
+        Vector<AssetHandle>     GetRequiredAssets() override;
 
         TURAS_IMPL_ALLOC(TransformSystem)
-        template<typename Archive>
 
+        template<typename Archive>
         void save(Archive& ar) const {
             ZoneScoped;
             auto transform_view = GetSceneRegistry(s_CurrentSerializingScene).view<TransformComponent>();
@@ -79,6 +79,7 @@ namespace turas
                 s_CurrentSerializingScene->AddComponent<TransformComponent>(e, trans);
             }
         }
+
     };
 }
 CEREAL_REGISTER_TYPE(turas::TransformSystem);

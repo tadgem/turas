@@ -37,15 +37,14 @@ turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
     {
         std::stringstream       stream;
         BinaryOutputArchive     archive(stream);
-        sys->SerializeBinary((Scene*) this, archive);
+        sys->SerializeSceneBinary((Scene *) this, archive);
 
         serialized.emplace(sys->m_Hash, stream.str());
     }
     return serialized;
 }
 
-void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String> sceneData)
-{
+void turas::Scene::LoadBinary(const turas::HashMap<u64, turas::String>& sceneData) {
     ZoneScoped;
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
         for(auto& [hash, serialized_stream] : sceneData)
@@ -54,7 +53,7 @@ void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String> sceneData)
             std::stringstream stream {};
             stream << serialized_stream;
             BinaryInputArchive input(stream);
-            sys->DeserializeBinary((Scene*) this, input);
+            sys->DeserializeSceneBinary((Scene *) this, input);
         }
 
     }
