@@ -6,6 +6,7 @@
 #include "VulkanAPI_SDL.h"
 #include "Im3D/im3d_lvk.h"
 #include <type_traits>
+#include "Debug/Profile.h"
 
 namespace turas
 {
@@ -45,6 +46,7 @@ namespace turas
         template<typename _Ty, typename ... Args>
         _Ty* AddSystem(Args &&... args)
         {
+            ZoneScoped;
             static_assert(std::is_base_of<System, _Ty>());
             return static_cast<_Ty*>(m_EngineSubSystems.emplace_back(std::move(CreateUnique<_Ty>(std::forward<Args>(args)...))).get());
         }

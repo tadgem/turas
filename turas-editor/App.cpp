@@ -3,6 +3,7 @@
 #include "STL/HashMap.h"
 #include "STL/String.h"
 #include "Systems/Transform.h"
+#include "Core/ECS.h"
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
 void* operator new(size_t size)

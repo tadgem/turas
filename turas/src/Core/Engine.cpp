@@ -5,10 +5,12 @@
 #include "Debug/StatsWindow.h"
 
 turas::Engine::Engine() {
+    ZoneScoped;
     INSTANCE = this;
 }
 
 void turas::Engine::Init() {
+    ZoneScoped;
     spdlog::info("Initialising Turas");
     m_VK.Start("Turas", 1280, 720);
     m_Im3dState = lvk::LoadIm3D(m_VK);
@@ -19,7 +21,7 @@ void turas::Engine::Init() {
 }
 
 void turas::Engine::Shutdown() {
-
+    ZoneScoped;
     CloseAllScenes();
     lvk::FreeIm3d(m_VK, m_Im3dState);
     m_VK.Quit();
@@ -43,6 +45,9 @@ void turas::Engine::Run()
 {
     while(m_VK.ShouldRun())
     {
+        FrameMark;
+        ZoneScoped;
+
         m_VK.PreFrame();
         Im3d::NewFrame();
 
@@ -62,6 +67,7 @@ void turas::Engine::Run()
 }
 
 turas::Scene *turas::Engine::CreateScene() {
+    ZoneScoped;
     Scene* scene =  m_ActiveScenes.emplace_back(std::move(CreateUnique<Scene>())).get();
     for(auto& sys : m_EngineSubSystems)
     {
@@ -71,6 +77,7 @@ turas::Scene *turas::Engine::CreateScene() {
 }
 
 void turas::Engine::CloseScene(turas::Scene *scene) {
+    ZoneScoped;
     int index = -1;
     for (int i = 0; i < m_ActiveScenes.size(); i++)
     {
@@ -93,6 +100,7 @@ void turas::Engine::CloseScene(turas::Scene *scene) {
 }
 
 void turas::Engine::CloseAllScenes() {
+    ZoneScoped;
     for(auto& scene : m_ActiveScenes)
     {
         // sys scene cleanup logic

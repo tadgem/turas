@@ -35,12 +35,14 @@ namespace turas
         template<typename _Ty, typename ... Args>
         _Ty&    AddComponent(Entity& entity, Args &&... args)
         {
+            ZoneScoped;
             return p_Registry.emplace<_Ty>(entity.m_Handle, std::forward<Args>(args)...);
         }
 
         template<typename _Ty>
         bool    RemoveComponent(Entity& entity)
         {
+            ZoneScoped;
             if(HasComponent<_Ty>(entity))
             {
                 p_Registry.remove<_Ty>(entity.m_Handle);
@@ -52,12 +54,14 @@ namespace turas
         template<typename _Ty>
         bool    HasComponent(Entity& entity)
         {
+            ZoneScoped;
             return p_Registry.any_of<_Ty>(entity.m_Handle);
         }
 
         template<typename _Ty>
         _Ty&    GetComponent(Entity& entity)
         {
+            ZoneScoped;
             return p_Registry.get<_Ty>(entity.m_Handle);
         }
 

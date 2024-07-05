@@ -4,17 +4,19 @@
 #include "Core/ECS.h"
 #include "Core/Log.h"
 turas::Scene::Scene() {
+    ZoneScoped;
     p_Registry = entt::registry ();
-
 }
 
 turas::Entity turas::Scene::CreateEntity() {
+    ZoneScoped;
     entt::entity handle = p_Registry.create();
     p_EntityCount++;
     return Entity {handle};
 }
 
 void turas::Scene::DestroyEntity(turas::Entity &e) {
+    ZoneScoped;
     if(!p_Registry.destroy(e.m_Handle))
     {
         log::error("Scene : failed to destroy entity {}", e.operator uint32_t());
@@ -24,10 +26,12 @@ void turas::Scene::DestroyEntity(turas::Entity &e) {
 }
 
 uint32_t turas::Scene::NumEntities() {
+    ZoneScoped;
     return p_EntityCount;
 }
 
 turas::HashMap<uint64_t, turas::String> turas::Scene::SaveBinary() {
+    ZoneScoped;
     HashMap<uint64_t, String> serialized {};
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
     {
@@ -42,6 +46,7 @@ turas::HashMap<uint64_t, turas::String> turas::Scene::SaveBinary() {
 
 void turas::Scene::LoadBinary(turas::HashMap<uint64_t, turas::String> sceneData)
 {
+    ZoneScoped;
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
         for(auto& [hash, serialized_stream] : sceneData)
         {

@@ -3,9 +3,10 @@
 //
 
 #include "Core/Utils.h"
-
+#include "Debug/Profile.h"
 
 uint64_t turas::Utils::Hash(const String &string) {
+    ZoneScoped;
     uint64_t ret = 0;
     for(auto& c : string)
     {
@@ -16,6 +17,7 @@ uint64_t turas::Utils::Hash(const String &string) {
 
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
 {
+    ZoneScoped;
 #ifdef TURAS_TRACK_HASHSTRINGS
     Utils::s_OriginalStrings.emplace(*this, input);
 #endif
@@ -23,5 +25,5 @@ turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(
 
 turas::HashString::HashString(uint64_t input) : m_Value(input)
 {
-
+    ZoneScoped;
 }

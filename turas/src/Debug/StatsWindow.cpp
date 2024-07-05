@@ -4,9 +4,10 @@
 #include "Debug/StatsWindow.h"
 #include "STL/String.h"
 #include "STL/Memory.h"
+#include "Debug/Profile.h"
 
 void turas::StatsWindow::OnImGuiStatsWindow(lvk::VulkanAPI &vk) {
-
+    ZoneScoped;
     // Main frame loop
     if(ImGui::Begin("Stats"))
     {

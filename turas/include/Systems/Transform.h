@@ -3,6 +3,7 @@
 #include "Core/System.h"
 #include "STL/Memory.h"
 #include "glm/glm.hpp"
+#include "Debug/Profile.h"
 
 namespace turas
 {
@@ -17,6 +18,7 @@ namespace turas
         template<typename Archive>
         void serialize(Archive& ar)
         {
+            ZoneScoped;
             ar(
                 m_Position.x, m_Position.y, m_Position.z,
                 m_Rotation.x, m_Rotation.y, m_Rotation.z,
@@ -45,6 +47,7 @@ namespace turas
         template<typename Archive>
 
         void save(Archive& ar) const {
+            ZoneScoped;
             auto transform_view = GetSceneRegistry(s_CurrentSerializingScene).view<TransformComponent>();
             HashMap<uint32_t, TransformComponent> transforms {};
             for(auto [ent, trans] : transform_view.each())
@@ -56,6 +59,7 @@ namespace turas
 
         template<typename Archive>
         void load(Archive& ar) {
+            ZoneScoped;
             HashMap<uint32_t, TransformComponent> transforms {};
             ar(transforms);
             auto& reg = GetSceneRegistry(s_CurrentSerializingScene);
