@@ -30,11 +30,6 @@ turas::VertexLayoutData turas::VertexLayoutDataBuilder::Build() {
     return data;
 }
 
-turas::VertexLayoutDataBuilder::VertexLayoutDataBuilder(lvk::VulkanAPI &vk) : p_VK(vk)
-{
-
-}
-
 void turas::VertexLayoutDataBuilder::AddAttribute(VkFormat format, u32 attributeSize) {
     Attribute a {};
     a.m_Binding  = 0; // TODO: Need more than one binding?

@@ -5,6 +5,7 @@
 #pragma once
 #include "lvk/Mesh.h"
 #include "Core/Types.h"
+#include "STL/Vector.h"
 
 namespace turas {
 
@@ -28,7 +29,7 @@ namespace turas {
             u32         m_Offset;
         };
 
-        VertexLayoutDataBuilder(lvk::VulkanAPI& vk);
+        VertexLayoutDataBuilder() = default;
 
         void AddAttribute(VkFormat format, uint32_t attributeSize);
         VertexLayoutData Build();
@@ -36,8 +37,6 @@ namespace turas {
         Vector<Attribute>   m_Attributes;
         uint32_t            m_LocationCount = 0;
 
-    protected:
-        lvk::VulkanAPI& p_VK;
 
     };
 

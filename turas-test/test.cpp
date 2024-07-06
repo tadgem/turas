@@ -168,6 +168,39 @@ TEST(
     e.Shutdown();
 });
 
+TEST(
+{
+    turas::Engine e;
+    e.Init();
+    turas::VertexLayoutDataBuilder builder {};
+    builder.AddAttribute(VK_FORMAT_R32G32B32_SFLOAT, sizeof(glm::vec3));
+    builder.AddAttribute(VK_FORMAT_R32G32B32_SFLOAT, sizeof(glm::vec3));
+    builder.AddAttribute(VK_FORMAT_R32G32_SFLOAT, sizeof(glm::vec2));
+
+    auto data = builder.Build();
+
+    VkVertexInputBindingDescription inputBindingDescription = lvk::VertexDataPosNormalUv::GetBindingDescription();
+    auto attributeDescriptions = lvk::VertexDataPosNormalUv::GetAttributeDescriptions();
+
+    assert(data.m_BindingDescription.binding == inputBindingDescription.binding);
+    assert(data.m_BindingDescription.stride == inputBindingDescription.stride);
+    assert(data.m_BindingDescription.inputRate == inputBindingDescription.inputRate);
+
+    assert(data.m_AttributeDescriptions.size() == attributeDescriptions.size());
+
+    for(int i = 0; i < attributeDescriptions.size(); i++)
+    {
+        assert(attributeDescriptions[i].binding == data.m_AttributeDescriptions[i].binding);
+        assert(attributeDescriptions[i].format == data.m_AttributeDescriptions[i].format);
+        assert(attributeDescriptions[i].offset == data.m_AttributeDescriptions[i].offset);
+        assert(attributeDescriptions[i].location == data.m_AttributeDescriptions[i].location);
+
+    }
+
+    e.Shutdown();
+}
+)
+
 
 RUN_TESTS()
 

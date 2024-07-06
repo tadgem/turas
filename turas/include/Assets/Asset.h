@@ -56,7 +56,7 @@ namespace turas {
     public:
         struct ModelEntry
         {
-            Mesh m_CPUMesh;
+            Mesh m_Mesh;
             HashMap<Texture::MapType, AssetHandle> m_AssociatedTextures;
         };
 
