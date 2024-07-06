@@ -4,14 +4,20 @@
 
 #pragma once
 #include "lvk/Mesh.h"
-
+#include "Rendering/VertexLayouts.h"
 
 namespace turas {
-    struct CPUMesh {
-    };
 
-    struct GPUMesh
+    struct Mesh
     {
-        lvk::Mesh m_Mesh;
+        // vertex data, vec of floats keeps it generic
+        Vector<float>       m_Data;
+
+        // vertex layout for vulkan
+        VertexLayoutData    m_VertexLayout;
+
+        // gpu submitted mesh
+        lvk::Mesh*          m_GPUMesh = nullptr;
+
     };
 }

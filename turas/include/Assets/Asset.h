@@ -7,6 +7,7 @@
 #include "STL/Vector.h"
 #include "Rendering/VertexLayouts.h"
 #include "Rendering/Mesh.h"
+#include "Rendering/Texture.h"
 
 namespace turas {
     enum class AssetType : u8
@@ -53,13 +54,16 @@ namespace turas {
 
     class ModelAsset : public Asset {
     public:
+        struct ModelEntry
+        {
+            Mesh m_CPUMesh;
+            HashMap<Texture::MapType, AssetHandle> m_AssociatedTextures;
+        };
 
-        ModelAsset(const String &path, const AssetHandle &handle) : Asset(path, handle) {
-
-        }
+        ModelAsset(const String &path, const AssetHandle &handle) : Asset(path, handle) {}
 
         TURAS_IMPL_ALLOC(ModelAsset)
-        Vector<CPUMesh> m_MeshData;
+        Vector<ModelEntry> m_Entries;
     };
 
     class TextureAsset : public Asset {
