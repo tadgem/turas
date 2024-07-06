@@ -11,7 +11,7 @@
 #include "assimp/cimport.h"
 #include "assimp/mesh.h"
 #include "assimp/scene.h"
-
+#include "lvk/Texture.h"
 
 void ProcessNode(const aiScene* assimpScene, aiNode* currentNode, turas::ModelAsset* model)
 {
@@ -46,8 +46,21 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
 
     turas::log::info("LoadModel : Finished Loading Model : {}", path);
 
-    return {model, {}, nullptr};
+    return {model, {}, {}};
 }
+
+turas::AssetLoadReturn LoadTexture(const turas::String& path)
+{
+    turas::log::info("LoadTexture : Loading Texture : {}", path);
+    auto asset =  new turas::TextureAsset (path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Texture), turas::Utils::LoadBinaryFromPath(path));
+    turas::GPULoadCallback task = [](lvk::VulkanAPI& vk , turas::Asset* asset)
+    {
+        auto* tex = static_cast<turas::TextureAsset*>(asset);
+        lvk::Texture::CreateTextureFromMemory(vk, tex->m_TextureData.data(), tex->m_TextureData.size(), VK_FORMAT_R8G8B8A8_UNORM);
+    };
+    return {asset, {}, {}};
+}
+
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
     AssetHandle handle (Utils::Hash(path), assetType);

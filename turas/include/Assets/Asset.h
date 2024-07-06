@@ -64,7 +64,13 @@ namespace turas {
 
     class TextureAsset : public Asset {
     public:
+        TextureAsset(const String& path, const AssetHandle& handle, const Vector<u8>& bytes) : Asset(path, handle),
+        m_TextureData(bytes)
+        {
+
+        }
         TURAS_IMPL_ALLOC(TextureAsset)
+        Vector<u8>    m_TextureData;
     };
 
     class AudioAsset : public Asset {

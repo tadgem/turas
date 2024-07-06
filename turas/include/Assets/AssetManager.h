@@ -12,6 +12,7 @@
 
 namespace turas {
 
+    using GPULoadCallback = Function<void(lvk::VulkanAPI&, Asset*)>;
     enum class AssetLoadProgress
     {
         NotLoaded,
@@ -29,7 +30,7 @@ namespace turas {
     {
         Asset*                  m_LoadedAsset;
         Vector<AssetLoadInfo>   m_NewAssetsToLoad;
-        Function<void(lvk::VulkanAPI&, Asset*)> m_GPUTask = nullptr;
+        Vector<GPULoadCallback> m_GPUTasks;
     };
 
     class AssetManager {

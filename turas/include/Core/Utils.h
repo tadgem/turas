@@ -4,6 +4,7 @@
 
 #pragma once
 #include "STL/Memory.h"
+#include "STL/Vector.h"
 #include "ThirdParty/ctti/type_id.hpp"
 #include "Core/Types.h"
 
@@ -57,5 +58,7 @@ namespace turas
 inline static HashMap<HashString, String> s_OriginalStrings = {};
 #endif
         static u64 Hash(const String& string);
+
+        static Vector<u8> LoadBinaryFromPath(const String& path);
     };
 }

@@ -147,25 +147,25 @@ TEST(
 });
 
 TEST(
-    {
-        turas::Engine e;
-        auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
-        e.Init();
-        auto* s = e.CreateScene();
-        auto ent = s->CreateEntity();
-        auto &trans = s->AddComponent<turas::TransformComponent>(ent);
-        trans.m_Position.y = 420.0f;
-        auto data = s->SaveBinary();
+{
+    turas::Engine e;
+    auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
+    e.Init();
+    auto* s = e.CreateScene();
+    auto ent = s->CreateEntity();
+    auto &trans = s->AddComponent<turas::TransformComponent>(ent);
+    trans.m_Position.y = 420.0f;
+    auto data = s->SaveBinary();
 
-        e.CloseScene(s);
+    e.CloseScene(s);
 
-        auto* s2 = e.CreateScene();
-        s2->LoadBinary(data);
+    auto* s2 = e.CreateScene();
+    s2->LoadBinary(data);
 
-        assert(s2->HasComponent<turas::TransformComponent>(ent));
-        assert(abs(s2->GetComponent<turas::TransformComponent>(ent).m_Position.y - 420.0f) <= 0.0001f);
-        e.Shutdown();
-    });
+    assert(s2->HasComponent<turas::TransformComponent>(ent));
+    assert(abs(s2->GetComponent<turas::TransformComponent>(ent).m_Position.y - 420.0f) <= 0.0001f);
+    e.Shutdown();
+});
 
 
 RUN_TESTS()

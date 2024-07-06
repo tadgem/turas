@@ -4,6 +4,7 @@
 
 #include "Core/Utils.h"
 #include "Debug/Profile.h"
+#include <fstream>
 
 turas::u64 turas::Utils::Hash(const String &string) {
     ZoneScoped;
@@ -13,6 +14,18 @@ turas::u64 turas::Utils::Hash(const String &string) {
         ret ^= 2305 * c;
     }
     return ret;
+}
+
+turas::Vector<turas::u8> turas::Utils::LoadBinaryFromPath(const turas::String &path) {
+    ZoneScoped;
+    std::ifstream input(path, std::ios::binary);
+
+    std::vector<u8> bytes(
+            (std::istreambuf_iterator<char>(input)),
+            (std::istreambuf_iterator<char>()));
+
+    input.close();
+    return bytes;
 }
 
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
