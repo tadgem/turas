@@ -12,7 +12,7 @@
 
 namespace turas {
 
-    using GPULoadCallback = Function<void(lvk::VulkanAPI&, Asset*)>;
+    using AssetLoadCallback = Function<void(Asset*)>;
     enum class AssetLoadProgress
     {
         NotLoaded,
@@ -28,17 +28,19 @@ namespace turas {
 
     struct AssetLoadReturn
     {
-        Asset*                  m_LoadedAsset;
-        Vector<AssetLoadInfo>   m_NewAssetsToLoad;
-        Vector<GPULoadCallback> m_GPUTasks;
+        Asset*                      m_LoadedAsset;
+        Vector<AssetLoadInfo>       m_NewAssetsToLoad;
+        Vector<AssetLoadCallback>   m_AssetLoadTasks;
     };
 
     class AssetManager {
     public:
+
         AssetHandle         LoadAsset(const String& path, const AssetType& assetType);
         void                UnloadAsset(const AssetHandle& handle);
         AssetLoadProgress   GetAssetLoadProgress(const AssetHandle& handle);
         bool                AnyAssetsLoading();
+        Asset*              GetAsset(AssetHandle& handle);
 
         // used to process async loaded assets
         void                OnUpdate();
@@ -55,5 +57,8 @@ namespace turas {
         // Move the Asset* into a UPtr once returned from the future
         HashMap<AssetHandle, Future<AssetLoadReturn>>   p_PendingLoads;
         HashMap<AssetHandle, UPtr<Asset>>               p_LoadedAssets;
+        HashMap<AssetHandle, AssetLoadReturn>           p_PendingCallbacks;
+
+        const uint16_t                                  p_CallbackTasksPerTick = 4;
     };
 }

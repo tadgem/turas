@@ -38,6 +38,52 @@ TEST(
     {
         turas::Engine e;
         e.Init();
+        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        e.m_AssetManager.WaitAllAssets();
+
+        auto* asset = e.m_AssetManager.GetAsset(handle);
+        assert(asset);
+        e.m_AssetManager.UnloadAsset(handle);
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        auto handle = e.m_AssetManager.LoadAsset("../crate.jpg", turas::AssetType::Texture);
+        assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loading);
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        auto handle = e.m_AssetManager.LoadAsset("../crate.jpg", turas::AssetType::Texture);
+        assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loading);
+        assert(e.m_AssetManager.AnyAssetsLoading());
+
+        while(e.m_AssetManager.AnyAssetsLoading())
+        {
+            e.m_AssetManager.OnUpdate();
+        }
+
+        auto* asset = e.m_AssetManager.GetAsset(handle);
+        auto* tex = reinterpret_cast<turas::TextureAsset*>(asset);
+
+        assert(tex->m_Texture->m_Image != VK_NULL_HANDLE);
+
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
         turas::Scene* s = e.CreateScene();
         assert(s);
         e.CloseScene(s);
@@ -194,12 +240,13 @@ TEST(
         assert(attributeDescriptions[i].format == data.m_AttributeDescriptions[i].format);
         assert(attributeDescriptions[i].offset == data.m_AttributeDescriptions[i].offset);
         assert(attributeDescriptions[i].location == data.m_AttributeDescriptions[i].location);
-
     }
 
     e.Shutdown();
 }
 )
+
+
 
 
 RUN_TESTS()

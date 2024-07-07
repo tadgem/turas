@@ -8,7 +8,7 @@
 #include "Rendering/VertexLayouts.h"
 #include "Rendering/Mesh.h"
 #include "Rendering/Texture.h"
-
+#include "lvk/Texture.h"
 namespace turas {
     enum class AssetType : u8
     {
@@ -71,10 +71,13 @@ namespace turas {
         TextureAsset(const String& path, const AssetHandle& handle, const Vector<u8>& bytes) : Asset(path, handle),
         m_TextureData(bytes)
         {
-
+            m_Texture = nullptr;
         }
+
         TURAS_IMPL_ALLOC(TextureAsset)
+
         Vector<u8>    m_TextureData;
+        lvk::Texture* m_Texture;
     };
 
     class AudioAsset : public Asset {
