@@ -173,7 +173,7 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
         });
     }
 
-    return {model, newAssetsToLoad, {}};
+    return {model, newAssetsToLoad, callbacks};
 }
 
 turas::AssetLoadReturn LoadTexture(const turas::String& path)

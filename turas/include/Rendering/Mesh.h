@@ -16,13 +16,7 @@ namespace turas {
 
     struct Mesh
     {
-        ~Mesh() {
-            if(m_LvkMesh)
-            {
-                delete m_LvkMesh;
-            }
-
-        }
+        ~Mesh();
         // vertex data, vec of floats keeps it generic
         Vector<float>       m_VertexData;
         // mesh indices
