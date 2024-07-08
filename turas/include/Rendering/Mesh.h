@@ -8,16 +8,31 @@
 
 namespace turas {
 
+    struct AABB
+    {
+        glm::vec3 m_Min;
+        glm::vec3 m_Max;
+    };
+
     struct Mesh
     {
-        // vertex data, vec of floats keeps it generic
-        Vector<float>       m_Data;
+        ~Mesh() {
+            if(m_LvkMesh)
+            {
+                delete m_LvkMesh;
+            }
 
+        }
+        // vertex data, vec of floats keeps it generic
+        Vector<float>       m_VertexData;
+        // mesh indices
+        Vector<uint32_t>    m_IndexData;
         // vertex layout for vulkan
         VertexLayoutData    m_VertexLayout;
-
         // gpu submitted mesh
-        lvk::Mesh*          m_GPUMesh = nullptr;
+        lvk::Mesh*          m_LvkMesh = nullptr;
+        // axis aligned bounding box for simple culling
+        AABB                m_AABB;
 
     };
 }

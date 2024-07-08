@@ -24,6 +24,14 @@ namespace turas {
     {
         String      m_Path;
         AssetType   m_Type;
+
+        bool operator==(const AssetLoadInfo &o) const {
+            return m_Path == o.m_Path && m_Type == o.m_Type;
+        }
+
+        bool operator<(const AssetLoadInfo &o) const {
+            return m_Path.size() < o.m_Path.size();
+        }
     };
 
     struct AssetLoadReturn

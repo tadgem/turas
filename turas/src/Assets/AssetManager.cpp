@@ -14,9 +14,116 @@
 #include "lvk/Texture.h"
 #include "Core/Engine.h"
 
-void ProcessNode(const aiScene* assimpScene, aiNode* currentNode, turas::ModelAsset* model)
-{
 
+static glm::vec3 AssimpToGLM(aiVector3D aiVec) {
+    return glm::vec3(aiVec.x, aiVec.y, aiVec.z);
+}
+
+static glm::vec2 AssimpToGLM(aiVector2D aiVec) {
+    return glm::vec2(aiVec.x, aiVec.y);
+}
+
+static turas::String AssimpToSTD(aiString str) {
+    return turas::String(str.C_Str());
+}
+
+
+void ProcessMesh(const aiScene* scene, aiMesh* mesh, aiNode* node, turas::ModelAsset* model,
+                 turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad) {
+    using namespace lvk;
+    bool hasPositions = mesh->HasPositions();
+    bool hasUVs = mesh->HasTextureCoords(0);
+    bool hasNormals = mesh->HasNormals();
+    bool hasIndices = mesh->HasFaces();
+
+    assert(hasIndices);
+    turas::VertexLayoutDataBuilder builder;
+    builder.AddAttribute(VK_FORMAT_R32G32B32_SFLOAT, sizeof(glm::vec3));
+    builder.AddAttribute(VK_FORMAT_R32G32B32_SFLOAT, sizeof(glm::vec3));
+    builder.AddAttribute(VK_FORMAT_R32G32_SFLOAT, sizeof(glm::vec2));
+
+    turas::Mesh m{};
+    m.m_VertexLayout = builder.Build();
+
+    if (hasPositions && hasUVs && hasNormals) {
+        for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+            auto Position = AssimpToGLM(mesh->mVertices[i]);
+            auto UV = glm::vec2(mesh->mTextureCoords[0][i].x, 1.0f - mesh->mTextureCoords[0][i].y);
+            auto Normal = AssimpToGLM(mesh->mNormals[i]);
+            m.m_VertexData.push_back(Position.x);
+            m.m_VertexData.push_back(Position.y);
+            m.m_VertexData.push_back(Position.z);
+            m.m_VertexData.push_back(Normal.z);
+            m.m_VertexData.push_back(Normal.x);
+            m.m_VertexData.push_back(Normal.y);
+            m.m_VertexData.push_back(UV.x);
+            m.m_VertexData.push_back(UV.y);
+        }
+
+    }
+
+    if (hasIndices) {
+        for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+            aiFace currentFace = mesh->mFaces[i];
+            if (currentFace.mNumIndices != 3) {
+                spdlog::error("Attempting to import a mesh with non triangular face structure! cannot load this mesh.");
+                return;
+            }
+            for (unsigned int index = 0; index < mesh->mFaces[i].mNumIndices; index++) {
+                m.m_IndexData.push_back(static_cast<uint32_t>(mesh->mFaces[i].mIndices[index]));
+            }
+        }
+    }
+    turas::AABB aabb = { {mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z},
+                  {mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z} };
+    m.m_AABB = aabb;
+    turas::HashMap<turas::Texture::MapType, turas::AssetHandle> maps;
+
+    aiMaterial* meshMaterial = scene->mMaterials[mesh->mMaterialIndex];
+    for (int i = 0; i < meshMaterial->mNumProperties; i++)
+    {
+        aiMaterialProperty* prop = meshMaterial->mProperties[i];
+        if(prop->mSemantic == aiTextureType_NONE || prop->mType != aiPTI_String) {
+            continue;
+        }
+        aiString assimpString;
+        aiGetMaterialTexture(meshMaterial, (aiTextureType)prop->mSemantic, 0, &assimpString);
+
+        turas::String filePath = AssimpToSTD(assimpString);
+        assert(!filePath.empty());
+
+        turas::AssetHandle handle (turas::Utils::Hash(filePath), turas::AssetType::Texture);
+        auto mapType = static_cast<turas::Texture::MapType>(prop->mSemantic);
+        maps.emplace(mapType, handle);
+        turas::AssetLoadInfo loadInfo {filePath, turas::AssetType::Texture};
+
+        if(std::find(newAssetsToLoad.begin(), newAssetsToLoad.end(), loadInfo) != newAssetsToLoad.end()){
+            continue;
+        }
+        newAssetsToLoad.push_back(loadInfo);
+    }
+
+    model->m_Entries.push_back({m, maps});
+}
+
+
+void ProcessNode(const aiScene* scene, aiNode* node, turas::ModelAsset* model, turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad)
+{
+    if (node->mNumMeshes > 0) {
+        for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+            unsigned int sceneIndex = node->mMeshes[i];
+            aiMesh* mesh = scene->mMeshes[sceneIndex];
+            ProcessMesh(scene, mesh, node, model, newAssetsToLoad);
+        }
+    }
+
+    if (node->mNumChildren == 0) {
+        return;
+    }
+
+    for (unsigned int i = 0; i < node->mNumChildren; i++) {
+        ProcessNode(scene, node, model, newAssetsToLoad);
+    }
 }
 
 turas::AssetLoadReturn LoadModel(const turas::String& path)
@@ -43,11 +150,30 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
     auto* model = new turas::ModelAsset(
             path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Model));
 
-    ProcessNode( scene, scene->mRootNode, model);
+    turas::Vector<turas::AssetLoadInfo> newAssetsToLoad;
+
+    ProcessNode( scene, scene->mRootNode, model, newAssetsToLoad);
 
     turas::log::info("LoadModel : Finished Loading Model : {}", path);
 
-    return {model, {}, {}};
+    turas::Vector<turas::AssetLoadCallback> callbacks;
+    for(int i = 0; i < model->m_Entries.size(); i++)
+    {
+        callbacks.emplace_back([i]( turas::Asset* asset)
+        {
+            auto* modelAsset = reinterpret_cast<turas::ModelAsset*>(asset);
+
+            auto* mesh = new lvk::Mesh();
+            turas::Engine::INSTANCE->m_VK.CreateVertexBuffer(modelAsset->m_Entries[i].m_Mesh.m_VertexData,
+                                                             mesh->m_VertexBuffer, mesh->m_VertexBufferMemory );
+            turas::Engine::INSTANCE->m_VK.CreateIndexBuffer(modelAsset->m_Entries[i].m_Mesh.m_IndexData,
+                                                             mesh->m_IndexBuffer, mesh->m_IndexBufferMemory);
+            mesh->m_IndexCount = modelAsset->m_Entries[i].m_Mesh.m_IndexData.size();
+            modelAsset->m_Entries[i].m_Mesh.m_LvkMesh = mesh;
+        });
+    }
+
+    return {model, newAssetsToLoad, callbacks};
 }
 
 turas::AssetLoadReturn LoadTexture(const turas::String& path)
@@ -56,7 +182,7 @@ turas::AssetLoadReturn LoadTexture(const turas::String& path)
     auto asset =  new turas::TextureAsset (path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Texture), turas::Utils::LoadBinaryFromPath(path));
     turas::AssetLoadCallback task = []( turas::Asset* asset)
     {
-        auto* textureAsset = static_cast<turas::TextureAsset*>(asset);
+        auto* textureAsset = reinterpret_cast<turas::TextureAsset*>(asset);
         auto* t = new lvk::Texture(lvk::Texture::CreateTextureFromMemory(
                 turas::Engine::INSTANCE->m_VK,
                 textureAsset->m_TextureData.data(),
@@ -126,8 +252,8 @@ void turas::AssetManager::OnUpdate() {
     }
 
     u16 processedCallbacks = 0;
-
     Vector<AssetHandle> clears;
+
     for(auto& [handle, asset] : p_PendingCallbacks) {
         if (processedCallbacks == p_CallbackTasksPerTick) break;
 

@@ -39,6 +39,73 @@ TEST(
         turas::Engine e;
         e.Init();
         auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        while(e.m_AssetManager.AnyAssetsLoading())
+        {
+            e.m_AssetManager.OnUpdate();
+        }
+        assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
+        e.m_AssetManager.UnloadAsset(handle);
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        while(e.m_AssetManager.AnyAssetsLoading())
+        {
+            e.m_AssetManager.OnUpdate();
+        }
+        assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
+        auto* asset = e.m_AssetManager.GetAsset(handle);
+        auto* model = reinterpret_cast<turas::ModelAsset*>(asset);
+        assert(model);
+
+        for(auto& entry : model->m_Entries)
+        {
+            for(auto& [ type, handle] : entry.m_AssociatedTextures)
+            {
+                assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
+            }
+        }
+
+        e.m_AssetManager.UnloadAsset(handle);
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        while(e.m_AssetManager.AnyAssetsLoading())
+        {
+            e.m_AssetManager.OnUpdate();
+        }
+        assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
+        auto* asset = e.m_AssetManager.GetAsset(handle);
+        auto* model = reinterpret_cast<turas::ModelAsset*>(asset);
+
+        for(auto& entry : model->m_Entries)
+        {
+            assert(entry.m_Mesh.m_LvkMesh);
+            assert(entry.m_Mesh.m_LvkMesh->m_VertexBuffer != VK_NULL_HANDLE);
+            assert(entry.m_Mesh.m_LvkMesh->m_IndexBuffer != VK_NULL_HANDLE);
+        }
+
+        e.m_AssetManager.UnloadAsset(handle);
+        e.Shutdown();
+    }
+)
+
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
         e.m_AssetManager.WaitAllAssets();
 
         auto* asset = e.m_AssetManager.GetAsset(handle);
