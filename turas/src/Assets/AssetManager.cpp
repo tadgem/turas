@@ -16,19 +16,23 @@
 
 
 static glm::vec3 AssimpToGLM(aiVector3D aiVec) {
+    ZoneScoped;
     return glm::vec3(aiVec.x, aiVec.y, aiVec.z);
 }
 
 static glm::vec2 AssimpToGLM(aiVector2D aiVec) {
+    ZoneScoped;
     return glm::vec2(aiVec.x, aiVec.y);
 }
 
 static turas::String AssimpToSTD(aiString str) {
+    ZoneScoped;
     return turas::String(str.C_Str());
 }
 
 void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* mesh, aiNode* node, turas::ModelAsset* model,
                  turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad) {
+    ZoneScoped;
     using namespace lvk;
     bool hasPositions = mesh->HasPositions();
     bool hasUVs = mesh->HasTextureCoords(0);
@@ -108,6 +112,7 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
 
 void ProcessNode(const turas::String& assetDirectory, const aiScene* scene, aiNode* node, turas::ModelAsset* model, turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad)
 {
+    ZoneScoped;
     if (node->mNumMeshes > 0) {
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             unsigned int sceneIndex = node->mMeshes[i];
@@ -127,6 +132,7 @@ void ProcessNode(const turas::String& assetDirectory, const aiScene* scene, aiNo
 
 turas::AssetLoadReturn LoadModel(const turas::String& path)
 {
+    ZoneScoped;
     turas::log::info("LoadModel : Loading Model : {}", path);
 
     Assimp::Importer importer;
@@ -186,6 +192,7 @@ void UnloadModel(turas::Asset* asset)
 
 turas::AssetLoadReturn LoadTexture(const turas::String& path)
 {
+    ZoneScoped;
     turas::log::info("LoadTexture : Loading Texture : {}", path);
     auto asset =  new turas::TextureAsset (path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Texture), turas::Utils::LoadBinaryFromPath(path));
     turas::AssetLoadCallback task = []( turas::Asset* asset)
@@ -203,14 +210,15 @@ turas::AssetLoadReturn LoadTexture(const turas::String& path)
 
 void UnloadTexture(turas::Asset* asset)
 {
+    ZoneScoped;
     auto* tex = reinterpret_cast<turas::TextureAsset*>(asset);
     if(!tex->m_Texture) return;
     tex->m_Texture->Free(turas::Engine::INSTANCE->m_VK);
 }
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
+    ZoneScoped;
     AssetHandle handle (Utils::Hash(path), assetType);
-
     switch(assetType)
     {
         case AssetType::Model:
@@ -234,6 +242,7 @@ turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, con
 }
 
 void turas::AssetManager::UnloadAsset(const turas::AssetHandle &handle) {
+    ZoneScoped;
     if(p_LoadedAssets.find(handle) == p_LoadedAssets.end())
     {
         return;
@@ -259,6 +268,7 @@ void turas::AssetManager::UnloadAsset(const turas::AssetHandle &handle) {
 }
 
 turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::AssetHandle &handle) {
+    ZoneScoped;
     if (p_PendingLoads.find(handle) != p_PendingLoads.end() ||
         p_PendingLoadCallbacks.find(handle) != p_PendingLoadCallbacks.end()) {
         return AssetLoadProgress::Loading;
@@ -277,6 +287,7 @@ turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::
 }
 
 void turas::AssetManager::OnUpdate() {
+    ZoneScoped;
     if (p_PendingLoads.empty() && p_PendingLoadCallbacks.empty() && p_PendingUnloadCallbacks.empty()) {
         return;
     }
@@ -311,14 +322,17 @@ void turas::AssetManager::OnUpdate() {
 }
 
 bool turas::AssetManager::AnyAssetsLoading() {
+    ZoneScoped;
     return !p_PendingLoads.empty() || !p_PendingLoadCallbacks.empty();
 }
 
 bool turas::AssetManager::AnyAssetsUnloading() {
+    ZoneScoped;
     return !p_PendingUnloadCallbacks.empty();
 }
 
 void turas::AssetManager::Shutdown() {
+    ZoneScoped;
     WaitAllAssets();
     WaitAllUnloads();
 
@@ -326,7 +340,7 @@ void turas::AssetManager::Shutdown() {
 }
 
 void turas::AssetManager::WaitAllAssets() {
-
+    ZoneScoped;
     Vector<AssetLoadInfo> newAssetsToLoad {};
 
     for(auto& [handle, pending] : p_PendingLoads)
@@ -356,6 +370,7 @@ void turas::AssetManager::WaitAllAssets() {
 }
 
 turas::Asset *turas::AssetManager::GetAsset(turas::AssetHandle &handle) {
+    ZoneScoped;
     if(p_LoadedAssets.find(handle) == p_LoadedAssets.end())
     {
         return nullptr;
@@ -365,7 +380,7 @@ turas::Asset *turas::AssetManager::GetAsset(turas::AssetHandle &handle) {
 }
 
 void turas::AssetManager::HandleLoadAndUnloadCallbacks() {
-
+    ZoneScoped;
     u16 processedCallbacks = 0;
     Vector<AssetHandle> clears;
 
@@ -405,6 +420,7 @@ void turas::AssetManager::HandleLoadAndUnloadCallbacks() {
 
 void turas::AssetManager::UnloadAllAssets()
 {
+    ZoneScoped;
     Vector<AssetHandle> assetsRemaining {};
 
     for(auto& [handle, asset] : p_LoadedAssets)
@@ -421,6 +437,7 @@ void turas::AssetManager::UnloadAllAssets()
 }
 
 void turas::AssetManager::WaitAllUnloads() {
+    ZoneScoped;
     while(AnyAssetsUnloading())
     {
         OnUpdate();
