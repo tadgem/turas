@@ -59,5 +59,6 @@ namespace turas
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;
 #endif
+
     };
 }

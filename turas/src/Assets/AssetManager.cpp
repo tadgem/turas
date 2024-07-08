@@ -27,7 +27,7 @@ static turas::String AssimpToSTD(aiString str) {
     return turas::String(str.C_Str());
 }
 
-void ProcessMesh(const aiScene* scene, aiMesh* mesh, aiNode* node, turas::ModelAsset* model,
+void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* mesh, aiNode* node, turas::ModelAsset* model,
                  turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad) {
     using namespace lvk;
     bool hasPositions = mesh->HasPositions();
@@ -88,7 +88,8 @@ void ProcessMesh(const aiScene* scene, aiMesh* mesh, aiNode* node, turas::ModelA
         aiString assimpString;
         aiGetMaterialTexture(meshMaterial, (aiTextureType)prop->mSemantic, 0, &assimpString);
 
-        turas::String filePath = AssimpToSTD(assimpString);
+        turas::String localFilePath = AssimpToSTD(assimpString);
+        turas::String filePath = assetDir + "/" + localFilePath;
         assert(!filePath.empty());
 
         turas::AssetHandle handle (turas::Utils::Hash(filePath), turas::AssetType::Texture);
@@ -105,13 +106,13 @@ void ProcessMesh(const aiScene* scene, aiMesh* mesh, aiNode* node, turas::ModelA
     model->m_Entries.push_back({m, maps});
 }
 
-void ProcessNode(const aiScene* scene, aiNode* node, turas::ModelAsset* model, turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad)
+void ProcessNode(const turas::String& assetDirectory, const aiScene* scene, aiNode* node, turas::ModelAsset* model, turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad)
 {
     if (node->mNumMeshes > 0) {
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             unsigned int sceneIndex = node->mMeshes[i];
             aiMesh* mesh = scene->mMeshes[sceneIndex];
-            ProcessMesh(scene, mesh, node, model, newAssetsToLoad);
+            ProcessMesh(assetDirectory, scene, mesh, node, model, newAssetsToLoad);
         }
     }
 
@@ -120,7 +121,7 @@ void ProcessNode(const aiScene* scene, aiNode* node, turas::ModelAsset* model, t
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; i++) {
-        ProcessNode(scene, node, model, newAssetsToLoad);
+        ProcessNode(assetDirectory, scene, node, model, newAssetsToLoad);
     }
 }
 
@@ -149,8 +150,8 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
             path, turas::AssetHandle(turas::Utils::Hash(path), turas::AssetType::Model));
 
     turas::Vector<turas::AssetLoadInfo> newAssetsToLoad;
-
-    ProcessNode( scene, scene->mRootNode, model, newAssetsToLoad);
+    turas::String assetDirectory = turas::Utils::GetDirectoryFromFilename(path);
+    ProcessNode(assetDirectory, scene, scene->mRootNode, model, newAssetsToLoad);
 
     turas::log::info("LoadModel : Finished Loading Model : {}", path);
 
@@ -176,7 +177,11 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
 
 void UnloadModel(turas::Asset* asset)
 {
-
+    auto* model = reinterpret_cast<turas::ModelAsset*>(asset);
+    for(auto& entry : model->m_Entries)
+    {
+        entry.m_Mesh.Free(turas::Engine::INSTANCE->m_VK);
+    }
 }
 
 turas::AssetLoadReturn LoadTexture(const turas::String& path)
@@ -198,9 +203,10 @@ turas::AssetLoadReturn LoadTexture(const turas::String& path)
 
 void UnloadTexture(turas::Asset* asset)
 {
-
+    auto* tex = reinterpret_cast<turas::TextureAsset*>(asset);
+    if(!tex->m_Texture) return;
+    tex->m_Texture->Free(turas::Engine::INSTANCE->m_VK);
 }
-
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
     AssetHandle handle (Utils::Hash(path), assetType);
@@ -250,58 +256,32 @@ void turas::AssetManager::UnloadAsset(const turas::AssetHandle &handle) {
         default:
             break;
     }
-
-    // do we want to defer deletion
-    p_LoadedAssets[handle].reset();
-    p_LoadedAssets.erase(handle);
 }
 
 turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::AssetHandle &handle) {
-    if(p_LoadedAssets.find(handle) != p_LoadedAssets.end())
-    {
-        return AssetLoadProgress::Loaded;
+    if (p_PendingLoads.find(handle) != p_PendingLoads.end() ||
+        p_PendingLoadCallbacks.find(handle) != p_PendingLoadCallbacks.end()) {
+        return AssetLoadProgress::Loading;
     }
 
-    if( p_PendingLoads.find(handle) != p_PendingLoads.end() ||
-        p_PendingLoadCallbacks.find(handle) != p_PendingLoadCallbacks.end())
+    if (p_PendingUnloadCallbacks.find(handle) != p_PendingUnloadCallbacks.end())
     {
-        return AssetLoadProgress::Loading;
+        return AssetLoadProgress::Unloading;
+    }
+
+    if (p_LoadedAssets.find(handle) != p_LoadedAssets.end()) {
+        return AssetLoadProgress::Loaded;
     }
 
     return AssetLoadProgress::NotLoaded;
 }
 
 void turas::AssetManager::OnUpdate() {
-    if(p_PendingLoads.empty() && p_PendingLoadCallbacks.empty())
-    {
+    if (p_PendingLoads.empty() && p_PendingLoadCallbacks.empty() && p_PendingUnloadCallbacks.empty()) {
         return;
     }
 
-    u16 processedCallbacks = 0;
-    Vector<AssetHandle> clears;
-
-    for(auto& [handle, asset] : p_PendingLoadCallbacks) {
-        if (processedCallbacks == p_CallbackTasksPerTick) break;
-
-        for (u16 i = 0; i < p_CallbackTasksPerTick - processedCallbacks; i++)
-        {
-            if(i >= asset.m_AssetLoadTasks.size()) break;
-            asset.m_AssetLoadTasks.back()(asset.m_LoadedAsset);
-            asset.m_AssetLoadTasks.pop_back();
-            processedCallbacks++;
-        }
-
-        if(asset.m_AssetLoadTasks.empty())
-        {
-            clears.push_back(handle);
-        }
-    }
-
-    for(auto& handle : clears)
-    {
-        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(p_PendingLoadCallbacks[handle].m_LoadedAsset)));
-        p_PendingLoadCallbacks.erase(handle);
-    }
+    HandleLoadAndUnloadCallbacks();
 
     Vector<AssetHandle> pending;
     for(auto& [handle, future] : p_PendingLoads) {
@@ -334,15 +314,15 @@ bool turas::AssetManager::AnyAssetsLoading() {
     return !p_PendingLoads.empty() || !p_PendingLoadCallbacks.empty();
 }
 
+bool turas::AssetManager::AnyAssetsUnloading() {
+    return !p_PendingUnloadCallbacks.empty();
+}
+
 void turas::AssetManager::Shutdown() {
     WaitAllAssets();
+    WaitAllUnloads();
 
-    for(auto&[ handle, asset] : p_LoadedAssets)
-    {
-        asset.reset();
-    }
-
-    p_LoadedAssets.clear();
+    UnloadAllAssets();
 }
 
 void turas::AssetManager::WaitAllAssets() {
@@ -382,4 +362,67 @@ turas::Asset *turas::AssetManager::GetAsset(turas::AssetHandle &handle) {
     }
 
     return p_LoadedAssets[handle].get();
+}
+
+void turas::AssetManager::HandleLoadAndUnloadCallbacks() {
+
+    u16 processedCallbacks = 0;
+    Vector<AssetHandle> clears;
+
+    for (auto &[handle, asset]: p_PendingLoadCallbacks) {
+        if (processedCallbacks == p_CallbackTasksPerTick) break;
+
+        for (u16 i = 0; i < p_CallbackTasksPerTick - processedCallbacks; i++) {
+            if (i >= asset.m_AssetLoadTasks.size()) break;
+            asset.m_AssetLoadTasks.back()(asset.m_LoadedAsset);
+            asset.m_AssetLoadTasks.pop_back();
+            processedCallbacks++;
+        }
+
+        if (asset.m_AssetLoadTasks.empty()) {
+            clears.push_back(handle);
+        }
+    }
+    for (auto &handle: clears) {
+        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(p_PendingLoadCallbacks[handle].m_LoadedAsset)));
+        p_PendingLoadCallbacks.erase(handle);
+    }
+    clears.clear();
+
+    for (auto &[handle, callback]: p_PendingUnloadCallbacks) {
+        if (processedCallbacks == p_CallbackTasksPerTick) break;
+        callback(p_LoadedAssets[handle].get());
+        clears.push_back(handle);
+        processedCallbacks++;
+    }
+
+    for (auto &handle: clears)
+    {
+        p_PendingUnloadCallbacks.erase(handle);
+        p_LoadedAssets.erase(handle);
+    }
+}
+
+void turas::AssetManager::UnloadAllAssets()
+{
+    Vector<AssetHandle> assetsRemaining {};
+
+    for(auto& [handle, asset] : p_LoadedAssets)
+    {
+        assetsRemaining.push_back(handle);
+    }
+
+    for(auto& handle : assetsRemaining)
+    {
+        UnloadAsset(handle);
+    }
+
+    WaitAllUnloads();
+}
+
+void turas::AssetManager::WaitAllUnloads() {
+    while(AnyAssetsUnloading())
+    {
+        OnUpdate();
+    }
 }

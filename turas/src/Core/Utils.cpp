@@ -28,6 +28,15 @@ turas::Vector<turas::u8> turas::Utils::LoadBinaryFromPath(const turas::String &p
     return bytes;
 }
 
+turas::String turas::Utils::GetDirectoryFromFilename(const turas::String &fname)
+{
+    size_t pos = fname.find_last_of("\\/");
+    return (String::npos == pos)
+           ? ""
+           : fname.substr(0, pos);
+}
+
+
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
 {
     ZoneScoped;

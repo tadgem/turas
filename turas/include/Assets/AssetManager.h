@@ -17,7 +17,8 @@ namespace turas {
     {
         NotLoaded,
         Loading,
-        Loaded
+        Loaded,
+        Unloading
     };
 
     struct AssetLoadInfo
@@ -48,6 +49,7 @@ namespace turas {
         void                UnloadAsset(const AssetHandle& handle);
         AssetLoadProgress   GetAssetLoadProgress(const AssetHandle& handle);
         bool                AnyAssetsLoading();
+        bool                AnyAssetsUnloading();
         Asset*              GetAsset(AssetHandle& handle);
 
         // used to process async loaded assets
@@ -59,6 +61,12 @@ namespace turas {
         // synchronous call to wait for all pending assets;
         void                WaitAllAssets();
 
+        // wait for any unloads to complete
+        void                WaitAllUnloads();
+
+        // synchronous call to wait for all pending unloads to finish
+        void                UnloadAllAssets();
+
         TURAS_IMPL_ALLOC(AssetManager)
 
     protected:
@@ -69,5 +77,7 @@ namespace turas {
         HashMap<AssetHandle, AssetLoadCallback>         p_PendingUnloadCallbacks;
 
         const uint16_t                                  p_CallbackTasksPerTick = 4;
+
+        void HandleLoadAndUnloadCallbacks();
     };
 }

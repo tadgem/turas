@@ -1,7 +1,7 @@
 #include "Rendering/Mesh.h"
 #include "Core/Engine.h"
 
-turas::Mesh::~Mesh()
+void turas::Mesh::Free(lvk::VulkanAPI& vk)
 {
     if(m_LvkMesh)
     {

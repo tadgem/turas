@@ -16,7 +16,7 @@ namespace turas {
 
     struct Mesh
     {
-        ~Mesh();
+        void Free(lvk::VulkanAPI& vk);
         // vertex data, vec of floats keeps it generic
         Vector<float>       m_VertexData;
         // mesh indices

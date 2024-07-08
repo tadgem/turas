@@ -60,5 +60,8 @@ inline static HashMap<HashString, String> s_OriginalStrings = {};
         static u64 Hash(const String& string);
 
         static Vector<u8> LoadBinaryFromPath(const String& path);
+
+        static String GetDirectoryFromFilename(const String& fname);
+
     };
 }

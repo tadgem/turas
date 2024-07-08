@@ -29,6 +29,11 @@ TEST(
         e.m_AssetManager.WaitAllAssets();
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
         e.m_AssetManager.UnloadAsset(handle);
+        assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Unloading);
+        while(e.m_AssetManager.AnyAssetsUnloading())
+        {
+            e.m_AssetManager.OnUpdate();
+        }
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::NotLoaded);
         e.Shutdown();
     }
@@ -45,6 +50,12 @@ TEST(
         }
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
         e.m_AssetManager.UnloadAsset(handle);
+
+        while(e.m_AssetManager.AnyAssetsUnloading())
+        {
+            e.m_AssetManager.OnUpdate();
+        }
+
         e.Shutdown();
     }
 )
@@ -71,7 +82,7 @@ TEST(
             }
         }
 
-        e.m_AssetManager.UnloadAsset(handle);
+        e.m_AssetManager.UnloadAllAssets();
         e.Shutdown();
     }
 )
@@ -96,7 +107,7 @@ TEST(
             assert(entry.m_Mesh.m_LvkMesh->m_IndexBuffer != VK_NULL_HANDLE);
         }
 
-        e.m_AssetManager.UnloadAsset(handle);
+        e.m_AssetManager.UnloadAllAssets();
         e.Shutdown();
     }
 )
@@ -110,7 +121,7 @@ TEST(
 
         auto* asset = e.m_AssetManager.GetAsset(handle);
         assert(asset);
-        e.m_AssetManager.UnloadAsset(handle);
+        e.m_AssetManager.UnloadAllAssets();
         e.Shutdown();
     }
 )
@@ -121,6 +132,8 @@ TEST(
         e.Init();
         auto handle = e.m_AssetManager.LoadAsset("../crate.jpg", turas::AssetType::Texture);
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loading);
+
+        e.m_AssetManager.UnloadAllAssets();
         e.Shutdown();
     }
 )
@@ -142,7 +155,7 @@ TEST(
         auto* tex = reinterpret_cast<turas::TextureAsset*>(asset);
 
         assert(tex->m_Texture->m_Image != VK_NULL_HANDLE);
-
+        e.m_AssetManager.UnloadAllAssets();
         e.Shutdown();
     }
 )
