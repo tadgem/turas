@@ -51,10 +51,11 @@ namespace turas
             return static_cast<_Ty*>(m_EngineSubSystems.emplace_back(std::move(CreateUnique<_Ty>(std::forward<Args>(args)...))).get());
         }
 
-    protected:
+        // Internal update loop, public for test: skoosh
         void PrepFrame();
         void SubmitFrame();
         void SystemsUpdate();
+    protected:
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;

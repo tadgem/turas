@@ -67,7 +67,16 @@ TEST(
         auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
         while(e.m_AssetManager.AnyAssetsLoading())
         {
+            e.PrepFrame();
             e.m_AssetManager.OnUpdate();
+            e.SystemsUpdate();
+            turas::log::info(" ---- TICK ---- ");
+            if(ImGui::Begin("Loading Assets :) "))
+            {
+
+            }
+            ImGui::End();
+            e.SubmitFrame();
         }
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
         auto* asset = e.m_AssetManager.GetAsset(handle);
