@@ -65,7 +65,8 @@ namespace turas {
         // Move the Asset* into a UPtr once returned from the future
         HashMap<AssetHandle, Future<AssetLoadReturn>>   p_PendingLoads;
         HashMap<AssetHandle, UPtr<Asset>>               p_LoadedAssets;
-        HashMap<AssetHandle, AssetLoadReturn>           p_PendingCallbacks;
+        HashMap<AssetHandle, AssetLoadReturn>           p_PendingLoadCallbacks;
+        HashMap<AssetHandle, AssetLoadCallback>         p_PendingUnloadCallbacks;
 
         const uint16_t                                  p_CallbackTasksPerTick = 4;
     };
