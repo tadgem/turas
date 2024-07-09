@@ -67,10 +67,13 @@ namespace turas
 
 
         HashMap<u64 , String>       SaveBinary();
-        void                        LoadBinary(const HashMap<u64, String>& sceneData);
+        void                        LoadBinary(HashMap<u64, String>& sceneData);
         TURAS_IMPL_ALLOC(Scene)
     protected:
         friend class System;
+
+        const String p_AssetsHashName = "Assets";
+
         entt::registry  p_Registry;
         u32        p_EntityCount = 0;
     };

@@ -306,6 +306,56 @@ TEST(
 TEST(
 {
     turas::Engine e;
+    auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
+    e.Init();
+    // load model
+    auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+    while(e.m_AssetManager.AnyAssetsLoading())
+    {
+        e.m_AssetManager.OnUpdate();
+    }
+
+    auto* s = e.CreateScene();
+    auto ent = s->CreateEntity();
+    auto& meshComponent = s->AddComponent<turas::MeshComponent>(ent, handle, 0);
+    assert(meshComponent.m_LvkMesh != nullptr);
+
+    e.Shutdown();
+});
+
+TEST(
+{
+    turas::Engine e;
+    auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
+    e.Init();
+    // load model
+    auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+    while(e.m_AssetManager.AnyAssetsLoading())
+    {
+        e.m_AssetManager.OnUpdate();
+    }
+
+    auto* s = e.CreateScene();
+    auto ent = s->CreateEntity();
+    auto& meshComponent = s->AddComponent<turas::MeshComponent>(ent, handle, 0);
+
+    auto sceneBinary = s->SaveBinary();
+    e.CloseScene(s);
+    e.m_AssetManager.UnloadAllAssets();
+    e.m_AssetManager.WaitAllUnloads();
+
+    auto* s2 = e.CreateScene();
+    s2->LoadBinary(sceneBinary);
+
+
+
+    e.Shutdown();
+});
+
+
+TEST(
+{
+    turas::Engine e;
     e.Init();
     turas::VertexLayoutDataBuilder builder {};
     builder.AddAttribute(VK_FORMAT_R32G32B32_SFLOAT, sizeof(glm::vec3));

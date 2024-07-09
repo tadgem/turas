@@ -83,3 +83,8 @@ void turas::MeshSystem::OnMeshComponentAdded(entt::registry &reg, entt::entity e
     }
 
 }
+
+turas::MeshComponent::MeshComponent(const turas::AssetHandle &handle, turas::u32 index) : m_Handle(handle), m_EntryIndex(index)
+{
+
+}

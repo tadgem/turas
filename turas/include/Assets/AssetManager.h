@@ -35,6 +35,13 @@ namespace turas {
             return m_Path.size() < o.m_Path.size();
         }
 
+        template<typename Archive>
+        void serialize(Archive& ar)
+        {
+            ZoneScoped;
+            ar(m_Path, m_Type);
+        }
+
         AssetHandle ToHandle()
         {
             return AssetHandle(Utils::Hash(m_Path), m_Type);

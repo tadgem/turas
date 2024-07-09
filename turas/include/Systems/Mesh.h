@@ -15,6 +15,8 @@ namespace turas
     {
         MeshComponent() = default;
 
+        MeshComponent(const AssetHandle& handle, u32 index);
+
         AssetHandle m_Handle;
         u32         m_EntryIndex;
         lvk::Mesh*  m_LvkMesh;
