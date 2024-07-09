@@ -9,6 +9,7 @@
 #include "STL/Vector.h"
 #include "STL/Functional.h"
 
+#include "Core/Utils.h"
 
 namespace turas {
 
@@ -32,6 +33,11 @@ namespace turas {
 
         bool operator<(const AssetLoadInfo &o) const {
             return m_Path.size() < o.m_Path.size();
+        }
+
+        AssetHandle ToHandle()
+        {
+            return AssetHandle(Utils::Hash(m_Path), m_Type);
         }
     };
 
@@ -71,13 +77,17 @@ namespace turas {
 
     protected:
         // Move the Asset* into a UPtr once returned from the future
-        HashMap<AssetHandle, Future<AssetLoadReturn>>   p_PendingLoads;
+        HashMap<AssetHandle, Future<AssetLoadReturn>>   p_PendingLoadTasks;
         HashMap<AssetHandle, UPtr<Asset>>               p_LoadedAssets;
         HashMap<AssetHandle, AssetLoadReturn>           p_PendingLoadCallbacks;
         HashMap<AssetHandle, AssetLoadCallback>         p_PendingUnloadCallbacks;
+        Vector<AssetLoadInfo>                           p_QueuedLoads;
 
         const uint16_t                                  p_CallbackTasksPerTick = 4;
+        const uint16_t                                  p_MaxAsyncTaskInFlight = 3;
 
         void HandleLoadAndUnloadCallbacks();
+        void HandlePendingLoads();
+        void DispatchAssetLoadTask(const AssetHandle& handle, AssetLoadInfo& info);
     };
 }

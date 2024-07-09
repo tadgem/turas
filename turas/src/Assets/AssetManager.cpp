@@ -219,24 +219,7 @@ void UnloadTexture(turas::Asset* asset)
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {
     ZoneScoped;
     AssetHandle handle (Utils::Hash(path), assetType);
-    switch(assetType)
-    {
-        case AssetType::Model:
-            p_PendingLoads.emplace(handle, std::move(std::async(std::launch::async, LoadModel, path)));
-            break;
-        case AssetType::Texture:
-            p_PendingLoads.emplace(handle, std::move(std::async(std::launch::async, LoadTexture, path)));
-            break;
-        case AssetType::Audio:
-            break;
-        case AssetType::Text:
-            break;
-        case AssetType::Binary:
-            break;
-        default:
-            break;
-    }
-
+    p_QueuedLoads.emplace_back(AssetLoadInfo{path, assetType});
 
     return handle;
 }
@@ -269,7 +252,7 @@ void turas::AssetManager::UnloadAsset(const turas::AssetHandle &handle) {
 
 turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::AssetHandle &handle) {
     ZoneScoped;
-    if (p_PendingLoads.find(handle) != p_PendingLoads.end() ||
+    if (p_PendingLoadTasks.find(handle) != p_PendingLoadTasks.end() ||
         p_PendingLoadCallbacks.find(handle) != p_PendingLoadCallbacks.end()) {
         return AssetLoadProgress::Loading;
     }
@@ -288,22 +271,24 @@ turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::
 
 void turas::AssetManager::OnUpdate() {
     ZoneScoped;
-    if (p_PendingLoads.empty() && p_PendingLoadCallbacks.empty() && p_PendingUnloadCallbacks.empty()) {
+    if (!AnyAssetsLoading()) {
         return;
     }
 
     HandleLoadAndUnloadCallbacks();
 
-    Vector<AssetHandle> pending;
-    for(auto& [handle, future] : p_PendingLoads) {
+    HandlePendingLoads();
+
+    Vector<AssetHandle> finished;
+    for(auto& [handle, future] : p_PendingLoadTasks) {
         if(IsReady(future))
         {
-            pending.push_back(handle);
+            finished.push_back(handle);
         }
     }
 
-    for(auto& handle : pending) {
-        AssetLoadReturn asyncReturn  = p_PendingLoads[handle].get();
+    for(auto& handle : finished) {
+        AssetLoadReturn asyncReturn  = p_PendingLoadTasks[handle].get();
         // add new loads
         for(auto& newLoad : asyncReturn.m_NewAssetsToLoad)
         {
@@ -317,13 +302,13 @@ void turas::AssetManager::OnUpdate() {
         {
             p_PendingLoadCallbacks.emplace(handle, asyncReturn);
         }
-        p_PendingLoads.erase(handle);
+        p_PendingLoadTasks.erase(handle);
     }
 }
 
 bool turas::AssetManager::AnyAssetsLoading() {
     ZoneScoped;
-    return !p_PendingLoads.empty() || !p_PendingLoadCallbacks.empty();
+    return !p_PendingLoadTasks.empty() || !p_PendingLoadCallbacks.empty() || !p_PendingUnloadCallbacks.empty() || !p_QueuedLoads.empty();
 }
 
 bool turas::AssetManager::AnyAssetsUnloading() {
@@ -341,31 +326,10 @@ void turas::AssetManager::Shutdown() {
 
 void turas::AssetManager::WaitAllAssets() {
     ZoneScoped;
-    Vector<AssetLoadInfo> newAssetsToLoad {};
-
-    for(auto& [handle, pending] : p_PendingLoads)
+    while(AnyAssetsLoading())
     {
-        pending.wait();
-        auto asset = pending.get();
-        p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(asset.m_LoadedAsset)));
-
-        newAssetsToLoad.insert(newAssetsToLoad.end(),
-                               asset.m_NewAssetsToLoad.begin(), asset.m_NewAssetsToLoad.end());
+        OnUpdate();
     }
-
-    p_PendingLoads.clear();
-
-    if(newAssetsToLoad.empty())
-    {
-        return;
-    }
-
-    for(auto& loadInfo : newAssetsToLoad)
-    {
-        LoadAsset(loadInfo.m_Path, loadInfo.m_Type);
-    }
-
-    WaitAllAssets();
 
 }
 
@@ -441,5 +405,34 @@ void turas::AssetManager::WaitAllUnloads() {
     while(AnyAssetsUnloading())
     {
         OnUpdate();
+    }
+}
+
+void turas::AssetManager::DispatchAssetLoadTask(const turas::AssetHandle& handle, turas::AssetLoadInfo &info) {
+    switch(info.m_Type)
+    {
+        case AssetType::Model:
+            p_PendingLoadTasks.emplace(handle, std::move(std::async(std::launch::async, LoadModel, info.m_Path)));
+            break;
+        case AssetType::Texture:
+            p_PendingLoadTasks.emplace(handle, std::move(std::async(std::launch::async, LoadTexture, info.m_Path)));
+            break;
+        case AssetType::Audio:
+            break;
+        case AssetType::Text:
+            break;
+        case AssetType::Binary:
+            break;
+        default:
+            break;
+    }
+}
+
+void turas::AssetManager::HandlePendingLoads() {
+    while (p_PendingLoadTasks.size() < p_MaxAsyncTaskInFlight && !p_QueuedLoads.empty())
+    {
+        auto& info = p_QueuedLoads.front();
+        DispatchAssetLoadTask(info.ToHandle(), info);
+        p_QueuedLoads.erase(p_QueuedLoads.begin());
     }
 }
