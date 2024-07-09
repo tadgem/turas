@@ -24,7 +24,7 @@ namespace turas {
         // vertex layout for vulkan
         VertexLayoutData    m_VertexLayout;
         // gpu submitted mesh
-        lvk::Mesh*          m_LvkMesh = nullptr;
+        lvk::Mesh           m_LvkMesh;
         // axis aligned bounding box for simple culling
         AABB                m_AABB;
 

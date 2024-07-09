@@ -44,22 +44,22 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
     builder.AddAttribute(VK_FORMAT_R32G32B32_SFLOAT, sizeof(glm::vec3));
     builder.AddAttribute(VK_FORMAT_R32G32_SFLOAT, sizeof(glm::vec2));
 
-    turas::Mesh m{};
-    m.m_VertexLayout = builder.Build();
+    auto* m = new turas::Mesh();
+    m->m_VertexLayout = builder.Build();
 
     if (hasPositions && hasUVs && hasNormals) {
         for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
             auto Position = AssimpToGLM(mesh->mVertices[i]);
             auto UV = glm::vec2(mesh->mTextureCoords[0][i].x, 1.0f - mesh->mTextureCoords[0][i].y);
             auto Normal = AssimpToGLM(mesh->mNormals[i]);
-            m.m_VertexData.push_back(Position.x);
-            m.m_VertexData.push_back(Position.y);
-            m.m_VertexData.push_back(Position.z);
-            m.m_VertexData.push_back(Normal.z);
-            m.m_VertexData.push_back(Normal.x);
-            m.m_VertexData.push_back(Normal.y);
-            m.m_VertexData.push_back(UV.x);
-            m.m_VertexData.push_back(UV.y);
+            m->m_VertexData.push_back(Position.x);
+            m->m_VertexData.push_back(Position.y);
+            m->m_VertexData.push_back(Position.z);
+            m->m_VertexData.push_back(Normal.z);
+            m->m_VertexData.push_back(Normal.x);
+            m->m_VertexData.push_back(Normal.y);
+            m->m_VertexData.push_back(UV.x);
+            m->m_VertexData.push_back(UV.y);
         }
     }
 
@@ -71,14 +71,14 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
                 return;
             }
             for (unsigned int index = 0; index < mesh->mFaces[i].mNumIndices; index++) {
-                m.m_IndexData.push_back(static_cast<uint32_t>(mesh->mFaces[i].mIndices[index]));
+                m->m_IndexData.push_back(static_cast<uint32_t>(mesh->mFaces[i].mIndices[index]));
             }
         }
     }
 
     turas::AABB aabb = { {mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z},
                   {mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z} };
-    m.m_AABB = aabb;
+    m->m_AABB = aabb;
     turas::HashMap<turas::Texture::MapType, turas::AssetHandle> maps;
 
     aiMaterial* meshMaterial = scene->mMaterials[mesh->mMaterialIndex];
@@ -106,7 +106,7 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
         newAssetsToLoad.push_back(loadInfo);
     }
 
-    model->m_Entries.push_back({m, maps});
+    model->m_Entries.push_back({turas::UPtr<turas::Mesh>(m), maps});
 }
 
 void ProcessNode(const turas::String& assetDirectory, const aiScene* scene, aiNode* node, turas::ModelAsset* model, turas::Vector<turas::AssetLoadInfo>& newAssetsToLoad)
@@ -167,13 +167,13 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
         {
             auto* modelAsset = reinterpret_cast<turas::ModelAsset*>(asset);
 
-            auto* mesh = new lvk::Mesh();
-            turas::Engine::INSTANCE->m_VK.CreateVertexBuffer(modelAsset->m_Entries[i].m_Mesh.m_VertexData,
-                                                             mesh->m_VertexBuffer, mesh->m_VertexBufferMemory );
-            turas::Engine::INSTANCE->m_VK.CreateIndexBuffer(modelAsset->m_Entries[i].m_Mesh.m_IndexData,
-                                                             mesh->m_IndexBuffer, mesh->m_IndexBufferMemory);
-            mesh->m_IndexCount = modelAsset->m_Entries[i].m_Mesh.m_IndexData.size();
-            modelAsset->m_Entries[i].m_Mesh.m_LvkMesh = mesh;
+            auto mesh = lvk::Mesh();
+            turas::Engine::INSTANCE->m_VK.CreateVertexBuffer(modelAsset->m_Entries[i].m_Mesh->m_VertexData,
+                                                             mesh.m_VertexBuffer, mesh.m_VertexBufferMemory );
+            turas::Engine::INSTANCE->m_VK.CreateIndexBuffer(modelAsset->m_Entries[i].m_Mesh->m_IndexData,
+                                                             mesh.m_IndexBuffer, mesh.m_IndexBufferMemory);
+            mesh.m_IndexCount = modelAsset->m_Entries[i].m_Mesh->m_IndexData.size();
+            modelAsset->m_Entries[i].m_Mesh->m_LvkMesh = mesh;
         });
     }
 
@@ -185,7 +185,7 @@ void UnloadModel(turas::Asset* asset)
     auto* model = reinterpret_cast<turas::ModelAsset*>(asset);
     for(auto& entry : model->m_Entries)
     {
-        entry.m_Mesh.Free(turas::Engine::INSTANCE->m_VK);
+        entry.m_Mesh->Free(turas::Engine::INSTANCE->m_VK);
     }
 }
 

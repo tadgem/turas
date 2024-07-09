@@ -12,7 +12,14 @@ void turas::MeshSystem::OnEngineReady() {
 void turas::MeshSystem::OnSceneLoaded(Scene *scene) {
     ZoneScoped;
     auto& reg = GetSceneRegistry(scene);
+    auto meshView = reg.view<MeshComponent>();
+    for(auto [e, mesh] : meshView.each())
+    {
+        FindMeshAsset(mesh);
+    }
+
     reg.on_construct<MeshComponent>().connect<&MeshSystem::OnMeshComponentAdded>(this);
+    reg.on_update<MeshComponent>().connect<&MeshSystem::OnMeshComponentAdded>(this);
 }
 
 void turas::MeshSystem::OnSceneClosed(Scene *scene) {
@@ -69,19 +76,22 @@ turas::Vector<turas::AssetHandle> turas::MeshSystem::GetRequiredAssets(Scene* sc
 void turas::MeshSystem::OnMeshComponentAdded(entt::registry &reg, entt::entity e) {
 
     MeshComponent& mesh = reg.get<MeshComponent>(e);
-    if(mesh.m_LvkMesh == nullptr)
+    FindMeshAsset(mesh);
+}
+
+void turas::MeshSystem::FindMeshAsset(turas::MeshComponent &meshComponent) {
+    if(meshComponent.m_MeshAsset == nullptr)
     {
-        auto* asset = Engine::INSTANCE->m_AssetManager.GetAsset(mesh.m_Handle);
+        auto* asset = Engine::INSTANCE->m_AssetManager.GetAsset(meshComponent.m_Handle);
         auto* meshAsset = reinterpret_cast<ModelAsset*>(asset);
 
-        if(mesh.m_EntryIndex >= meshAsset->m_Entries.size())
+        if(meshComponent.m_EntryIndex >= meshAsset->m_Entries.size())
         {
             return;
         }
 
-        mesh.m_LvkMesh = meshAsset->m_Entries[mesh.m_EntryIndex].m_Mesh.m_LvkMesh;
+        meshComponent.m_MeshAsset = meshAsset->m_Entries[meshComponent.m_EntryIndex].m_Mesh.get();
     }
-
 }
 
 turas::MeshComponent::MeshComponent(const turas::AssetHandle &handle, turas::u32 index) : m_Handle(handle), m_EntryIndex(index)

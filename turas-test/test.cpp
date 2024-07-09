@@ -111,9 +111,9 @@ TEST(
 
         for(auto& entry : model->m_Entries)
         {
-            assert(entry.m_Mesh.m_LvkMesh);
-            assert(entry.m_Mesh.m_LvkMesh->m_VertexBuffer != VK_NULL_HANDLE);
-            assert(entry.m_Mesh.m_LvkMesh->m_IndexBuffer != VK_NULL_HANDLE);
+            assert(entry.m_Mesh);
+            assert(entry.m_Mesh->m_LvkMesh.m_VertexBuffer != VK_NULL_HANDLE);
+            assert(entry.m_Mesh->m_LvkMesh.m_IndexBuffer != VK_NULL_HANDLE);
         }
 
         e.m_AssetManager.UnloadAllAssets();
@@ -332,7 +332,10 @@ TEST(
     auto* s = e.CreateScene("Test");
     auto ent = s->CreateEntity();
     auto& meshComponent = s->AddComponent<turas::MeshComponent>(ent, handle, 0);
-    assert(meshComponent.m_LvkMesh != nullptr);
+    assert(meshComponent.m_MeshAsset != nullptr);
+    assert(meshComponent.m_MeshAsset->m_LvkMesh.m_VertexBuffer != VK_NULL_HANDLE);
+    assert(meshComponent.m_MeshAsset->m_LvkMesh.m_IndexBuffer != VK_NULL_HANDLE);
+
 
     e.Shutdown();
 });
@@ -341,7 +344,9 @@ TEST(
 {
     turas::Engine e;
     auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
+
     e.Init();
+
     // load model
     auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
     while(e.m_AssetManager.AnyAssetsLoading())
@@ -360,7 +365,6 @@ TEST(
     e.m_AssetManager.WaitAllUnloads();
 
     std::stringstream dataStream {};
-
     {
         turas::BinaryOutputArchive outputArchive(dataStream);
         outputArchive(sceneBinary);
@@ -377,7 +381,7 @@ TEST(
     }
 
     assert(s2->HasComponent<turas::MeshComponent>(ent));
-    assert(s2->GetComponent<turas::MeshComponent>(ent).m_LvkMesh != nullptr);
+    assert(s2->GetComponent<turas::MeshComponent>(ent).m_MeshAsset != nullptr);
 
     e.Shutdown();
 });

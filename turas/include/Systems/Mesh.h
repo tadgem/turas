@@ -19,7 +19,7 @@ namespace turas
 
         AssetHandle m_Handle;
         u32         m_EntryIndex;
-        lvk::Mesh*  m_LvkMesh;
+        Mesh*       m_MeshAsset = nullptr;
 
         template<typename Archive>
         void serialize(Archive& ar)
@@ -46,6 +46,7 @@ namespace turas
         Vector<AssetHandle>     GetRequiredAssets(Scene* scene) override;
 
         void OnMeshComponentAdded(entt::registry & reg, entt::entity e);
+        void FindMeshAsset(MeshComponent& meshComponent);
 
         template<typename Archive>
         void save(Archive& ar) const {
