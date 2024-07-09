@@ -9,6 +9,9 @@
 #include "Rendering/Mesh.h"
 #include "Rendering/Texture.h"
 #include "lvk/Texture.h"
+#include "Debug/Profile.h"
+#include "Core/Serialization.h"
+
 namespace turas {
     enum class AssetType : u8
     {
@@ -39,6 +42,13 @@ namespace turas {
 
         bool operator<(const AssetHandle &o) const {
             return _DataA < o._DataA && _DataB < o._DataB;
+        }
+
+        template<typename Archive>
+        void serialize(Archive& ar)
+        {
+            ZoneScoped;
+            ar(_DataA, _DataB);
         }
     };
 
