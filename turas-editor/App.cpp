@@ -3,6 +3,7 @@
 #include "STL/HashMap.h"
 #include "STL/String.h"
 #include "Systems/Transform.h"
+#include "Systems/Mesh.h"
 #include "Core/ECS.h"
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
@@ -23,8 +24,9 @@ int main(int argc, char** argv)
 {
     turas::Engine app;
     app.AddSystem<turas::TransformSystem>();
-    app.CreateScene();
-    app.CreateScene();
+    app.AddSystem<turas::MeshSystem>();
+    app.CreateScene("Test1");
+    app.CreateScene("Test2");
     app.Init();
     app.Run();
 
