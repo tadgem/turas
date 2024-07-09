@@ -173,7 +173,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        turas::Scene* s = e.CreateScene();
+        turas::Scene* s = e.CreateScene("Test");
         assert(s);
         e.CloseScene(s);
         assert(e.m_ActiveScenes.empty());
@@ -185,8 +185,8 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        turas::Scene* s1 = e.CreateScene();
-        turas::Scene* s2 = e.CreateScene();
+        turas::Scene* s1 = e.CreateScene("Test");
+        turas::Scene* s2 = e.CreateScene("Test2");
         e.CloseScene(s1);
         assert(e.m_ActiveScenes.size() == 1);
         e.CloseScene(s2);
@@ -199,8 +199,8 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        turas::Scene* s1 = e.CreateScene();
-        turas::Scene* s2 = e.CreateScene();
+        turas::Scene* s1 = e.CreateScene("Test");
+        turas::Scene* s2 = e.CreateScene("Test2 ");
         e.CloseAllScenes();
         assert(e.m_ActiveScenes.empty());
         e.Shutdown();
@@ -210,7 +210,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        turas::Scene* s1 = e.CreateScene();
+        turas::Scene* s1 = e.CreateScene("Test");
         auto e1 = s1->CreateEntity();
         auto e2 = s1->CreateEntity();
         assert(s1->NumEntities() == 2);
@@ -239,7 +239,7 @@ TEST(
         auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
         assert(transformSystem);
         e.Init();
-        auto* s = e.CreateScene();
+        auto* s = e.CreateScene("Test");
         auto ent = s->CreateEntity();
 
         auto& trans = s->AddComponent<turas::TransformComponent>(ent);
@@ -256,7 +256,7 @@ TEST(
         auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
         assert(transformSystem);
         e.Init();
-        auto* s = e.CreateScene();
+        auto* s = e.CreateScene("Test");
         auto ent = s->CreateEntity();
 
         auto& trans = s->AddComponent<turas::TransformComponent>(ent);
@@ -272,7 +272,7 @@ TEST(
     turas::Engine e;
     auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
     e.Init();
-    auto &s = *e.CreateScene();
+    auto &s = *e.CreateScene("Test");
     auto ent = s.CreateEntity();
     auto &trans = s.AddComponent<turas::TransformComponent>(ent);
     auto data = s.SaveBinary();
@@ -287,7 +287,7 @@ TEST(
     turas::Engine e;
     auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
     e.Init();
-    auto* s = e.CreateScene();
+    auto* s = e.CreateScene("Test");
     auto ent = s->CreateEntity();
     auto &trans = s->AddComponent<turas::TransformComponent>(ent);
     trans.m_Position.y = 420.0f;
@@ -295,9 +295,10 @@ TEST(
 
     e.CloseScene(s);
 
-    auto* s2 = e.CreateScene();
+    auto* s2 = e.CreateScene("Test");
     s2->LoadBinary(data);
 
+    assert(s2->m_Name == "Test");
     assert(s2->HasComponent<turas::TransformComponent>(ent));
     assert(abs(s2->GetComponent<turas::TransformComponent>(ent).m_Position.y - 420.0f) <= 0.0001f);
     e.Shutdown();
@@ -315,7 +316,7 @@ TEST(
         e.m_AssetManager.OnUpdate();
     }
 
-    auto* s = e.CreateScene();
+    auto* s = e.CreateScene("Test");
     auto ent = s->CreateEntity();
     auto& meshComponent = s->AddComponent<turas::MeshComponent>(ent, handle, 0);
     assert(meshComponent.m_LvkMesh != nullptr);
@@ -335,7 +336,7 @@ TEST(
         e.m_AssetManager.OnUpdate();
     }
 
-    auto* s = e.CreateScene();
+    auto* s = e.CreateScene("Test");
     auto ent = s->CreateEntity();
     auto& meshComponent = s->AddComponent<turas::MeshComponent>(ent, handle, 0);
 
@@ -344,7 +345,7 @@ TEST(
     e.m_AssetManager.UnloadAllAssets();
     e.m_AssetManager.WaitAllUnloads();
 
-    auto* s2 = e.CreateScene();
+    auto* s2 = e.CreateScene("Test");
     s2->LoadBinary(sceneBinary);
 
 

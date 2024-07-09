@@ -25,7 +25,9 @@ namespace turas
     class Scene
     {
     public:
-        Scene();
+        Scene(const String& name);
+
+        String m_Name;
 
         Entity  CreateEntity();
         void    DestroyEntity(Entity& e);
@@ -72,6 +74,7 @@ namespace turas
         friend class System;
 
         const String p_AssetsHashName = "Assets";
+        const String p_SceneHashName = "SceneName";
 
         entt::registry  p_Registry;
         u32        p_EntityCount = 0;

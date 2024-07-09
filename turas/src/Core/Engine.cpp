@@ -58,9 +58,9 @@ void turas::Engine::Run()
     }
 }
 
-turas::Scene *turas::Engine::CreateScene() {
+turas::Scene *turas::Engine::CreateScene(const String& name) {
     ZoneScoped;
-    Scene* scene =  m_ActiveScenes.emplace_back(std::move(CreateUnique<Scene>())).get();
+    Scene* scene =  m_ActiveScenes.emplace_back(std::move(CreateUnique<Scene>(name))).get();
     for(auto& sys : m_EngineSubSystems)
     {
         sys->OnSceneLoaded(scene);

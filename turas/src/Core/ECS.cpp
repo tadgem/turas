@@ -3,7 +3,8 @@
 //
 #include "Core/ECS.h"
 #include "Core/Log.h"
-turas::Scene::Scene() {
+turas::Scene::Scene(const String& name) : m_Name(name)
+{
     ZoneScoped;
     p_Registry = entt::registry ();
 }
@@ -55,6 +56,11 @@ turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
         }
     }
 
+    {
+        // emplace name entry
+        serialized.emplace(Utils::Hash(p_SceneHashName), m_Name);
+    }
+
     // emplace asset entry
     {
         std::stringstream       stream;
@@ -68,7 +74,7 @@ turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
 
 void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String>& sceneData) {
     ZoneScoped;
-    
+
     {
         u64 assetsHash = Utils::Hash(p_AssetsHashName);
         std::stringstream loadInfoStream;
@@ -82,6 +88,11 @@ void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String>& sceneData) {
         {
             Engine::INSTANCE->m_AssetManager.LoadAsset(info.m_Path, info.m_Type);
         }
+    }
+
+    {
+        u64 nameHash = Utils::Hash(p_SceneHashName);
+        m_Name = sceneData[nameHash];
     }
 
     for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {

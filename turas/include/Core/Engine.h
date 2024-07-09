@@ -20,7 +20,7 @@ namespace turas
         void Shutdown();
         void Run();
 
-        Scene*  CreateScene();
+        Scene*  CreateScene(const String& name);
         void    CloseScene(Scene* scene);
         void    CloseAllScenes();
 
