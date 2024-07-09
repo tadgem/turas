@@ -20,9 +20,11 @@ namespace turas
         void Shutdown();
         void Run();
 
-        Scene*  CreateScene(const String& name);
-        void    CloseScene(Scene* scene);
-        void    CloseAllScenes();
+        Scene*              CreateScene(const String& name);
+        Scene*              LoadScene(BinaryInputArchive& archive);
+        void                CloseScene(Scene* scene);
+        void                CloseAllScenes();
+        AssetLoadProgress   GetSceneLoadProgress(Scene* scene);
 
         TURAS_IMPL_ALLOC(Engine)
 
@@ -33,6 +35,9 @@ namespace turas
 
         // Collection of all running scenes, each ECS in this collection will be processed + rendered each frame
         Vector<UPtr<Scene>>     m_ActiveScenes;
+
+        // Scenes not yet loaded due to remaining asset load tasks
+        Vector<Scene*>          m_PendingScenes;
 
         // main service for retrieving data from disk
         AssetManager            m_AssetManager;

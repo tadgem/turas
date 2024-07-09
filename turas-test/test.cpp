@@ -292,11 +292,24 @@ TEST(
     auto &trans = s->AddComponent<turas::TransformComponent>(ent);
     trans.m_Position.y = 420.0f;
     auto data = s->SaveBinary();
+    std::stringstream dataStream {};
+
+    {
+        turas::BinaryOutputArchive outputArchive(dataStream);
+        outputArchive(data);
+    }
+
+    turas::BinaryInputArchive serialized_data(dataStream);
 
     e.CloseScene(s);
 
-    auto* s2 = e.CreateScene("Test");
-    s2->LoadBinary(data);
+    auto* s2 = e.LoadScene(serialized_data);
+
+    while(e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded)
+    {
+        e.m_AssetManager.OnUpdate();
+        e.PendingScenes();
+    }
 
     assert(s2->m_Name == "Test");
     assert(s2->HasComponent<turas::TransformComponent>(ent));
@@ -342,13 +355,29 @@ TEST(
 
     auto sceneBinary = s->SaveBinary();
     e.CloseScene(s);
+
     e.m_AssetManager.UnloadAllAssets();
     e.m_AssetManager.WaitAllUnloads();
 
-    auto* s2 = e.CreateScene("Test");
-    s2->LoadBinary(sceneBinary);
+    std::stringstream dataStream {};
 
+    {
+        turas::BinaryOutputArchive outputArchive(dataStream);
+        outputArchive(sceneBinary);
+    }
 
+    turas::BinaryInputArchive serialized_data(dataStream);
+
+    auto* s2 = e.LoadScene(serialized_data);
+
+    while(e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded)
+    {
+        e.m_AssetManager.OnUpdate();
+        e.PendingScenes();
+    }
+
+    assert(s2->HasComponent<turas::MeshComponent>(ent));
+    assert(s2->GetComponent<turas::MeshComponent>(ent).m_LvkMesh != nullptr);
 
     e.Shutdown();
 });

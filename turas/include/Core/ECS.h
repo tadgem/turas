@@ -68,10 +68,14 @@ namespace turas
         }
 
         HashMap<u64 , String>       SaveBinary();
-        void                        LoadBinary(HashMap<u64, String>& sceneData);
+
         TURAS_IMPL_ALLOC(Scene)
     protected:
         friend class System;
+        friend class Engine;
+
+        void                        LoadBinary(HashMap<u64, String>& sceneData);
+        void                        LoadBinaryFromArchive(BinaryInputArchive& sceneData);
 
         const String p_AssetsHashName = "Assets";
         const String p_SceneHashName = "SceneName";

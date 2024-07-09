@@ -131,5 +131,47 @@ void turas::Engine::SystemsUpdate() {
 }
 
 void turas::Engine::PendingScenes() {
+    if(m_AssetManager.AnyAssetsLoading())
+    {
+        return;
+    }
 
+    if(m_PendingScenes.empty())
+    {
+        return;
+    }
+
+    for(auto* pendingScene : m_PendingScenes)
+    {
+        m_ActiveScenes.push_back(UPtr<Scene>(pendingScene));
+        for(auto& sys : m_EngineSubSystems)
+        {
+            sys->OnSceneLoaded(pendingScene);
+        }
+    }
+    m_PendingScenes.clear();
+}
+
+turas::Scene *turas::Engine::LoadScene(turas::BinaryInputArchive &archive) {
+    auto* s = new Scene("empty");
+    s->LoadBinaryFromArchive(archive);
+    m_PendingScenes.push_back(s);
+    return s;
+}
+
+turas::AssetLoadProgress turas::Engine::GetSceneLoadProgress(turas::Scene *scene) {
+    if(std::find(m_PendingScenes.begin(), m_PendingScenes.end(), scene) != m_PendingScenes.end())
+    {
+        return AssetLoadProgress::Loading;
+    }
+
+    for(auto& activeScene : m_ActiveScenes)
+    {
+        if(activeScene.get() == scene)
+        {
+            return AssetLoadProgress::Loaded;
+        }
+    }
+
+    return turas::AssetLoadProgress::NotLoaded;
 }

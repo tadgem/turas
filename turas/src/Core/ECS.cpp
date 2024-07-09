@@ -72,6 +72,14 @@ turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
     return serialized;
 }
 
+
+void turas::Scene::LoadBinaryFromArchive(turas::BinaryInputArchive& sceneData) {
+    ZoneScoped;
+    HashMap<u64, turas::String> data {};
+    sceneData(data);
+    LoadBinary(data);
+}
+
 void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String>& sceneData) {
     ZoneScoped;
 
