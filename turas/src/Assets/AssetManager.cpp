@@ -14,7 +14,6 @@
 #include "lvk/Texture.h"
 #include "Core/Engine.h"
 
-
 static glm::vec3 AssimpToGLM(aiVector3D aiVec) {
     ZoneScoped;
     return glm::vec3(aiVec.x, aiVec.y, aiVec.z);
@@ -62,7 +61,6 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
             m.m_VertexData.push_back(UV.x);
             m.m_VertexData.push_back(UV.y);
         }
-
     }
 
     if (hasIndices) {
@@ -77,6 +75,7 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
             }
         }
     }
+
     turas::AABB aabb = { {mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z},
                   {mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z} };
     m.m_AABB = aabb;
@@ -257,8 +256,7 @@ turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::
         return AssetLoadProgress::Loading;
     }
 
-    if (p_PendingUnloadCallbacks.find(handle) != p_PendingUnloadCallbacks.end())
-    {
+    if (p_PendingUnloadCallbacks.find(handle) != p_PendingUnloadCallbacks.end()) {
         return AssetLoadProgress::Unloading;
     }
 
@@ -289,19 +287,18 @@ void turas::AssetManager::OnUpdate() {
 
     for(auto& handle : finished) {
         AssetLoadReturn asyncReturn  = p_PendingLoadTasks[handle].get();
-        // add new loads
-        for(auto& newLoad : asyncReturn.m_NewAssetsToLoad)
-        {
+        // enqueue new loads
+        for(auto& newLoad : asyncReturn.m_NewAssetsToLoad) {
             LoadAsset(newLoad.m_Path, newLoad.m_Type);
         }
 
         if(asyncReturn.m_AssetLoadTasks.empty()) {
             p_LoadedAssets.emplace(handle, std::move(UPtr<Asset>(asyncReturn.m_LoadedAsset)));
         }
-        else
-        {
+        else {
             p_PendingLoadCallbacks.emplace(handle, asyncReturn);
         }
+
         p_PendingLoadTasks.erase(handle);
     }
 }
