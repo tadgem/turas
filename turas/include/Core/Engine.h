@@ -55,6 +55,7 @@ namespace turas
         void PrepFrame();
         void SubmitFrame();
         void SystemsUpdate();
+        void PendingScenes();
     protected:
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING

@@ -65,7 +65,6 @@ namespace turas
             return p_Registry.get<_Ty>(entity.m_Handle);
         }
 
-
         HashMap<u64 , String>       SaveBinary();
         void                        LoadBinary(HashMap<u64, String>& sceneData);
         TURAS_IMPL_ALLOC(Scene)

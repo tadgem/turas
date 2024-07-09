@@ -51,6 +51,7 @@ void turas::Engine::Run()
         ZoneScopedN("Frame");
         PrepFrame();
         m_AssetManager.OnUpdate();
+        PendingScenes();
         SystemsUpdate();
         StatsWindow::OnImGuiStatsWindow(m_VK);
         SubmitFrame();
@@ -127,4 +128,8 @@ void turas::Engine::SystemsUpdate() {
             sys->OnUpdate(scene.get());
         }
     }
+}
+
+void turas::Engine::PendingScenes() {
+
 }
