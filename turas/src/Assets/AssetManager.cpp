@@ -251,6 +251,15 @@ void turas::AssetManager::UnloadAsset(const turas::AssetHandle &handle) {
 
 turas::AssetLoadProgress turas::AssetManager::GetAssetLoadProgress(const turas::AssetHandle &handle) {
     ZoneScoped;
+
+    for(auto& queued : p_QueuedLoads)
+    {
+        if(queued.ToHandle() == handle)
+        {
+            return AssetLoadProgress::Loading;
+        }
+    }
+
     if (p_PendingLoadTasks.find(handle) != p_PendingLoadTasks.end() ||
         p_PendingLoadCallbacks.find(handle) != p_PendingLoadCallbacks.end()) {
         return AssetLoadProgress::Loading;

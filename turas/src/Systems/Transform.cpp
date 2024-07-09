@@ -57,6 +57,6 @@ void turas::TransformSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArc
     s_CurrentSerializingScene = nullptr;
 }
 
-turas::Vector<turas::AssetHandle> turas::TransformSystem::GetRequiredAssets() {
+turas::Vector<turas::AssetHandle> turas::TransformSystem::GetRequiredAssets(Scene* scene) {
     return turas::Vector<AssetHandle>();
 }

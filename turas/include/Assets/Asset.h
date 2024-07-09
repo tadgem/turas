@@ -31,6 +31,8 @@ namespace turas {
             AssetType   m_Type;
         };
 
+        AssetHandle() = default;
+
         AssetHandle(const u64& hash, const AssetType& type) : m_Hash(hash), m_Type(type)
         {
 

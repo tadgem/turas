@@ -47,7 +47,7 @@ namespace turas
         void                    OnShutdown() override;
         void                    SerializeSceneBinary(Scene* scene, BinaryOutputArchive& output) const override;
         void                    DeserializeSceneBinary(Scene* scene, BinaryInputArchive& input) override;
-        Vector<AssetHandle>     GetRequiredAssets() override;
+        Vector<AssetHandle>     GetRequiredAssets(Scene*) override;
 
         TURAS_IMPL_ALLOC(TransformSystem)
 
@@ -56,7 +56,7 @@ namespace turas
             ZoneScoped;
             auto transform_view = GetSceneRegistry(s_CurrentSerializingScene).view<TransformComponent>();
             HashMap<u32, TransformComponent> transforms {};
-            for(auto [ent, trans] : transform_view.each())
+            for(const auto& [ent, trans] : transform_view.each())
             {
                 transforms.emplace(static_cast<u32>(ent), trans);
             }
