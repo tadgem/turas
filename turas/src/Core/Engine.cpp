@@ -143,6 +143,8 @@ void turas::Engine::PendingScenes() {
 
     for(auto* pendingScene : m_PendingScenes)
     {
+        // Turn raw scene ptr to a UPtr so it will be
+        // freed when the scene is removed from list of active scenes
         m_ActiveScenes.push_back(UPtr<Scene>(pendingScene));
         for(auto& sys : m_EngineSubSystems)
         {
