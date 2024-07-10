@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "STL/Memory.h"
 #include "lvk/Mesh.h"
 #include "Rendering/VertexLayouts.h"
 
@@ -12,6 +13,8 @@ namespace turas {
     {
         glm::vec3 m_Min;
         glm::vec3 m_Max;
+
+        TURAS_IMPL_ALLOC(AABB);
     };
 
     struct Mesh
@@ -27,6 +30,8 @@ namespace turas {
         lvk::Mesh           m_LvkMesh;
         // axis aligned bounding box for simple culling
         AABB                m_AABB;
+
+        TURAS_IMPL_ALLOC(Mesh);
 
     };
 }

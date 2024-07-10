@@ -15,7 +15,7 @@ namespace turas {
 
     struct Camera
     {
-        enum class ProjectionType : u8
+        enum ProjectionType : u8
         {
             Perspective,
             Orthographic
@@ -34,7 +34,7 @@ namespace turas {
         void serialize(Archive& ar)
         {
             ZoneScoped;
-            ar(m_FOV, m_NearPlane, m_FarPlane, m_Width, m_Height, m_ProjectionType, m_ViewMatrix, m_ProjectionType);
+            ar(m_FOV, m_NearPlane, m_FarPlane, m_Width, m_Height, m_ProjectionType);
         }
 
         TURAS_IMPL_ALLOC(Camera)
@@ -48,5 +48,13 @@ namespace turas {
         View(const String& name);
 
         TURAS_IMPL_ALLOC(View)
+
+        template<typename Archive>
+        void serialize(Archive& ar)
+        {
+            ZoneScoped;
+            ar(m_Name);
+        }
+
     };
 }

@@ -25,6 +25,8 @@ namespace turas {
         // interface to GPU (vulkan)
         lvk::VulkanAPI_SDL      m_VK;
 
+        TURAS_IMPL_ALLOC(Renderer)
+
     protected:
         HashMap<u64, CreatePipelineCallback> p_CreatePipelineCallbacks;
     };

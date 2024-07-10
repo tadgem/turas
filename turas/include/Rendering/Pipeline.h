@@ -25,5 +25,7 @@ namespace turas {
     public:
 
         UPtr<PipelineCommandDispatcher> m_Renderer;
+
+        TURAS_IMPL_ALLOC(Pipeline)
     };
 }
