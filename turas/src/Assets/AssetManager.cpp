@@ -168,9 +168,9 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
             auto* modelAsset = reinterpret_cast<turas::ModelAsset*>(asset);
 
             auto mesh = lvk::Mesh();
-            turas::Engine::INSTANCE->m_VK.CreateVertexBuffer(modelAsset->m_Entries[i].m_Mesh->m_VertexData,
+            turas::Engine::INSTANCE->m_Renderer.m_VK.CreateVertexBuffer(modelAsset->m_Entries[i].m_Mesh->m_VertexData,
                                                              mesh.m_VertexBuffer, mesh.m_VertexBufferMemory );
-            turas::Engine::INSTANCE->m_VK.CreateIndexBuffer(modelAsset->m_Entries[i].m_Mesh->m_IndexData,
+            turas::Engine::INSTANCE->m_Renderer.m_VK.CreateIndexBuffer(modelAsset->m_Entries[i].m_Mesh->m_IndexData,
                                                              mesh.m_IndexBuffer, mesh.m_IndexBufferMemory);
             mesh.m_IndexCount = modelAsset->m_Entries[i].m_Mesh->m_IndexData.size();
             modelAsset->m_Entries[i].m_Mesh->m_LvkMesh = mesh;
@@ -185,7 +185,7 @@ void UnloadModel(turas::Asset* asset)
     auto* model = reinterpret_cast<turas::ModelAsset*>(asset);
     for(auto& entry : model->m_Entries)
     {
-        entry.m_Mesh->Free(turas::Engine::INSTANCE->m_VK);
+        entry.m_Mesh->Free(turas::Engine::INSTANCE->m_Renderer.m_VK);
     }
 }
 
@@ -198,7 +198,7 @@ turas::AssetLoadReturn LoadTexture(const turas::String& path)
     {
         auto* textureAsset = reinterpret_cast<turas::TextureAsset*>(asset);
         auto* t = new lvk::Texture(lvk::Texture::CreateTextureFromMemory(
-                turas::Engine::INSTANCE->m_VK,
+                turas::Engine::INSTANCE->m_Renderer.m_VK,
                 textureAsset->m_TextureData.data(),
                 textureAsset->m_TextureData.size(),
                 VK_FORMAT_R8G8B8A8_UNORM));
@@ -212,7 +212,7 @@ void UnloadTexture(turas::Asset* asset)
     ZoneScoped;
     auto* tex = reinterpret_cast<turas::TextureAsset*>(asset);
     if(!tex->m_Texture) return;
-    tex->m_Texture->Free(turas::Engine::INSTANCE->m_VK);
+    tex->m_Texture->Free(turas::Engine::INSTANCE->m_Renderer.m_VK);
 }
 
 turas::AssetHandle turas::AssetManager::LoadAsset(const turas::String &path, const turas::AssetType &assetType) {

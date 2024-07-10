@@ -12,8 +12,8 @@ turas::Engine::Engine() {
 void turas::Engine::Init() {
     ZoneScoped;
     spdlog::info("Initialising Turas");
-    m_VK.Start("Turas", 1280, 720);
-    m_Im3dState = lvk::LoadIm3D(m_VK);
+    m_Renderer.Start();
+    m_Im3dState = lvk::LoadIm3D(m_Renderer.m_VK);
     for(auto& sys : m_EngineSubSystems)
     {
         sys->OnEngineReady();
@@ -37,15 +37,14 @@ void turas::Engine::Shutdown() {
     m_EngineSubSystems.clear();
     m_AssetManager.Shutdown();
 
-    lvk::FreeIm3d(m_VK, m_Im3dState);
-    m_VK.Cleanup();
-
+    lvk::FreeIm3d(m_Renderer.m_VK, m_Im3dState);
+    m_Renderer.Shutdown();
     INSTANCE = nullptr;
 }
 
 void turas::Engine::Run()
 {
-    while(m_VK.ShouldRun())
+    while(m_Renderer.m_VK.ShouldRun())
     {
         FrameMark;
         ZoneScopedN("Frame");
@@ -53,7 +52,7 @@ void turas::Engine::Run()
         m_AssetManager.OnUpdate();
         PendingScenes();
         SystemsUpdate();
-        StatsWindow::OnImGuiStatsWindow(m_VK);
+        StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
         SubmitFrame();
     }
 }
@@ -109,14 +108,14 @@ void turas::Engine::CloseAllScenes() {
 
 void turas::Engine::PrepFrame() {
     ZoneScoped;
-    m_VK.PreFrame();
+    m_Renderer.PreFrame();
     Im3d::NewFrame();
 }
 
 void turas::Engine::SubmitFrame() {
     ZoneScoped;
     Im3d::EndFrame();
-    m_VK.PostFrame();
+    m_Renderer.PostFrame();
 }
 
 void turas::Engine::SystemsUpdate() {

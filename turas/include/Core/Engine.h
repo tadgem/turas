@@ -1,12 +1,13 @@
 #pragma once
+#include <type_traits>
 #include "STL/Memory.h"
 #include "STL/Vector.h"
 #include "Core/System.h"
 #include "Assets/AssetManager.h"
-#include "VulkanAPI_SDL.h"
-#include "Im3D/im3d_lvk.h"
-#include <type_traits>
 #include "Debug/Profile.h"
+#include "Rendering/Renderer.h"
+#include "Im3D/im3d_lvk.h"
+#include "VulkanAPI_SDL.h"
 
 namespace turas
 {
@@ -42,8 +43,8 @@ namespace turas
         // main service for retrieving data from disk
         AssetManager            m_AssetManager;
 
-        // interface to GPU (vulkan)
-        lvk::VulkanAPI_SDL      m_VK;
+        // Renders all active views & pipelines
+        Renderer                m_Renderer;
 
         // backend for IM3D
         lvk::LvkIm3dState       m_Im3dState;
