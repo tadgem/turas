@@ -6,10 +6,10 @@
 #include "lvk/Pipeline.h"
 #include "Core/Types.h"
 #include "STL/Memory.h"
-#include "Core/ECS.h"
 
 namespace turas {
 
+    class Scene;
     // pure virtual class, implement per pipeline or use abstractions
     // pass in to pipeline to record commands for associated pipeline state
     // e.g. pass in dependencies to derived type constructor

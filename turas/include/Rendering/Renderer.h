@@ -3,12 +3,18 @@
 //
 
 #pragma once
+#include "STL/HashMap.h"
+#include "STL/Functional.h"
 #include "VulkanAPI_SDL.h"
+#include "Rendering/Pipeline.h"
 
 namespace turas {
+
+    using CreatePipelineCallback = Function<Pipeline*(lvk::VulkanAPI& vk)>;
+
     class Renderer {
     public:
-        Renderer();
+        Renderer() = default;
 
         void Start();
         void Shutdown();
@@ -18,5 +24,8 @@ namespace turas {
 
         // interface to GPU (vulkan)
         lvk::VulkanAPI_SDL      m_VK;
+
+    protected:
+        HashMap<u64, CreatePipelineCallback> p_CreatePipelineCallbacks;
     };
 }

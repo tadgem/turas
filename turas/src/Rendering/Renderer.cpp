@@ -1,10 +1,5 @@
 #include "Rendering/Renderer.h"
 
-
-turas::Renderer::Renderer() {
-
-}
-
 void turas::Renderer::Start() {
     m_VK.Start("Turas", 1280, 720);
 }
