@@ -44,3 +44,5 @@ docs/turas/.obsidian/graph.json
 /.VSCodeCounter
 /cmake-build-debug
 /cmake-build-release
+/cmake-build-debug-visual-studio
+/cmake-build-minsizerel-visual-studio
