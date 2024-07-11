@@ -7,6 +7,7 @@
 #include "STL/Vector.h"
 #include "ThirdParty/ctti/type_id.hpp"
 #include "Core/Types.h"
+#include "STL/Memory.h"
 
 namespace turas {
     template<typename T>
@@ -32,6 +33,8 @@ namespace turas {
             Utils::s_OriginalStrings.emplace(*this, GetTypeName<T>());
 #endif
         }
+
+        TURAS_IMPL_ALLOC(HashString)
 
         u64 m_Value;
 

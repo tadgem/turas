@@ -28,8 +28,6 @@ namespace turas {
 
         CameraSystem();
 
-        TURAS_IMPL_ALLOC(CameraSystem)
-
         void OnEngineReady() override;
         void OnSceneLoaded(Scene *scene) override;
         void OnSceneClosed(Scene *scene) override;
@@ -68,5 +66,6 @@ namespace turas {
             }
         }
 
+        TURAS_IMPL_ALLOC(CameraSystem)
     };
 }

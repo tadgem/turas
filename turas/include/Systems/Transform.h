@@ -49,7 +49,6 @@ namespace turas
         void                    DeserializeSceneBinary(Scene* scene, BinaryInputArchive& input) override;
         Vector<AssetHandle>     GetRequiredAssets(Scene*) override;
 
-        TURAS_IMPL_ALLOC(TransformSystem)
 
         template<typename Archive>
         void save(Archive& ar) const {
@@ -80,6 +79,7 @@ namespace turas
             }
         }
 
+        TURAS_IMPL_ALLOC(TransformSystem)
     };
 }
 CEREAL_REGISTER_TYPE(turas::TransformSystem);

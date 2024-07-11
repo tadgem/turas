@@ -47,14 +47,14 @@ namespace turas {
 
         View(const String& name);
 
-        TURAS_IMPL_ALLOC(View)
-
         template<typename Archive>
         void serialize(Archive& ar)
         {
             ZoneScoped;
             ar(m_Name);
         }
+
+        TURAS_IMPL_ALLOC(View)
 
     };
 }

@@ -14,6 +14,8 @@ namespace turas {
         VkVertexInputBindingDescription             m_BindingDescription;
         Vector<VkVertexInputAttributeDescription>   m_AttributeDescriptions;
         u64                                         m_Hash;
+
+        TURAS_IMPL_ALLOC(VertexLayoutData)
     };
 
     class VertexLayoutDataBuilder
@@ -37,6 +39,7 @@ namespace turas {
         Vector<Attribute>   m_Attributes;
         uint32_t            m_LocationCount = 0;
 
+        TURAS_IMPL_ALLOC(VertexLayoutDataBuilder)
 
     };
 
