@@ -43,8 +43,8 @@ namespace turas {
     class View {
     public:
 
-        String m_Name;
-
+        String  m_Name;
+        u64     m_Hash;
         View(const String& name);
 
         template<typename Archive>
