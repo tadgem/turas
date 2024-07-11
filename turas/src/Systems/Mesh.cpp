@@ -60,7 +60,7 @@ void turas::MeshSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArchive 
 }
 
 turas::Vector<turas::AssetHandle> turas::MeshSystem::GetRequiredAssets(Scene* scene) {
-
+    ZoneScoped;
     Vector<AssetHandle> handles{};
 
     auto meshView = GetSceneRegistry(scene).view<MeshComponent>();
@@ -74,12 +74,13 @@ turas::Vector<turas::AssetHandle> turas::MeshSystem::GetRequiredAssets(Scene* sc
 }
 
 void turas::MeshSystem::OnMeshComponentAdded(entt::registry &reg, entt::entity e) {
-
+    ZoneScoped;
     MeshComponent& mesh = reg.get<MeshComponent>(e);
     FindMeshAsset(mesh);
 }
 
 void turas::MeshSystem::FindMeshAsset(turas::MeshComponent &meshComponent) {
+    ZoneScoped;
     if(meshComponent.m_MeshAsset == nullptr)
     {
         auto* asset = Engine::INSTANCE->m_AssetManager.GetAsset(meshComponent.m_Handle);
@@ -96,5 +97,5 @@ void turas::MeshSystem::FindMeshAsset(turas::MeshComponent &meshComponent) {
 
 turas::MeshComponent::MeshComponent(const turas::AssetHandle &handle, turas::u32 index) : m_Handle(handle), m_EntryIndex(index)
 {
-
+    ZoneScoped;
 }

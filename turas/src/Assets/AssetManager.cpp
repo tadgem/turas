@@ -82,7 +82,7 @@ void ProcessMesh(const turas::String& assetDir, const aiScene* scene, aiMesh* me
     turas::HashMap<turas::Texture::MapType, turas::AssetHandle> maps;
 
     aiMaterial* meshMaterial = scene->mMaterials[mesh->mMaterialIndex];
-    for (int i = 0; i < meshMaterial->mNumProperties; i++)
+    for (unsigned int i = 0; i < meshMaterial->mNumProperties; i++)
     {
         aiMaterialProperty* prop = meshMaterial->mProperties[i];
         if(prop->mSemantic == aiTextureType_NONE || prop->mType != aiPTI_String) {
@@ -172,7 +172,7 @@ turas::AssetLoadReturn LoadModel(const turas::String& path)
                                                              mesh.m_VertexBuffer, mesh.m_VertexBufferMemory );
             turas::Engine::INSTANCE->m_Renderer.m_VK.CreateIndexBuffer(modelAsset->m_Entries[i].m_Mesh->m_IndexData,
                                                              mesh.m_IndexBuffer, mesh.m_IndexBufferMemory);
-            mesh.m_IndexCount = modelAsset->m_Entries[i].m_Mesh->m_IndexData.size();
+            mesh.m_IndexCount = static_cast<uint32_t>(modelAsset->m_Entries[i].m_Mesh->m_IndexData.size());
             modelAsset->m_Entries[i].m_Mesh->m_LvkMesh = mesh;
         });
     }
@@ -200,7 +200,7 @@ turas::AssetLoadReturn LoadTexture(const turas::String& path)
         auto* t = new lvk::Texture(lvk::Texture::CreateTextureFromMemory(
                 turas::Engine::INSTANCE->m_Renderer.m_VK,
                 textureAsset->m_TextureData.data(),
-                textureAsset->m_TextureData.size(),
+                static_cast<uint32_t>(textureAsset->m_TextureData.size()),
                 VK_FORMAT_R8G8B8A8_UNORM));
         textureAsset->m_Texture = t;
     };
