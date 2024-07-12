@@ -26,17 +26,23 @@ namespace turas {
 
         Renderer() = default;
 
-        void    Start();
-        void    Shutdown();
+        void        Start();
+        void        Shutdown();
 
-        void    PreFrame();
-        void    PostFrame();
+        void        PreFrame();
+        void        PostFrame();
 
-        bool    AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
-        bool    RemovePipelineTemplate(u64 hash);
+        bool        AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
+        bool        RemovePipelineTemplate(u64 hash);
 
-        View*   CreateView(const String& name, u64 pipelineHash);
-        void    DestroyView(const String& name);
+        View*       CreateView(const String& name, u64 pipelineHash);
+        void        DestroyView(const String& name);
+
+        View*       GetView(const String& name);
+        View*       GetView(u64 nameHash);
+
+        Pipeline*   GetViewPipeline(const String& name);
+        Pipeline*   GetViewPipeline(u64 nameHash);
 
         // interface to GPU (vulkan)
         lvk::VulkanAPI_SDL      m_VK;

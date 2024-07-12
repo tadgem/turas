@@ -30,8 +30,7 @@ bool turas::Renderer::AddPipelineTemplate(turas::u64 hash, const turas::CreatePi
 }
 
 bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash) {
-    if(p_CreatePipelineCallbacks.find(hash) == p_CreatePipelineCallbacks.end())
-    {
+    if(p_CreatePipelineCallbacks.find(hash) == p_CreatePipelineCallbacks.end())    {
         return false;
     }
 
@@ -40,29 +39,48 @@ bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash) {
 }
 
 turas::View *turas::Renderer::CreateView(const turas::String &name, turas::u64 pipelineHash) {
-    if(p_CreatePipelineCallbacks.find(pipelineHash) == p_CreatePipelineCallbacks.end())
-    {
+    if(p_CreatePipelineCallbacks.find(pipelineHash) == p_CreatePipelineCallbacks.end()) {
         // cant create a pipeline for this view
         return nullptr;
     }
 
     Pipeline* p = p_CreatePipelineCallbacks[pipelineHash]((Renderer*)this);
-
     u64 viewNameHash = Utils::Hash(name);
 
     m_ViewData.emplace(viewNameHash, ViewData {CreateUnique<View>(name), UPtr<Pipeline>(p)});
     return m_ViewData[viewNameHash].m_View.get();
-
 }
 
 void turas::Renderer::DestroyView(const turas::String &name) {
-
     u64 hash = Utils::Hash(name);
     if(m_ViewData.find(hash) == m_ViewData.end())
     {
         return;
     }
+}
 
+turas::View *turas::Renderer::GetView(const turas::String& name) {
+    return GetView(Utils::Hash(name));
+}
 
+turas::View *turas::Renderer::GetView(turas::u64 nameHash) {
+    if(m_ViewData.find(nameHash) == m_ViewData.end())
+    {
+        return nullptr;
+    }
 
+    return m_ViewData[nameHash].m_View.get();
+}
+
+turas::Pipeline *turas::Renderer::GetViewPipeline(turas::u64 nameHash) {
+    if(m_ViewData.find(nameHash) == m_ViewData.end())
+    {
+        return nullptr;
+    }
+
+    return m_ViewData[nameHash].m_Pipeline.get();
+}
+
+turas::Pipeline *turas::Renderer::GetViewPipeline(const turas::String &name) {
+    return GetViewPipeline(Utils::Hash(name));
 }
