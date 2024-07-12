@@ -28,11 +28,8 @@ int main(int argc, char** argv)
     app.AddSystem<turas::TransformSystem>();
     app.AddSystem<turas::MeshSystem>();
     app.AddSystem<turas::CameraSystem>();
-    app.CreateScene("Test1");
-    app.CreateScene("Test2");
     app.Init();
     app.Run();
-
     app.Shutdown();
     return 0;
 }

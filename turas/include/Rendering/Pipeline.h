@@ -6,6 +6,7 @@
 #include "lvk/Pipeline.h"
 #include "Core/Types.h"
 #include "STL/Memory.h"
+#include "STL/Vector.h"
 
 namespace turas {
 
@@ -21,10 +22,22 @@ namespace turas {
         virtual void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, Scene* scene) = 0;
     };
 
+    // use this to update uniform or any other kind of per frame buffers
+    class PipelineStateUpdater
+    {
+    public:
+        virtual void OnUpdateState(Scene* scene) = 0;
+    };
+
     class Pipeline {
     public:
 
         UPtr<PipelineCommandDispatcher> m_Renderer;
+        UPtr<PipelineStateUpdater>      m_StateUpdater;
+
+        lvk::Pipeline                   m_LvkPipeline;
+
+        void Free(lvk::VulkanAPI& vk);
 
         TURAS_IMPL_ALLOC(Pipeline)
     };

@@ -13,9 +13,11 @@ void turas::Renderer::Shutdown() {
 
 void turas::Renderer::PreFrame() {
     m_VK.PreFrame();
+    VkCommandBuffer& cmd = m_VK.BeginGraphicsCommands(m_VK.GetFrameIndex());
 }
 
 void turas::Renderer::PostFrame() {
+    m_VK.EndGraphicsCommands(m_VK.GetFrameIndex());
     m_VK.PostFrame();
 }
 
