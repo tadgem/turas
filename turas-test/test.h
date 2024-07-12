@@ -12,6 +12,7 @@
 #include "Systems/Transform.h"
 #include "Systems/Mesh.h"
 #include "Rendering/VertexLayouts.h"
+#include "Rendering/Renderer.h"
 
 inline static turas::Vector<turas::Procedure> s_Tests = {};
 

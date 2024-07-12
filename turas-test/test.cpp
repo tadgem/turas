@@ -419,6 +419,19 @@ TEST(
 }
 )
 
+TEST(
+    {
+        turas::Engine e;
+        e.Init();
+        e.m_Renderer.AddPipelineTemplate(turas::Utils::Hash("Sample"), [](turas::Renderer* vk) -> turas::Pipeline*
+        {
+            return nullptr;
+        });
+
+
+        e.Shutdown();
+    }
+)
 
 
 

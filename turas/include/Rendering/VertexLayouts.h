@@ -6,6 +6,7 @@
 #include "lvk/Mesh.h"
 #include "Core/Types.h"
 #include "STL/Vector.h"
+#include "STL/Memory.h"
 
 namespace turas {
 

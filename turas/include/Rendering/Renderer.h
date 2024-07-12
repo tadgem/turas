@@ -8,29 +8,39 @@
 #include "VulkanAPI_SDL.h"
 #include "Rendering/Pipeline.h"
 #include "Rendering/View.h"
+#include "Im3D/im3d_lvk.h"
 namespace turas {
 
-    using CreatePipelineCallback = Function<Pipeline*(lvk::VulkanAPI& vk)>;
+    class Renderer;
+
+    using CreatePipelineCallback = Function<Pipeline*(Renderer*)>;
 
     class Renderer {
     public:
 
         struct ViewData
         {
-            UPtr<View>      m_View;
-            UPtr<Pipeline>  m_Pipeline;
+            UPtr<View>              m_View;
+            UPtr<Pipeline>          m_Pipeline;
         };
 
         Renderer() = default;
 
-        void Start();
-        void Shutdown();
+        void    Start();
+        void    Shutdown();
 
-        void PreFrame();
-        void PostFrame();
+        void    PreFrame();
+        void    PostFrame();
+
+        bool    AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
+        bool    RemovePipelineTemplate(u64 hash);
+
+        View*   CreateView(const String& name, u64 pipelineHash);
+        void    DestroyView(const String& name);
 
         // interface to GPU (vulkan)
         lvk::VulkanAPI_SDL      m_VK;
+        lvk::LvkIm3dState       m_Im3dState;
 
         TURAS_IMPL_ALLOC(Renderer)
 

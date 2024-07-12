@@ -4,6 +4,8 @@
 #include "STL/String.h"
 #include "Systems/Transform.h"
 #include "Systems/Mesh.h"
+#include "Systems/Camera.h"
+
 #include "Core/ECS.h"
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
@@ -25,6 +27,7 @@ int main(int argc, char** argv)
     turas::Engine app;
     app.AddSystem<turas::TransformSystem>();
     app.AddSystem<turas::MeshSystem>();
+    app.AddSystem<turas::CameraSystem>();
     app.CreateScene("Test1");
     app.CreateScene("Test2");
     app.Init();
