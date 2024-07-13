@@ -9,6 +9,8 @@
 #include "Rendering/Pipeline.h"
 #include "Rendering/View.h"
 #include "Im3D/im3d_lvk.h"
+#include "lvk/Shader.h"
+
 namespace turas {
 
     class Renderer;
@@ -22,27 +24,35 @@ namespace turas {
         {
             UPtr<View>              m_View;
             UPtr<Pipeline>          m_Pipeline;
+
+            void Free(lvk::VulkanAPI& vk);
         };
 
         Renderer() = default;
 
-        void        Start();
-        void        Shutdown();
+        void                Start();
+        void                Shutdown();
 
-        void        PreFrame();
-        void        PostFrame();
+        void                PreFrame();
+        void                PostFrame();
 
-        bool        AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
-        bool        RemovePipelineTemplate(u64 hash);
+        bool                AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
+        bool                RemovePipelineTemplate(u64 hash);
 
-        View*       CreateView(const String& name, u64 pipelineHash);
-        void        DestroyView(const String& name);
+        bool                AddShader(u64 shaderNameHash, lvk::ShaderProgram* shader);
+        bool                RemoveShader(u64 shaderNameHash);
 
-        View*       GetView(const String& name);
-        View*       GetView(u64 nameHash);
+        View*               CreateView(const String& name, u64 pipelineHash);
+        bool                DestroyView(const String& name);
 
-        Pipeline*   GetViewPipeline(const String& name);
-        Pipeline*   GetViewPipeline(u64 nameHash);
+        View*               GetView(const String& name);
+        View*               GetView(u64 nameHash);
+
+        Pipeline*           GetViewPipeline(const String& name);
+        Pipeline*           GetViewPipeline(u64 nameHash);
+
+        lvk::ShaderProgram* GetShaderProgram(const String& name);
+        lvk::ShaderProgram* GetShaderProgram(u64 hash);
 
         // interface to GPU (vulkan)
         lvk::VulkanAPI_SDL      m_VK;
@@ -50,8 +60,8 @@ namespace turas {
 
         TURAS_IMPL_ALLOC(Renderer)
 
-        HashMap<u64, ViewData>  m_ViewData;
-
+        HashMap<u64, ViewData>                      m_ViewData;
+        HashMap<u64, UPtr<lvk::ShaderProgram>>      m_Shaders;
     protected:
         HashMap<u64, CreatePipelineCallback> p_CreatePipelineCallbacks;
     };

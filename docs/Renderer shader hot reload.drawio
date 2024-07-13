@@ -1,0 +1,52 @@
+<mxfile host="Electron" modified="2024-07-13T17:29:25.220Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="j8Z0J2dk-c2Ex1w2GTTG" version="24.6.4" type="device">
+  <diagram name="Page-1" id="AoZBgNgJgA8oX43OP7rN">
+    <mxGraphModel dx="757" dy="681" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-2" value="Shader Source" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="380" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-5" value="Shader Biinary" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-6" value="Pipeline" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="140" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-7" value="Renderer" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="04FXyWO5N9l0YGxAT1qH-10" target="04FXyWO5N9l0YGxAT1qH-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-10" value="Renderer" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="490" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-12" value="Shader Source" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="590" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-15" value="If renderer observes change to shader source state, kick off rebuild of associated shader binary" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="220" y="500" width="210" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="04FXyWO5N9l0YGxAT1qH-17" target="04FXyWO5N9l0YGxAT1qH-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-17" value="Renderer" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="490" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-18" value="Shader Biinary" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="580" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-20" value="If renderer observes change to shader binary file, reload all shader programs, then rebuild all view pipelines -&amp;gt; Fire pipelines rebuilt event?&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="500" width="210" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-21" value="Shader Program" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="04FXyWO5N9l0YGxAT1qH-22" value="Shader Sources + Binaries need to be separate from assets&lt;div&gt;to handle synchronous loads&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="713" width="340" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

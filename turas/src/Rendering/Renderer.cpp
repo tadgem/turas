@@ -61,13 +61,17 @@ turas::View *turas::Renderer::CreateView(const turas::String &name, turas::u64 p
     return m_ViewData[viewNameHash].m_View.get();
 }
 
-void turas::Renderer::DestroyView(const turas::String &name) {
+bool turas::Renderer::DestroyView(const turas::String &name) {
     ZoneScoped;
     u64 hash = Utils::Hash(name);
     if(m_ViewData.find(hash) == m_ViewData.end())
     {
-        return;
+        return false;
     }
+
+    m_ViewData[hash].Free(m_VK);
+    m_ViewData.erase(hash);
+    return true;
 }
 
 turas::View *turas::Renderer::GetView(const turas::String& name) {
@@ -98,4 +102,47 @@ turas::Pipeline *turas::Renderer::GetViewPipeline(turas::u64 nameHash) {
 turas::Pipeline *turas::Renderer::GetViewPipeline(const turas::String &name) {
     ZoneScoped;
     return GetViewPipeline(Utils::Hash(name));
+}
+
+bool turas::Renderer::AddShader(turas::u64 shaderNameHash, lvk::ShaderProgram* shader)
+{
+    ZoneScoped;
+    if(m_Shaders.find(shaderNameHash) != m_Shaders.end())
+    {
+        return false;
+    }
+    m_Shaders.emplace(shaderNameHash,  UPtr<lvk::ShaderProgram>(shader));
+    return true;
+}
+
+
+bool turas::Renderer::RemoveShader(turas::u64 shaderNameHash) {
+    ZoneScoped;
+    if(m_Shaders.find(shaderNameHash) == m_Shaders.end())
+    {
+        return false;
+    }
+    m_Shaders[shaderNameHash]->Free(m_VK);
+    m_Shaders.erase(shaderNameHash);
+    return true;
+}
+
+lvk::ShaderProgram *turas::Renderer::GetShaderProgram(const turas::String &name) {
+    ZoneScoped;
+    u64 hash = Utils::Hash(name);
+    return GetShaderProgram(hash);
+}
+
+lvk::ShaderProgram *turas::Renderer::GetShaderProgram(turas::u64 hash) {
+    ZoneScoped;
+    if(m_Shaders.find(hash) == m_Shaders.end())
+    {
+        return nullptr;
+    }
+
+    return m_Shaders[hash].get();
+}
+
+void turas::Renderer::ViewData::Free(lvk::VulkanAPI &vk) {
+    ZoneScoped;
 }
