@@ -14,10 +14,12 @@ set(SKIP_PERFORMANCE_COMPARISON TRUE CACHE BOOL "Disable perf. comparison which 
 add_subdirectory(submodules/cereal)
 add_subdirectory(submodules/entt)
 add_subdirectory(submodules/lvk)
+add_subdirectory(submodules/efsw)
 add_subdirectory(third-party/tracy)
 
 set(CEREAL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/submodules/cereal/include)
 set(ENTT_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/submodules/entt/src)
+set(EFSW_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/submodules/efsw/include)
 set(TRACY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/third-party/tracy/public)
 
 add_subdirectory(turas)

@@ -25,7 +25,7 @@ endforeach()
 
 add_library(${PROJECT_NAME} STATIC ${CORE_SRC_FILES} ${CORE_HEADER_FILES} ${CORE_HEADERPP_FILES})
 
-set(TURAS_INCLUDES ${LVK_SDL_INCLUDES} ${CEREAL_INCLUDES} ${ENTT_INCLUDES} ${ASSIMP_INCLUDES} ${TRACY_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
+set(TURAS_INCLUDES ${LVK_SDL_INCLUDES} ${CEREAL_INCLUDES} ${ENTT_INCLUDES} ${ASSIMP_INCLUDES} ${TRACY_INCLUDES} ${EFSW_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
 
 target_include_directories (${PROJECT_NAME} PUBLIC ${TURAS_INCLUDES})
 
@@ -35,5 +35,5 @@ if (MSVC)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,Release>:ProgramDatabase>")
 endif ()
 
-target_link_libraries (${PROJECT_NAME} lvk-sdl cereal assimp TracyClient)
+target_link_libraries (${PROJECT_NAME} lvk-sdl cereal assimp TracyClient efsw)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

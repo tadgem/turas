@@ -14,6 +14,11 @@ void turas::Engine::Init() {
     spdlog::info("Initialising Turas");
     m_Renderer.Start();
     m_Im3dState = lvk::LoadIm3D(m_Renderer.m_VK);
+    m_FileWatcher = CreateUnique<efsw::FileWatcher>();
+    m_UpdateListener = CreateUnique<TurasFilesystemListener>();
+    m_GlobalProjectWatchId = m_FileWatcher->addWatch(".", m_UpdateListener.get(), true);
+    // Perhaps other sources of watch?
+    m_FileWatcher->watch();
     for(auto& sys : m_EngineSubSystems)
     {
         sys->OnEngineReady();
@@ -22,6 +27,9 @@ void turas::Engine::Init() {
 
 void turas::Engine::Shutdown() {
     ZoneScoped;
+    m_FileWatcher->removeWatch(m_GlobalProjectWatchId);
+    // remove other watch sources;
+
     CloseAllScenes();
 
     for(auto& scene : m_ActiveScenes)
@@ -175,4 +183,29 @@ turas::AssetLoadProgress turas::Engine::GetSceneLoadProgress(turas::Scene *scene
     }
 
     return turas::AssetLoadProgress::NotLoaded;
+}
+
+void turas::TurasFilesystemListener::handleFileAction(efsw::WatchID watchid, const std::string &dir,
+                                                      const std::string &filename, efsw::Action action,
+                                                      std::string oldFilename){
+        switch ( action ) {
+            case efsw::Actions::Add:
+                std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Added"
+                          << std::endl;
+                break;
+            case efsw::Actions::Delete:
+                std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Delete"
+                          << std::endl;
+                break;
+            case efsw::Actions::Modified:
+                std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified"
+                          << std::endl;
+                break;
+            case efsw::Actions::Moved:
+                std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Moved from ("
+                          << oldFilename << ")" << std::endl;
+                break;
+            default:
+                std::cout << "Should never happen!" << std::endl;
+        }
 }

@@ -8,10 +8,20 @@
 #include "Rendering/Renderer.h"
 #include "Im3D/im3d_lvk.h"
 #include "VulkanAPI_SDL.h"
+#include "efsw/efsw.hpp"
 
 namespace turas
 {
     class Scene;
+
+    class TurasFilesystemListener : public efsw::FileWatchListener
+    {
+    public:
+        void handleFileAction( efsw::WatchID watchid, const std::string& dir,
+                               const std::string& filename, efsw::Action action,
+                               std::string oldFilename ) override;
+    };
+
     class Engine
     {
     public:
@@ -48,6 +58,10 @@ namespace turas
 
         // backend for IM3D
         lvk::LvkIm3dState       m_Im3dState;
+
+        UPtr<efsw::FileWatcher>         m_FileWatcher;
+        UPtr<TurasFilesystemListener>   m_UpdateListener;
+        efsw::WatchID                   m_GlobalProjectWatchId;
 
         template<typename _Ty, typename ... Args>
         _Ty* AddSystem(Args &&... args)
