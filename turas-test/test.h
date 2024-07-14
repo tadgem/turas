@@ -11,6 +11,7 @@
 #include "STL/Functional.h"
 #include "Systems/Transform.h"
 #include "Systems/Mesh.h"
+#include "Systems/Camera.h"
 #include "Rendering/VertexLayouts.h"
 #include "Rendering/Renderer.h"
 

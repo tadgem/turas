@@ -12,6 +12,10 @@ namespace turas
     {
     public:
         TURAS_IMPL_ALLOC(Project)
+
+        // store project name
+        // store all shaders here
+        // store all serialized scene paths
     };
 }
 #endif //TURAS_ALL_PROJECT_H

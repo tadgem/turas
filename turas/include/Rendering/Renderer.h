@@ -47,19 +47,16 @@ namespace turas {
 
         View*               GetView(const String& name);
         View*               GetView(u64 nameHash);
-
         Pipeline*           GetViewPipeline(const String& name);
         Pipeline*           GetViewPipeline(u64 nameHash);
-
         lvk::ShaderProgram* GetShaderProgram(const String& name);
         lvk::ShaderProgram* GetShaderProgram(u64 hash);
+
+        TURAS_IMPL_ALLOC(Renderer)
 
         // interface to GPU (vulkan)
         lvk::VulkanAPI_SDL      m_VK;
         lvk::LvkIm3dState       m_Im3dState;
-
-        TURAS_IMPL_ALLOC(Renderer)
-
         HashMap<u64, ViewData>                      m_ViewData;
         HashMap<u64, UPtr<lvk::ShaderProgram>>      m_Shaders;
     protected:

@@ -317,6 +317,42 @@ TEST(
     e.Shutdown();
 });
 
+
+TEST(
+    {
+        turas::Engine e;
+        auto &transformSystem = *e.AddSystem<turas::CameraSystem>();
+        e.Init();
+        auto* s = e.CreateScene("Test");
+        auto ent = s->CreateEntity();
+        auto &trans = s->AddComponent<turas::CameraComponent>(ent);
+        trans.m_Camera.m_Height = 12345;
+        auto data = s->SaveBinary();
+        std::stringstream dataStream {};
+
+        {
+            turas::BinaryOutputArchive outputArchive(dataStream);
+            outputArchive(data);
+        }
+
+        turas::BinaryInputArchive serialized_data(dataStream);
+
+        e.CloseScene(s);
+
+        auto* s2 = e.LoadScene(serialized_data);
+
+        while(e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded)
+        {
+            e.m_AssetManager.OnUpdate();
+            e.PendingScenes();
+        }
+
+        assert(s2->m_Name == "Test");
+        assert(s2->HasComponent<turas::CameraComponent>(ent));
+        assert(s2->GetComponent<turas::CameraComponent>(ent).m_Camera.m_Height == 12345);
+        e.Shutdown();
+    });
+
 TEST(
 {
     turas::Engine e;
