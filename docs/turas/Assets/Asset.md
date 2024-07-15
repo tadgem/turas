@@ -1,0 +1,1 @@
+An asset is any file that is loaded from disk and loaded asynchronously as it is required by the game

@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "LVK - Link.md",
+                "file": "Rendering/Renderer.md",
                 "mode": "source",
                 "source": false
               }
@@ -99,7 +99,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "LVK - Link.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -116,7 +115,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "LVK - Link.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,9 +136,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "LVK - Link.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -160,14 +156,21 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "99666ef09864dbb6",
+  "active": "5a074b1cb089cfcd",
   "lastOpenFiles": [
-    "Assets",
-    "Welcome.md",
-    "LVK - Link.md",
+    "Rendering/Renderer.md",
+    "ECS/Scene.md",
+    "Assets/Asset Manager.md",
+    "Assets/Asset.md",
     "Rendering/View.md",
+    "LVK.md",
+    "Rendering/Shaders.md",
     "Rendering/Vector Graphics.md",
     "Rendering/Pipeline.md",
+    "Shader.md",
+    "ECS",
+    "Assets",
+    "Welcome.md",
     "Rendering"
   ]
 }

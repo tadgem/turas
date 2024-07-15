@@ -1,0 +1,1 @@
+The asset manager is responsible for loading [[Asset]]s asynchronously from disk
