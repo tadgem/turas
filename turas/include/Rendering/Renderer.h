@@ -8,8 +8,8 @@
 #include "VulkanAPI_SDL.h"
 #include "Rendering/Pipeline.h"
 #include "Rendering/View.h"
+#include "Rendering/Shader.h"
 #include "Im3D/im3d_lvk.h"
-#include "lvk/Shader.h"
 
 namespace turas {
 
@@ -39,9 +39,6 @@ namespace turas {
         bool                AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
         bool                RemovePipelineTemplate(u64 hash);
 
-        bool                AddShader(u64 shaderNameHash, lvk::ShaderProgram* shader);
-        bool                RemoveShader(u64 shaderNameHash);
-
         View*               CreateView(const String& name, u64 pipelineHash);
         bool                DestroyView(const String& name);
 
@@ -49,17 +46,19 @@ namespace turas {
         View*               GetView(u64 nameHash);
         Pipeline*           GetViewPipeline(const String& name);
         Pipeline*           GetViewPipeline(u64 nameHash);
-        lvk::ShaderProgram* GetShaderProgram(const String& name);
-        lvk::ShaderProgram* GetShaderProgram(u64 hash);
+        Shader*             GetShaderProgram(const String& name);
+        Shader*             GetShaderProgram(u64 hash);
 
         TURAS_IMPL_ALLOC(Renderer)
 
         // interface to GPU (vulkan)
-        lvk::VulkanAPI_SDL      m_VK;
-        lvk::LvkIm3dState       m_Im3dState;
-        HashMap<u64, ViewData>                      m_ViewData;
-        HashMap<u64, UPtr<lvk::ShaderProgram>>      m_Shaders;
+        lvk::VulkanAPI_SDL                  m_VK;
+        lvk::LvkIm3dState                   m_Im3dState;
+
     protected:
-        HashMap<u64, CreatePipelineCallback> p_CreatePipelineCallbacks;
+        HashMap<u64, CreatePipelineCallback>    p_CreatePipelineCallbacks;
+        HashMap<u64, ViewData>                  p_ViewData;
+        HashMap<u64, UPtr<Shader>>              p_Shaders;
+        HashMap<String, ShaderStageBinary>      p_ShaderBinaries;
     };
 }
