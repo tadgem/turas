@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Rendering/Renderer.md",
+                "file": "Assets/Asset.md",
                 "mode": "source",
                 "source": false
               }
@@ -99,6 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Assets/Asset.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,6 +116,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Assets/Asset.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -136,7 +138,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Assets/Asset.md"
+              }
             }
           }
         ]
@@ -156,17 +160,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5a074b1cb089cfcd",
+  "active": "f33905874f00b7c3",
   "lastOpenFiles": [
-    "Rendering/Renderer.md",
-    "ECS/Scene.md",
     "Assets/Asset Manager.md",
+    "ECS/Scene.md",
     "Assets/Asset.md",
     "Rendering/View.md",
-    "LVK.md",
-    "Rendering/Shaders.md",
     "Rendering/Vector Graphics.md",
+    "Rendering/Shaders.md",
+    "Rendering/Renderer.md",
     "Rendering/Pipeline.md",
+    "Notes/CMake Shader Compilation.md",
+    "Notes",
+    "LVK.md",
     "Shader.md",
     "ECS",
     "Assets",

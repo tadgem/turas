@@ -2,21 +2,20 @@
 #include "lvk/Shader.h"
 #include "STL/String.h"
 #include "STL/Vector.h"
+#include "Core/Serialization.h"
 
 namespace turas {
-    using ShaderStageBinary = Vector<u8>;
 
-    enum class ShaderStageType
+    struct ShaderBinary
     {
-        Vertex,
-        Fragment,
-        Compute
+        Vector<u8>  m_Binary;
+        String      m_Path;
     };
 
     class Shader {
     public:
         String              m_ShaderName;
-        String              m_ShaderPath;
         lvk::ShaderProgram  m_ShaderProgram;
+        Vector<String>      m_StagePaths;
     };
 }
