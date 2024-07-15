@@ -120,6 +120,10 @@ turas::Shader* turas::Renderer::GetShaderProgram(turas::u64 hash) {
     return p_Shaders[hash].get();
 }
 
+void turas::Renderer::LoadShaders() {
+    // Load all files ending in .spv in the shaders directory/
+}
+
 void turas::Renderer::ViewData::Free(lvk::VulkanAPI &vk) {
     ZoneScoped;
 }

@@ -59,6 +59,8 @@ namespace turas {
         HashMap<u64, CreatePipelineCallback>    p_CreatePipelineCallbacks;
         HashMap<u64, ViewData>                  p_ViewData;
         HashMap<u64, UPtr<Shader>>              p_Shaders;
-        HashMap<String, ShaderStageBinary>      p_ShaderBinaries;
+        HashMap<String, ShaderBinary>           p_ShaderBinaries;
+
+        void LoadShaders();
     };
 }

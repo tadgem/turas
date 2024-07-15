@@ -3,14 +3,10 @@
 #include "STL/String.h"
 #include "STL/Vector.h"
 #include "Core/Serialization.h"
-
+#include "Core/Types.h"
 namespace turas {
 
-    struct ShaderBinary
-    {
-        Vector<u8>  m_Binary;
-        String      m_Path;
-    };
+    using ShaderBinary = Vector<u8>;
 
     class Shader {
     public:
