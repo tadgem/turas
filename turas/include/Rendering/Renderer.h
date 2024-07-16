@@ -46,8 +46,6 @@ namespace turas {
         View*               GetView(u64 nameHash);
         Pipeline*           GetViewPipeline(const String& name);
         Pipeline*           GetViewPipeline(u64 nameHash);
-        Shader*             GetShaderProgram(const String& name);
-        Shader*             GetShaderProgram(u64 hash);
 
         TURAS_IMPL_ALLOC(Renderer)
 

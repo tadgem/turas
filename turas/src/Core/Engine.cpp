@@ -256,10 +256,11 @@ bool turas::Engine::SaveProject() {
         return false;
     }
 
+    return true;
 }
 
 void turas::Engine::ChangeWorkingDirectory(const turas::String &newDirectory) {
-    C
+    std::filesystem::current_path(newDirectory);
 }
 
 void turas::Engine::CopyShadersToProject() {
