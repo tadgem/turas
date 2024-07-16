@@ -3,13 +3,13 @@
 #include "STL/Memory.h"
 #include "STL/Vector.h"
 #include "Core/System.h"
+#include "Core/Project.h"
 #include "Assets/AssetManager.h"
 #include "Debug/Profile.h"
 #include "Rendering/Renderer.h"
 #include "Im3D/im3d_lvk.h"
 #include "VulkanAPI_SDL.h"
 #include "efsw/efsw.hpp"
-
 namespace turas
 {
     class Scene;
@@ -31,6 +31,10 @@ namespace turas
         void Shutdown();
         void Run();
 
+        bool    LoadProject(const String& path);
+        bool    CreateProject(const String& name, const String& projectDir);
+        bool    SaveProject();
+
         Scene*              CreateScene(const String& name);
         Scene*              LoadScene(BinaryInputArchive& archive);
         void                CloseScene(Scene* scene);
@@ -43,22 +47,20 @@ namespace turas
 
         // Subsystems of the engine, used to have ProgramComponents and Systems, roll them into a system
         Vector<UPtr<System>>    m_EngineSubSystems;
-
         // Collection of all running scenes, each ECS in this collection will be processed + rendered each frame
         Vector<UPtr<Scene>>     m_ActiveScenes;
-
         // Scenes not yet loaded due to remaining asset load tasks
         Vector<Scene*>          m_PendingScenes;
-
         // main service for retrieving data from disk
         AssetManager            m_AssetManager;
-
         // Renders all active views & pipelines
         Renderer                m_Renderer;
-
         // backend for IM3D
         lvk::LvkIm3dState       m_Im3dState;
+        // name + serialized scene info. Working directory is project file directory
+        UPtr<Project>           m_Project;
 
+        // File watchers should be p_DebugUpdateEnabled only
         UPtr<efsw::FileWatcher>         m_FileWatcher;
         UPtr<TurasFilesystemListener>   m_UpdateListener;
         efsw::WatchID                   m_GlobalProjectWatchId;
@@ -76,10 +78,15 @@ namespace turas
         void SubmitFrame();
         void SystemsUpdate();
         void PendingScenes();
+
+        inline bool IsDebugEnabled() { return p_DebugUpdateEnabled;}
     protected:
 
-        bool p_DebugUpdateEnabled;
+        void ChangeWorkingDirectory(const String& newDirectory);
+        void CopyShadersToProject();
 
+        bool p_DebugUpdateEnabled;
+        void DebugInit();
         void DebugUpdate();
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;

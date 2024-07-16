@@ -109,7 +109,7 @@ turas::Pipeline *turas::Renderer::GetViewPipeline(const turas::String &name) {
 
 void turas::Renderer::LoadShaderBinaries() {
     // Load all files ending in .spv in the shaders directory (recursively)
-    Vector<String> shaders = Utils::GetFilesInDirectory("../shaders/");
+    Vector<String> shaders = Utils::GetFilesInDirectory("shaders/");
     for(auto& path : shaders)
     {
         if(path.find(".spv") < path.size())

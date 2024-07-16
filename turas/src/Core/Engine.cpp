@@ -3,11 +3,15 @@
 #include "Core/ECS.h"
 #include "spdlog/spdlog.h"
 #include "Debug/StatsWindow.h"
+#ifdef WIN32
+#include "windows.h"
+#endif
 
 turas::Engine::Engine(bool enableDebugUpdate) : p_DebugUpdateEnabled(enableDebugUpdate)
 {
     ZoneScoped;
     INSTANCE = this;
+    ChangeWorkingDirectory("../");
 }
 
 void turas::Engine::Init() {
@@ -15,11 +19,7 @@ void turas::Engine::Init() {
     spdlog::info("Initialising Turas");
     m_Renderer.Start();
     m_Im3dState = lvk::LoadIm3D(m_Renderer.m_VK);
-    m_FileWatcher = CreateUnique<efsw::FileWatcher>();
-    m_UpdateListener = CreateUnique<TurasFilesystemListener>();
-    m_GlobalProjectWatchId = m_FileWatcher->addWatch(".", m_UpdateListener.get(), true);
-    // Perhaps other sources of watch?
-    m_FileWatcher->watch();
+    DebugInit();
     for(auto& sys : m_EngineSubSystems)
     {
         sys->OnEngineReady();
@@ -28,8 +28,12 @@ void turas::Engine::Init() {
 
 void turas::Engine::Shutdown() {
     ZoneScoped;
-    m_FileWatcher->removeWatch(m_GlobalProjectWatchId);
-    // remove other watch sources;
+
+    if(p_DebugUpdateEnabled)
+    {
+        m_FileWatcher->removeWatch(m_GlobalProjectWatchId);
+        // remove other watch sources;
+    }
 
     CloseAllScenes();
 
@@ -194,6 +198,72 @@ void turas::Engine::DebugUpdate() {
 
     m_Renderer.OnImGui();
     StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
+}
+
+void turas::Engine::DebugInit() {
+    if(!p_DebugUpdateEnabled)
+    {
+        return;
+    }
+    m_FileWatcher           = CreateUnique<efsw::FileWatcher>();
+    m_UpdateListener        = CreateUnique<TurasFilesystemListener>();
+    m_GlobalProjectWatchId  = m_FileWatcher->addWatch(".", m_UpdateListener.get(), true);
+    // Perhaps other sources of watch?
+    m_FileWatcher->watch();
+}
+
+bool turas::Engine::LoadProject(const turas::String &path)
+{
+    if(m_Project.get() != nullptr)
+    {
+        return false;
+    }
+    // Deserialize project binary
+    // change working directory to project dir
+    // if debug copy shaders to directory
+    if(p_DebugUpdateEnabled)
+    {
+        CopyShadersToProject();
+    }
+    // update renderer to reload all shaders
+    // load default scene
+    return true;
+}
+
+bool turas::Engine::CreateProject(const turas::String &name, const turas::String &projectDir) {
+    if(m_Project.get() != nullptr)
+    {
+        return false;
+    }
+    m_Project = CreateUnique<Project>(name);
+    // change working directory to projectDir
+    ChangeWorkingDirectory(projectDir);
+    // save project to specified path
+    SaveProject();
+    // if debug copy shaders to directory
+    if(p_DebugUpdateEnabled)
+    {
+        CopyShadersToProject();
+    }
+    // update renderer to reload all shaders
+    // create default scene
+    return true;
+}
+
+bool turas::Engine::SaveProject() {
+    if(m_Project.get() == nullptr)
+    {
+        return false;
+    }
+
+}
+
+void turas::Engine::ChangeWorkingDirectory(const turas::String &newDirectory) {
+    C
+}
+
+void turas::Engine::CopyShadersToProject() {
+
 }
 
 void turas::TurasFilesystemListener::handleFileAction(efsw::WatchID watchid, const std::string &dir,
