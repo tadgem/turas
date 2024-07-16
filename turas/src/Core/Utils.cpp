@@ -44,6 +44,13 @@ turas::Vector<turas::String> turas::Utils::GetFilesInDirectory(const turas::Stri
     return ret;
 }
 
+turas::String turas::Utils::GetFilenameFromPath(const turas::String &fname) {
+    size_t pos = fname.find_last_of("\\/");
+    return (String::npos == pos)
+           ? ""
+           : fname.substr(pos + 1, fname.size() - 1);
+}
+
 
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
 {

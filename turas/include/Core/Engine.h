@@ -25,7 +25,7 @@ namespace turas
     class Engine
     {
     public:
-        Engine();
+        Engine(bool enableDebugUpdate = true);
 
         void Init();
         void Shutdown();
@@ -78,6 +78,9 @@ namespace turas
         void PendingScenes();
     protected:
 
+        bool p_DebugUpdateEnabled;
+
+        void DebugUpdate();
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;
 #endif

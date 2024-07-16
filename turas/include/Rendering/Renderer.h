@@ -58,9 +58,12 @@ namespace turas {
     protected:
         HashMap<u64, CreatePipelineCallback>    p_CreatePipelineCallbacks;
         HashMap<u64, ViewData>                  p_ViewData;
-        HashMap<u64, UPtr<Shader>>              p_Shaders;
-        HashMap<String, ShaderBinary>           p_ShaderBinaries;
+        HashMap<String, lvk::ShaderStage>       p_ShaderStages;
 
-        void LoadShaders();
+        friend class Engine;
+
+        void OnImGui();
+
+        void LoadShaderBinaries();
     };
 }

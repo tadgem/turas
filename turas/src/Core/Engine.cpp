@@ -4,7 +4,8 @@
 #include "spdlog/spdlog.h"
 #include "Debug/StatsWindow.h"
 
-turas::Engine::Engine() {
+turas::Engine::Engine(bool enableDebugUpdate) : p_DebugUpdateEnabled(enableDebugUpdate)
+{
     ZoneScoped;
     INSTANCE = this;
 }
@@ -60,7 +61,7 @@ void turas::Engine::Run()
         m_AssetManager.OnUpdate();
         PendingScenes();
         SystemsUpdate();
-        StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
+        DebugUpdate();
         SubmitFrame();
     }
 }
@@ -183,6 +184,16 @@ turas::AssetLoadProgress turas::Engine::GetSceneLoadProgress(turas::Scene *scene
     }
 
     return turas::AssetLoadProgress::NotLoaded;
+}
+
+void turas::Engine::DebugUpdate() {
+    if(!p_DebugUpdateEnabled)
+    {
+        return;
+    }
+
+    m_Renderer.OnImGui();
+    StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
 }
 
 void turas::TurasFilesystemListener::handleFileAction(efsw::WatchID watchid, const std::string &dir,
