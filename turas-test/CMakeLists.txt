@@ -8,3 +8,5 @@ target_link_libraries (${PROJECT_NAME} turas)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sponza DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/crate.jpg DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_shaders_dependency(turas-test)

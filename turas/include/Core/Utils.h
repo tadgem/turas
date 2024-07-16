@@ -8,7 +8,10 @@
 #include "ThirdParty/ctti/type_id.hpp"
 #include "Core/Types.h"
 #include "STL/Memory.h"
+#include <iostream>
+#include <filesystem>
 
+namespace fs = std::filesystem;
 namespace turas {
     template<typename T>
     String GetTypeName() {
@@ -60,11 +63,9 @@ namespace turas
 #ifdef TURAS_TRACK_HASHSTRINGS
 inline static HashMap<HashString, String> s_OriginalStrings = {};
 #endif
-        static u64 Hash(const String& string);
-
-        static Vector<u8> LoadBinaryFromPath(const String& path);
-
-        static String GetDirectoryFromFilename(const String& fname);
-
+        static u64              Hash(const String& string);
+        static String           GetDirectoryFromFilename(const String& fname);
+        static Vector<u8>       LoadBinaryFromPath(const String& path);
+        static Vector<String>   GetFilesInDirectory(const String& path);
     };
 }

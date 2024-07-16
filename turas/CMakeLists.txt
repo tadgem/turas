@@ -37,3 +37,7 @@ endif ()
 
 target_link_libraries (${PROJECT_NAME} lvk-sdl cereal assimp TracyClient efsw)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+
+# compile shaders
+message("-- Adding Turas Shaders Dependency")
+add_shaders(turas ${CMAKE_CURRENT_SOURCE_DIR}/../shaders)

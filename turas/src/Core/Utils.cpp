@@ -36,6 +36,14 @@ turas::String turas::Utils::GetDirectoryFromFilename(const turas::String &fname)
            : fname.substr(0, pos);
 }
 
+turas::Vector<turas::String> turas::Utils::GetFilesInDirectory(const turas::String &path) {
+    auto ret =  turas::Vector<turas::String>();
+    for (const auto & entry : fs::directory_iterator(path)) {
+        ret.push_back(entry.path().string());
+    }
+    return ret;
+}
+
 
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
 {

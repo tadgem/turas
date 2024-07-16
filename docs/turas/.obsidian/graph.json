@@ -34,6 +34,13 @@
         "a": 1,
         "rgb": 6084188
       }
+    },
+    {
+      "query": "path:Project  ",
+      "color": {
+        "a": 1,
+        "rgb": 6084269
+      }
     }
   ],
   "collapse-display": true,

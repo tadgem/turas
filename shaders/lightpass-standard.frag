@@ -139,9 +139,9 @@ vec3 BlinnPhong_Spot(int lightIdx, vec3 position, vec3 normal, vec3 materialAmbi
 
 void main() {
 
-    vec4 textureColour = vec4(texture(u_ColourBufferSampler, UV).rgb, 1.0f);
-    vec3 position = texture(u_PositionBufferSampler, UV).xyz;
-    vec3 normal = texture(u_NormalBufferSampler, UV).xyz;
+    vec4 textureColour = vec4(texture(u_ColourBufferSampler, a_FragUV).rgb, 1.0f);
+    vec3 position = texture(u_PositionBufferSampler, a_FragUV).xyz;
+    vec3 normal = texture(u_NormalBufferSampler, a_FragUV).xyz;
 
     vec3 lightColour = BlinnPhong_Directional(normal, vec3(0.0f), textureColour.xyz, vec3(0.0f), 0.0f);
 

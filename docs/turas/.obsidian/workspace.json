@@ -29,8 +29,12 @@
             "id": "5a074b1cb089cfcd",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "Notes/CMake Shader Compilation.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -162,15 +166,18 @@
   },
   "active": "f33905874f00b7c3",
   "lastOpenFiles": [
+    "Notes/CMake Shader Compilation.md",
+    "Untitled.canvas",
+    "Project/CMake.md",
+    "Project",
+    "Assets/Asset.md",
     "Assets/Asset Manager.md",
     "ECS/Scene.md",
-    "Assets/Asset.md",
     "Rendering/View.md",
     "Rendering/Vector Graphics.md",
     "Rendering/Shaders.md",
     "Rendering/Renderer.md",
     "Rendering/Pipeline.md",
-    "Notes/CMake Shader Compilation.md",
     "Notes",
     "LVK.md",
     "Shader.md",

@@ -122,7 +122,7 @@ turas::Shader* turas::Renderer::GetShaderProgram(turas::u64 hash) {
 
 void turas::Renderer::LoadShaders() {
     // Load all files ending in .spv in the shaders directory (recursively)
-
+    Utils::GetFilesInDirectory("shaders/");
 }
 
 void turas::Renderer::ViewData::Free(lvk::VulkanAPI &vk) {
