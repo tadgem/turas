@@ -67,13 +67,17 @@ namespace turas {
         inline static HashMap<HashString, String> s_OriginalStrings = {};
 #endif
 
-        static u64 Hash(const String &string);
+        static u64          Hash(const String &string);
 
-        static String GetDirectoryFromFilename(const String &fname);
+        static String       GetDirectoryFromFilename(const String &fname);
 
-        static String GetFilenameFromPath(const String &fname);
+        static String       GetFilenameFromPath(const String &fname);
 
-        static Vector<u8> LoadBinaryFromPath(const String &path);
+        static Vector<u8>   LoadBinaryFromPath(const String &path);
+
+        static String       LoadStringFromPath(const String &path);
+
+        static void         SaveStringToPath(const String& str, const String &path);
 
         static Vector<String> GetFilesInDirectory(const String &path);
     };

@@ -3,6 +3,11 @@
 #include "Core/Log.h"
 #include "Debug/Profile.h"
 
+turas::Renderer::Renderer(bool enableDebugValidation) : m_VK(enableDebugValidation)
+{
+
+}
+
 void turas::Renderer::Start() {
     ZoneScoped;
     m_VK.Start("Turas", 1280, 720);

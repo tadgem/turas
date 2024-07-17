@@ -28,7 +28,7 @@ namespace turas {
             void Free(lvk::VulkanAPI &vk);
         };
 
-        Renderer() = default;
+        Renderer(bool enableDebugValidation);
 
         void Start();
 

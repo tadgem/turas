@@ -11,7 +11,8 @@
 
 #endif
 
-turas::Engine::Engine(bool enableDebugUpdate) : p_DebugUpdateEnabled(enableDebugUpdate) {
+turas::Engine::Engine(bool enableDebugUpdate) : p_DebugUpdateEnabled(enableDebugUpdate) , m_Renderer(false)
+{
     ZoneScoped;
     INSTANCE = this;
     p_OriginalWorkingDir = std::filesystem::current_path().string();
@@ -199,7 +200,8 @@ bool turas::Engine::LoadProject(const turas::String &path) {
     if (m_Project.get() != nullptr) {
         return false;
     }
-    // Deserialize project binary
+    // Deserialize project string
+    String projectStr = Utils::LoadStringFromPath(path);
     // change working directory to project dir
     // if debug copy shaders to directory
     if (p_DebugUpdateEnabled) {
@@ -233,6 +235,14 @@ bool turas::Engine::SaveProject() {
         return false;
     }
 
+    std::stringstream stream;
+
+    {
+        cereal::XMLOutputArchive archive(stream);
+        archive(*m_Project.get());
+    }
+    String projectFilePath = std::filesystem::current_path().string() + m_Project->m_Name + ".turasproj";
+    Utils::SaveStringToPath(stream.str(), projectFilePath);
     return true;
 }
 

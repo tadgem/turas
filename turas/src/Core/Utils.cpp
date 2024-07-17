@@ -49,6 +49,22 @@ turas::String turas::Utils::GetFilenameFromPath(const turas::String &fname) {
            : fname.substr(pos + 1, fname.size() - 1);
 }
 
+void turas::Utils::SaveStringToPath(const turas::String &str, const turas::String &path) {
+    std::ofstream out (path);
+    out << str;
+    out.close();}
+
+turas::String turas::Utils::LoadStringFromPath(const turas::String &path) {
+    std::ifstream in(path);
+    std::stringstream stream;
+    if(!in.is_open()){
+        return "";
+    }
+
+    stream << in.rdbuf();
+    return stream.str();
+}
+
 
 turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input)) {
     ZoneScoped;
