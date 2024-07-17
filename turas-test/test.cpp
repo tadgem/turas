@@ -13,7 +13,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto path = "../Sponza/Sponza.gltf";
+        auto path = "Sponza/Sponza.gltf";
         auto handle = e.m_AssetManager.LoadAsset(path, turas::AssetType::Model);
         e.m_AssetManager.WaitAllAssets();
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
@@ -25,7 +25,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
         e.m_AssetManager.WaitAllAssets();
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loaded);
         e.m_AssetManager.UnloadAsset(handle);
@@ -43,7 +43,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
         while(e.m_AssetManager.AnyAssetsLoading())
         {
             e.m_AssetManager.OnUpdate();
@@ -64,7 +64,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
         while(e.m_AssetManager.AnyAssetsLoading())
         {
             e.PrepFrame();
@@ -100,7 +100,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
         while(e.m_AssetManager.AnyAssetsLoading())
         {
             e.m_AssetManager.OnUpdate();
@@ -125,7 +125,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+        auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
         e.m_AssetManager.WaitAllAssets();
 
         auto* asset = e.m_AssetManager.GetAsset(handle);
@@ -139,7 +139,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../crate.jpg", turas::AssetType::Texture);
+        auto handle = e.m_AssetManager.LoadAsset("crate.jpg", turas::AssetType::Texture);
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loading);
 
         e.m_AssetManager.UnloadAllAssets();
@@ -151,7 +151,7 @@ TEST(
     {
         turas::Engine e;
         e.Init();
-        auto handle = e.m_AssetManager.LoadAsset("../crate.jpg", turas::AssetType::Texture);
+        auto handle = e.m_AssetManager.LoadAsset("crate.jpg", turas::AssetType::Texture);
         assert(e.m_AssetManager.GetAssetLoadProgress(handle) == turas::AssetLoadProgress::Loading);
         assert(e.m_AssetManager.AnyAssetsLoading());
 
@@ -359,7 +359,7 @@ TEST(
     auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
     e.Init();
     // load model
-    auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+    auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
     while(e.m_AssetManager.AnyAssetsLoading())
     {
         e.m_AssetManager.OnUpdate();
@@ -384,7 +384,7 @@ TEST(
     e.Init();
 
     // load model
-    auto handle = e.m_AssetManager.LoadAsset("../Sponza/Sponza.gltf", turas::AssetType::Model);
+    auto handle = e.m_AssetManager.LoadAsset("Sponza/Sponza.gltf", turas::AssetType::Model);
     while(e.m_AssetManager.AnyAssetsLoading())
     {
         e.m_AssetManager.OnUpdate();

@@ -85,9 +85,11 @@ namespace turas
         void ChangeWorkingDirectory(const String& newDirectory);
         void CopyShadersToProject();
 
-        bool p_DebugUpdateEnabled;
+        bool    p_DebugUpdateEnabled;
+        String  p_OriginalWorkingDir;
         void DebugInit();
         void DebugUpdate();
+
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
         DebugMemoryTracker p_DebugMemoryTracker;
 #endif

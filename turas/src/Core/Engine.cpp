@@ -1,6 +1,7 @@
 #include "STL/Memory.h"
 #include "Core/Engine.h"
 #include "Core/ECS.h"
+#include "Core/Log.h"
 #include "spdlog/spdlog.h"
 #include "Debug/StatsWindow.h"
 #ifdef WIN32
@@ -11,7 +12,9 @@ turas::Engine::Engine(bool enableDebugUpdate) : p_DebugUpdateEnabled(enableDebug
 {
     ZoneScoped;
     INSTANCE = this;
+    p_OriginalWorkingDir = std::filesystem::current_path().string();
     ChangeWorkingDirectory("../");
+    log::info("Turas : Working Directory : {}", std::filesystem::current_path().string());
 }
 
 void turas::Engine::Init() {
@@ -53,6 +56,8 @@ void turas::Engine::Shutdown() {
     lvk::FreeIm3d(m_Renderer.m_VK, m_Im3dState);
     m_Renderer.Shutdown();
     INSTANCE = nullptr;
+
+    ChangeWorkingDirectory(p_OriginalWorkingDir);
 }
 
 void turas::Engine::Run()
