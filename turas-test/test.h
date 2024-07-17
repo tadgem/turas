@@ -20,7 +20,8 @@ inline static turas::HashMap<turas::String, turas::Procedure> s_Tests = {};
 #define BEGIN_TESTS() int main(int argc, char** argv) {
 #define TEST(NAME, X) s_Tests.emplace(NAME,[]() X);
 
-#define RUN_TESTS() begin: turas::String selection = ""; {turas::Engine e;e.Init(); while(selection.empty())\
+#define RUN_TESTS() begin: turas::String selection = ""; {turas::Engine e;e.Init(); while(selection.empty() && \
+e.m_Renderer.m_VK.ShouldRun())\
 {\
 e.PrepFrame();\
 if(ImGui::Begin("Select Test"))\
@@ -34,11 +35,12 @@ for(auto& [name, func] : s_Tests)                                               
 ImGui::End();\
 e.SubmitFrame();\
 } \
-e.Shutdown();}                                                                          \
+bool shouldRun = e.m_Renderer.m_VK.ShouldRun();e.Shutdown();if(!shouldRun) {goto end;}        }                                                                          \
+                                                                                                       \
 if(selection == "RUNALL")                                                          \
 {                                                                                       \
 for(auto& [name, t] : s_Tests) { t();}}else {\
 \
 s_Tests[selection]();}                                                                                      \
-goto begin;                                                                                                            \
+goto begin;end: return 1;                                                                                      \
 }
