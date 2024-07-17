@@ -38,9 +38,15 @@ namespace turas {
 
         bool SaveProject();
 
-        Scene *CreateScene(const String &name);
+        Scene*  CreateScene(const String &name);
 
-        Scene *LoadScene(BinaryInputArchive &archive);
+        Scene*  LoadSceneFromArchive(BinaryInputArchive &archive);
+
+        Scene*  LoadSceneFromPath(const String& path);
+
+        Scene*  LoadSceneFromName(const String& name);
+
+        bool    SaveScene(Scene* s);
 
         void CloseScene(Scene *scene);
 

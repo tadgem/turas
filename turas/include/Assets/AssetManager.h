@@ -89,7 +89,7 @@ namespace turas {
         HashMap<AssetHandle, AssetLoadCallback> p_PendingUnloadCallbacks;
         Vector<AssetLoadInfo> p_QueuedLoads;
 
-        const uint16_t p_CallbackTasksPerTick = 4;
+        const uint16_t p_CallbackTasksPerTick = 6;
         const uint16_t p_MaxAsyncTaskInFlight = 3;
 
         void HandleLoadAndUnloadCallbacks();

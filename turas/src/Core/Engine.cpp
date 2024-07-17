@@ -78,6 +78,7 @@ turas::Scene *turas::Engine::CreateScene(const String &name) {
     for (auto &sys: m_EngineSubSystems) {
         sys->OnSceneLoaded(scene);
     }
+
     return scene;
 }
 
@@ -155,7 +156,7 @@ void turas::Engine::PendingScenes() {
     m_PendingScenes.clear();
 }
 
-turas::Scene *turas::Engine::LoadScene(turas::BinaryInputArchive &archive) {
+turas::Scene *turas::Engine::LoadSceneFromArchive(BinaryInputArchive &archive) {
     auto *s = new Scene("empty");
     s->LoadBinaryFromArchive(archive);
     m_PendingScenes.push_back(s);
@@ -200,9 +201,19 @@ bool turas::Engine::LoadProject(const turas::String &path) {
     if (m_Project.get() != nullptr) {
         return false;
     }
+    m_Project = CreateUnique<Project>("It doesnt matter");
     // Deserialize project string
     String projectStr = Utils::LoadStringFromPath(path);
+    std::stringstream stream;
+    stream << projectStr;
+    {
+        cereal::XMLInputArchive archive(stream);
+        archive(*m_Project.get());
+    }
+
+    String dir = Utils::GetDirectoryFromFilename(path);
     // change working directory to project dir
+    ChangeWorkingDirectory(dir);
     // if debug copy shaders to directory
     if (p_DebugUpdateEnabled) {
         CopyShadersToProject();
@@ -217,6 +228,12 @@ bool turas::Engine::CreateProject(const turas::String &name, const turas::String
         return false;
     }
     m_Project = CreateUnique<Project>(name);
+
+    if(!std::filesystem::exists(projectDir))
+    {
+        std::filesystem::create_directory(projectDir);
+    }
+
     // change working directory to projectDir
     ChangeWorkingDirectory(projectDir);
     // save project to specified path
@@ -236,12 +253,11 @@ bool turas::Engine::SaveProject() {
     }
 
     std::stringstream stream;
-
     {
         cereal::XMLOutputArchive archive(stream);
         archive(*m_Project.get());
     }
-    String projectFilePath = std::filesystem::current_path().string() + m_Project->m_Name + ".turasproj";
+    String projectFilePath = std::filesystem::current_path().string() + "/" + m_Project->m_Name + ".turasproj";
     Utils::SaveStringToPath(stream.str(), projectFilePath);
     return true;
 }
@@ -252,6 +268,63 @@ void turas::Engine::ChangeWorkingDirectory(const turas::String &newDirectory) {
 
 void turas::Engine::CopyShadersToProject() {
 
+}
+
+bool turas::Engine::SaveScene(turas::Scene *s) {
+
+    if (!s) return false;
+
+    auto data = s->SaveBinary();
+    std::stringstream dataStream{};
+    {
+        turas::BinaryOutputArchive outputArchive(dataStream);
+        outputArchive(data);
+    }
+
+    if (!std::filesystem::exists("scenes/"))
+    {
+        std::filesystem::create_directory("scenes");
+    }
+
+    String scenePath = "scenes/" + s->m_Name + ".tbs";
+    Utils::SaveStringToPath(dataStream.str(), scenePath);
+
+    if(m_Project)
+    {
+        m_Project->m_SerializedScenes.emplace(s->m_Name, scenePath);
+    }
+
+    return true;
+}
+
+turas::Scene *turas::Engine::LoadSceneFromPath(const String &path) {
+    if(!std::filesystem::exists(path)) return nullptr;
+
+    String s = Utils::LoadStringFromPath(path);
+    std::stringstream stream;
+    stream << s;
+    turas::BinaryInputArchive input(stream);
+    Scene* scene = LoadSceneFromArchive(input);
+    if(!m_Project)
+    {
+        return scene;
+    }
+
+    if(m_Project->m_SerializedScenes.find(scene->m_Name) == m_Project->m_SerializedScenes.end())
+    {
+        m_Project->m_SerializedScenes.emplace(scene->m_Name, path);
+    }
+    return scene;
+}
+
+turas::Scene *turas::Engine::LoadSceneFromName(const turas::String &name) {
+    if(!m_Project) return nullptr;
+    if(m_Project->m_SerializedScenes.find(name) == m_Project->m_SerializedScenes.end())
+    {
+        return nullptr;
+    }
+
+    return LoadSceneFromPath(m_Project->m_SerializedScenes[name]);
 }
 
 void turas::TurasFilesystemListener::handleFileAction(efsw::WatchID watchid, const std::string &dir,

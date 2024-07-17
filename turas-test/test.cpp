@@ -211,6 +211,93 @@ TEST("Scene basic entity tests",
     }
 )
 
+TEST("Project object / file created",
+     {
+         {
+             turas::Engine e;
+             e.Init();
+             e.CreateProject("12345", "./");
+             assert(e.m_Project.get() != nullptr);
+             assert(std::filesystem::exists("12345.turasproj"));
+             e.Shutdown();
+         }
+         // while(!std::filesystem::remove("12345.turasproj"));
+     }
+)
+
+
+
+TEST("Scene Serialization To Disk", {
+    turas::Engine e;
+    auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
+    e.Init();
+    turas::Scene* s1 = e.CreateScene("Test Scene 1");
+    assert(s1);
+    e.SaveScene(s1);
+    assert(std::filesystem::exists("scenes/Test Scene 1.tbs"));
+    e.Shutdown();
+
+    std::filesystem::remove("scenes/Test Scene 1.tbs");
+})
+
+TEST("Scene Saved in Project", {
+    turas::Engine e;
+    e.Init();
+    e.CreateProject("TestProjScenes", "TestProjScenes");
+    turas::Scene* s1 = e.CreateScene("ts1");
+    e.SaveScene(s1);
+
+    assert(e.m_Project->m_SerializedScenes.find("ts1") != e.m_Project->m_SerializedScenes.end());
+    e.Shutdown();
+    assert(std::filesystem::exists("../TestProjScenes/scenes/ts1.tbs"));
+})
+
+TEST("Load Scene from Name", {
+    {
+        turas::Engine e;
+        e.Init();
+        e.CreateProject("TestSceneFromPath", "TestSceneFromPath");
+        turas::Scene *s1 = e.CreateScene("ts1");
+        e.SaveScene(s1);
+        e.SaveProject();
+        e.Shutdown();
+    }
+    assert(std::filesystem::exists("../TestSceneFromPath/TestSceneFromPath.turasproj"));
+    {
+        turas::Engine e;
+        e.Init();
+        e.LoadProject("TestSceneFromPath/TestSceneFromPath.turasproj");
+        auto* s1 = e.LoadSceneFromName("ts1");
+        assert(s1 != nullptr);
+        assert(e.m_Project->m_Name == "TestSceneFromPath");
+        e.Shutdown();
+    }
+})
+
+TEST("Load Scene from Path", {
+    {
+        turas::Engine e;
+        e.Init();
+        e.CreateProject("TestSceneFromPath", "TestSceneFromPath");
+        turas::Scene *s1 = e.CreateScene("ts1");
+        e.SaveScene(s1);
+        e.SaveProject();
+        e.Shutdown();
+    }
+    assert(std::filesystem::exists("../TestSceneFromPath/TestSceneFromPath.turasproj"));
+    {
+        turas::Engine e;
+        e.Init();
+        e.LoadProject("TestSceneFromPath/TestSceneFromPath.turasproj");
+        auto* s1 = e.LoadSceneFromPath("scenes/ts1.tbs");
+        assert(s1 != nullptr);
+        assert(e.m_Project->m_SerializedScenes.find("ts1") != e.m_Project->m_SerializedScenes.end());
+        e.Shutdown();
+    }
+})
+
+
+
 TEST("Transform system successfully added",
     {
         turas::Engine e;
@@ -271,7 +358,7 @@ TEST("Transform system serialization check 1",
     e.Shutdown();
 });
 
-TEST("Transform system serialization check 2",
+TEST("Scene + Transform system serialization check 2",
 {
     turas::Engine e;
     auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
@@ -292,7 +379,7 @@ TEST("Transform system serialization check 2",
 
     e.CloseScene(s);
 
-    auto* s2 = e.LoadScene(serialized_data);
+    auto* s2 = e.LoadSceneFromArchive(serialized_data);
 
     while(e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded)
     {
@@ -328,7 +415,7 @@ TEST("Camera system serialization check 1",
 
         e.CloseScene(s);
 
-        auto* s2 = e.LoadScene(serialized_data);
+        auto* s2 = e.LoadSceneFromArchive(serialized_data);
 
         while(e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded)
         {
@@ -365,7 +452,7 @@ TEST("Mesh system populates component GPU handles",
     e.Shutdown();
 });
 
-TEST("Transform system serialization : GPU handles populated systemically",
+TEST("Scene Deserialization : GPU handles populated systemically",
 {
     turas::Engine e;
     auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
@@ -397,7 +484,7 @@ TEST("Transform system serialization : GPU handles populated systemically",
 
     turas::BinaryInputArchive serialized_data(dataStream);
 
-    auto* s2 = e.LoadScene(serialized_data);
+    auto* s2 = e.LoadSceneFromArchive(serialized_data);
 
     while(e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded)
     {
