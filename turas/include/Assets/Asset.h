@@ -3,18 +3,20 @@
 //
 
 #pragma once
+
 #include "STL/Memory.h"
 #include "STL/Vector.h"
-#include "Rendering/VertexLayouts.h"
 #include "Rendering/Mesh.h"
 #include "Rendering/Texture.h"
-#include "lvk/Texture.h"
 #include "Debug/Profile.h"
 #include "Core/Serialization.h"
 
+namespace lvk {
+    class Texture;
+}
+
 namespace turas {
-    enum class AssetType : u8
-    {
+    enum class AssetType : u8 {
         Model,
         Texture,
         Audio,
@@ -27,14 +29,13 @@ namespace turas {
         u64 _DataB;
 
         struct {
-            u64    m_Hash;
-            AssetType   m_Type;
+            u64 m_Hash;
+            AssetType m_Type;
         };
 
         AssetHandle() = default;
 
-        AssetHandle(const u64& hash, const AssetType& type) : m_Hash(hash), m_Type(type)
-        {
+        AssetHandle(const u64 &hash, const AssetType &type) : m_Hash(hash), m_Type(type) {
 
         }
 
@@ -47,8 +48,7 @@ namespace turas {
         }
 
         template<typename Archive>
-        void serialize(Archive& ar)
-        {
+        void serialize(Archive &ar) {
             ZoneScoped;
             ar(_DataA, _DataB);
         }
@@ -56,18 +56,17 @@ namespace turas {
 
     class Asset {
     public:
-        Asset(const String &path, const AssetHandle &handle) : m_Path(path), m_Handle(handle)
-        {
+        Asset(const String &path, const AssetHandle &handle) : m_Path(path), m_Handle(handle) {
 
         }
-        const String        m_Path;
-        const AssetHandle   m_Handle;
+
+        const String m_Path;
+        const AssetHandle m_Handle;
     };
 
     class ModelAsset : public Asset {
     public:
-        struct ModelEntry
-        {
+        struct ModelEntry {
             UPtr<Mesh> m_Mesh;
             HashMap<Texture::MapType, AssetHandle> m_AssociatedTextures;
         };
@@ -75,21 +74,21 @@ namespace turas {
         ModelAsset(const String &path, const AssetHandle &handle) : Asset(path, handle) {}
 
         TURAS_IMPL_ALLOC(ModelAsset)
+
         Vector<ModelEntry> m_Entries;
     };
 
     class TextureAsset : public Asset {
     public:
-        TextureAsset(const String& path, const AssetHandle& handle, const Vector<u8>& bytes) : Asset(path, handle),
-        m_TextureData(bytes)
-        {
+        TextureAsset(const String &path, const AssetHandle &handle, const Vector<u8> &bytes) : Asset(path, handle),
+                                                                                               m_TextureData(bytes) {
             m_Texture = nullptr;
         }
 
         TURAS_IMPL_ALLOC(TextureAsset)
 
-        Vector<u8>    m_TextureData;
-        lvk::Texture* m_Texture;
+        Vector<u8> m_TextureData;
+        lvk::Texture *m_Texture;
     };
 
     class AudioAsset : public Asset {
@@ -109,8 +108,9 @@ namespace turas {
 }
 
 /* required to hash a container */
-template<> struct std::hash<turas::AssetHandle> {
-    std::size_t operator()(const turas::AssetHandle& ah) const {
+template<>
+struct std::hash<turas::AssetHandle> {
+    std::size_t operator()(const turas::AssetHandle &ah) const {
         return std::hash<turas::u64>()(ah._DataA) ^ std::hash<turas::u64>()(ah._DataB);
     }
 };

@@ -4,6 +4,7 @@
 #include "Systems/Mesh.h"
 #include "Core/Utils.h"
 #include "Core/ECS.h"
+#include "Core/Engine.h"
 
 void turas::MeshSystem::OnEngineReady() {
     ZoneScoped;
@@ -11,10 +12,9 @@ void turas::MeshSystem::OnEngineReady() {
 
 void turas::MeshSystem::OnSceneLoaded(Scene *scene) {
     ZoneScoped;
-    auto& reg = GetSceneRegistry(scene);
+    auto &reg = GetSceneRegistry(scene);
     auto meshView = reg.view<MeshComponent>();
-    for(auto [e, mesh] : meshView.each())
-    {
+    for (auto [e, mesh]: meshView.each()) {
         FindMeshAsset(mesh);
     }
 
@@ -30,8 +30,7 @@ void turas::MeshSystem::OnUpdate(Scene *scene) {
     ZoneScoped;
     auto view = GetSceneRegistry(scene).view<MeshComponent>();
 
-    for(auto [ent, t] : view.each())
-    {
+    for (auto [ent, t]: view.each()) {
     }
 }
 
@@ -39,8 +38,7 @@ void turas::MeshSystem::OnShutdown() {
     ZoneScoped;
 }
 
-turas::MeshSystem::MeshSystem() : System(GetTypeHash<MeshSystem>())
-{
+turas::MeshSystem::MeshSystem() : System(GetTypeHash<MeshSystem>()) {
     ZoneScoped;
 }
 
@@ -51,22 +49,20 @@ void turas::MeshSystem::SerializeSceneBinary(Scene *scene, BinaryOutputArchive &
     s_CurrentSerializingScene = nullptr;
 }
 
-void turas::MeshSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArchive &input)
-{
+void turas::MeshSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArchive &input) {
     ZoneScoped;
     s_CurrentSerializingScene = scene;
     input(*this);
     s_CurrentSerializingScene = nullptr;
 }
 
-turas::Vector<turas::AssetHandle> turas::MeshSystem::GetRequiredAssets(Scene* scene) {
+turas::Vector<turas::AssetHandle> turas::MeshSystem::GetRequiredAssets(Scene *scene) {
     ZoneScoped;
     Vector<AssetHandle> handles{};
 
     auto meshView = GetSceneRegistry(scene).view<MeshComponent>();
 
-    for(const auto& [e, mesh] : meshView.each())
-    {
+    for (const auto &[e, mesh]: meshView.each()) {
         handles.push_back(mesh.m_Handle);
     }
 
@@ -75,19 +71,17 @@ turas::Vector<turas::AssetHandle> turas::MeshSystem::GetRequiredAssets(Scene* sc
 
 void turas::MeshSystem::OnMeshComponentAdded(entt::registry &reg, entt::entity e) {
     ZoneScoped;
-    MeshComponent& mesh = reg.get<MeshComponent>(e);
+    MeshComponent &mesh = reg.get<MeshComponent>(e);
     FindMeshAsset(mesh);
 }
 
 void turas::MeshSystem::FindMeshAsset(turas::MeshComponent &meshComponent) {
     ZoneScoped;
-    if(meshComponent.m_MeshAsset == nullptr)
-    {
-        auto* asset = Engine::INSTANCE->m_AssetManager.GetAsset(meshComponent.m_Handle);
-        auto* meshAsset = reinterpret_cast<ModelAsset*>(asset);
+    if (meshComponent.m_MeshAsset == nullptr) {
+        auto *asset = Engine::INSTANCE->m_AssetManager.GetAsset(meshComponent.m_Handle);
+        auto *meshAsset = reinterpret_cast<ModelAsset *>(asset);
 
-        if(meshComponent.m_EntryIndex >= meshAsset->m_Entries.size())
-        {
+        if (meshComponent.m_EntryIndex >= meshAsset->m_Entries.size()) {
             return;
         }
 
@@ -95,7 +89,7 @@ void turas::MeshSystem::FindMeshAsset(turas::MeshComponent &meshComponent) {
     }
 }
 
-turas::MeshComponent::MeshComponent(const turas::AssetHandle &handle, turas::u32 index) : m_Handle(handle), m_EntryIndex(index)
-{
+turas::MeshComponent::MeshComponent(const turas::AssetHandle &handle, turas::u32 index) : m_Handle(handle),
+                                                                                          m_EntryIndex(index) {
     ZoneScoped;
 }

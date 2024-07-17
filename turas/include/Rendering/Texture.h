@@ -7,8 +7,7 @@ namespace turas {
 
     class Texture {
     public:
-        enum class MapType
-        {
+        enum class MapType {
             Invalid = 0,
             Diffuse,
             Specular,

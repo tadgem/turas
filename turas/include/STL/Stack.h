@@ -3,9 +3,8 @@
 
 #include <stack>
 
-namespace turas
-{
-	template<typename T>
-	using Stack = std::stack<T>;
+namespace turas {
+    template<typename T>
+    using Stack = std::stack<T>;
 }
 #endif

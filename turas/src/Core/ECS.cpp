@@ -3,23 +3,23 @@
 //
 #include "Core/ECS.h"
 #include "Core/Log.h"
-turas::Scene::Scene(const String& name) : m_Name(name)
-{
+#include "Core/Engine.h"
+
+turas::Scene::Scene(const String &name) : m_Name(name) {
     ZoneScoped;
-    p_Registry = entt::registry ();
+    p_Registry = entt::registry();
 }
 
 turas::Entity turas::Scene::CreateEntity() {
     ZoneScoped;
     entt::entity handle = p_Registry.create();
     p_EntityCount++;
-    return Entity {handle};
+    return Entity{handle};
 }
 
 void turas::Scene::DestroyEntity(turas::Entity &e) {
     ZoneScoped;
-    if(!p_Registry.destroy(e.m_Handle))
-    {
+    if (!p_Registry.destroy(e.m_Handle)) {
         log::error("Scene : failed to destroy entity {}", e.operator u32());
         return;
     }
@@ -33,24 +33,21 @@ turas::u32 turas::Scene::NumEntities() {
 
 turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
     ZoneScoped;
-    HashMap<u64, String> serialized {};
-    Vector<AssetLoadInfo> assetsToLoad {};
+    HashMap<u64, String> serialized{};
+    Vector<AssetLoadInfo> assetsToLoad{};
 
-    for(auto& sys : Engine::INSTANCE->m_EngineSubSystems)
-    {
-        std::stringstream       stream;
-        BinaryOutputArchive     archive(stream);
+    for (auto &sys: Engine::INSTANCE->m_EngineSubSystems) {
+        std::stringstream stream;
+        BinaryOutputArchive archive(stream);
         sys->SerializeSceneBinary((Scene *) this, archive);
         serialized.emplace(sys->m_Hash, stream.str());
 
-        Vector<AssetHandle> handles = sys->GetRequiredAssets((Scene*) this);
-        for(auto& handle : handles)
-        {
-            Asset* a = Engine::INSTANCE->m_AssetManager.GetAsset(handle);
+        Vector<AssetHandle> handles = sys->GetRequiredAssets((Scene *) this);
+        for (auto &handle: handles) {
+            Asset *a = Engine::INSTANCE->m_AssetManager.GetAsset(handle);
             AssetLoadInfo loadInfo = {a->m_Path, handle.m_Type};
 
-            if(std::find(assetsToLoad.begin(), assetsToLoad.end(), loadInfo) == assetsToLoad.end())
-            {
+            if (std::find(assetsToLoad.begin(), assetsToLoad.end(), loadInfo) == assetsToLoad.end()) {
                 assetsToLoad.push_back(loadInfo);
             }
         }
@@ -63,8 +60,8 @@ turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
 
     // emplace asset entry
     {
-        std::stringstream       stream;
-        BinaryOutputArchive     archive(stream);
+        std::stringstream stream;
+        BinaryOutputArchive archive(stream);
         archive(assetsToLoad);
         serialized.emplace(Utils::Hash(p_AssetsHashName), stream.str());
     }
@@ -73,14 +70,14 @@ turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
 }
 
 
-void turas::Scene::LoadBinaryFromArchive(turas::BinaryInputArchive& sceneData) {
+void turas::Scene::LoadBinaryFromArchive(turas::BinaryInputArchive &sceneData) {
     ZoneScoped;
-    HashMap<u64, turas::String> data {};
+    HashMap<u64, turas::String> data{};
     sceneData(data);
     LoadBinary(data);
 }
 
-void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String>& sceneData) {
+void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String> &sceneData) {
     ZoneScoped;
 
     {
@@ -92,8 +89,7 @@ void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String>& sceneData) {
         Vector<AssetLoadInfo> assetsToLoad{};
         input(assetsToLoad);
 
-        for(auto& info : assetsToLoad)
-        {
+        for (auto &info: assetsToLoad) {
             Engine::INSTANCE->m_AssetManager.LoadAsset(info.m_Path, info.m_Type);
         }
     }
@@ -103,11 +99,10 @@ void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String>& sceneData) {
         m_Name = sceneData[nameHash];
     }
 
-    for(auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
-        for(auto& [hash, serialized_stream] : sceneData)
-        {
-            if(sys->m_Hash != hash) continue;
-            std::stringstream stream {};
+    for (auto &sys: Engine::INSTANCE->m_EngineSubSystems) {
+        for (auto &[hash, serialized_stream]: sceneData) {
+            if (sys->m_Hash != hash) continue;
+            std::stringstream stream{};
             stream << serialized_stream;
             BinaryInputArchive input(stream);
             sys->DeserializeSceneBinary((Scene *) this, input);

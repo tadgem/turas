@@ -5,29 +5,26 @@
 #include <ThirdParty/ctti/name.hpp>
 #include <ThirdParty/ctti/detail/language_features.hpp>
 
-namespace ctti
-{
+namespace ctti {
 
 
-template<typename T>
-constexpr name_t detailed_nameof()
-{
-    return {ctti::nameof<T>()};
-}
+    template<typename T>
+    constexpr name_t detailed_nameof() {
+        return {ctti::nameof<T>()};
+    }
 
-template<typename T, T Value>
-constexpr name_t detailed_nameof()
-{
-    return {ctti::nameof<T, Value>()};
-}
+    template<typename T, T Value>
+    constexpr name_t detailed_nameof() {
+        return {ctti::nameof<T, Value>()};
+    }
 
 #ifdef CTTI_HAS_VARIABLE_TEMPLATES
-template<typename T>
-constexpr ctti::name_t detailed_nameof_v = ctti::detailed_nameof<T>();
+    template<typename T>
+    constexpr ctti::name_t detailed_nameof_v = ctti::detailed_nameof<T>();
 
 // CONSIDER USING detailed_nameof_v<CTTI_STATIC_VALUE(value)> INSTEAD
-template<typename T, T Value>
-constexpr ctti::name_t detailed_nameof_value_v = ctti::detailed_nameof<T, Value>();
+    template<typename T, T Value>
+    constexpr ctti::name_t detailed_nameof_value_v = ctti::detailed_nameof<T, Value>();
 #endif // CTTI_HAS_VARIABLE_TEMPLATES
 
 }

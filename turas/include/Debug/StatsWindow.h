@@ -3,9 +3,11 @@
 //
 
 #pragma once
+
 #include "lvk/VulkanAPI.h"
+
 namespace turas {
     namespace StatsWindow {
-        void OnImGuiStatsWindow(lvk::VulkanAPI& vk);
+        void OnImGuiStatsWindow(lvk::VulkanAPI &vk);
     };
 }

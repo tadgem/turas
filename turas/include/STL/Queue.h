@@ -3,7 +3,9 @@
 //
 
 #pragma once
+
 #include <queue>
+
 namespace turas {
     template<typename T>
     using Queue = std::queue<T>;

@@ -4,7 +4,6 @@
 #include "Rendering/View.h"
 #include "Core/Utils.h"
 
-turas::View::View(const String &name) : m_Name(name), m_Hash(Utils::Hash(name))
-{
+turas::View::View(const String &name) : m_Name(name), m_Hash(Utils::Hash(name)) {
 
 }

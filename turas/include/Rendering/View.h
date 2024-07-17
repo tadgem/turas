@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "STL/String.h"
 #include "STL/Memory.h"
 #include "Core/Types.h"
@@ -13,26 +14,23 @@
 namespace turas {
 
 
-    struct Camera
-    {
-        enum ProjectionType : u8
-        {
+    struct Camera {
+        enum ProjectionType : u8 {
             Perspective,
             Orthographic
         };
 
-        float           m_FOV;
-        float           m_NearPlane;
-        float           m_FarPlane;
-        u32             m_Width;
-        u32             m_Height;
-        ProjectionType  m_ProjectionType;
-        glm::mat4       m_ViewMatrix;
-        glm::mat4       m_ProjectionMatrix;
+        float m_FOV;
+        float m_NearPlane;
+        float m_FarPlane;
+        u32 m_Width;
+        u32 m_Height;
+        ProjectionType m_ProjectionType;
+        glm::mat4 m_ViewMatrix;
+        glm::mat4 m_ProjectionMatrix;
 
         template<typename Archive>
-        void serialize(Archive& ar)
-        {
+        void serialize(Archive &ar) {
             ZoneScoped;
             ar(m_FOV, m_NearPlane, m_FarPlane, m_Width, m_Height, m_ProjectionType);
         }
@@ -43,13 +41,13 @@ namespace turas {
     class View {
     public:
 
-        String  m_Name;
-        u64     m_Hash;
-        View(const String& name);
+        String m_Name;
+        u64 m_Hash;
+
+        View(const String &name);
 
         template<typename Archive>
-        void serialize(Archive& ar)
-        {
+        void serialize(Archive &ar) {
             ZoneScoped;
             ar(m_Name);
         }

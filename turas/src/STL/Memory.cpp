@@ -4,10 +4,9 @@
 #include "STL/String.h"
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
-turas::DebugMemoryTracker::DebugMemoryTracker()
-{
-    if(s_Instance != nullptr)
-    {
+
+turas::DebugMemoryTracker::DebugMemoryTracker() {
+    if (s_Instance != nullptr) {
         // error;
         return;
     }

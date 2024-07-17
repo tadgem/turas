@@ -101,138 +101,119 @@
     name ctti_symbol_from_hash(::ctti::meta::uint64_t<ctti::detail::fnv1a_hash(CTTI_PP_STR(name))>)
 
 
-namespace ctti
-{
+namespace ctti {
 
-namespace detail
-{
+    namespace detail {
 
-template<typename Member>
-struct member_traits;
+        template<typename Member>
+        struct member_traits;
 
-template<typename T, typename Class>
-struct member_traits<T Class::*>
-{
-    using value_type = T;
-    using pointer_type = T Class::*;
+        template<typename T, typename Class>
+        struct member_traits<T Class::*> {
+            using value_type = T;
+            using pointer_type = T Class::*;
 
-    template<typename Obj>
-    static constexpr const value_type& get(const Obj& object, pointer_type member)
-    {
-        return object.*member;
+            template<typename Obj>
+            static constexpr const value_type &get(const Obj &object, pointer_type member) {
+                return object.*member;
+            }
+
+            template<typename Obj>
+            static constexpr value_type &get(Obj &object, pointer_type member) {
+                return object.*member;
+            }
+
+            template<typename Obj, typename Value>
+            static void set(Obj &object, pointer_type member, Value &&value) {
+                get(object, member) = std::forward<Value>(value);
+            }
+        };
+
+        template<typename T, typename Class, typename... Args>
+        struct member_traits<T (Class::*)(Args...)> {
+            using value_type = T;
+            using pointer_type = T (Class::*)(Args...);
+
+            template<typename Obj, typename... _Args>
+            static constexpr value_type get(const Obj &object, pointer_type member, _Args &&... args) {
+                return (object.*member)(std::forward<_Args>(args)...);
+            }
+
+            template<typename Obj, typename... _Args>
+            static void set(Obj &object, pointer_type member, _Args &&... args) {
+                get(object, member, std::forward<_Args>(args)...);
+            }
+        };
+
+        template<typename Class, typename Arg>
+        struct member_traits<void (Class::*)(Arg)> {
+            using pointer_type = void (Class::*)(Arg);
+            using value_type = ctti::meta::decay_t<Arg>;
+
+            template<typename Obj, typename _Arg>
+            static void set(Obj &object, pointer_type member, _Arg &&arg) {
+                (object.*member)(std::forward<_Arg>(arg));
+            }
+        };
+
+        template<typename T, typename Class, typename... Args>
+        struct member_traits<T (Class::*)(Args...) const> {
+            using value_type = T;
+            using pointer_type = T (Class::*)(Args...) const;
+
+            template<typename Obj, typename... _Args>
+            static constexpr value_type get(const Obj &object, pointer_type member, _Args &&... args) {
+                return (object.*member)(std::forward<_Args>(args)...);
+            }
+        };
+
+        template<typename T, typename Member, typename... Args>
+        constexpr auto member_traits_get(const T &object, Member member, Args &&... args)
+        -> const typename member_traits<Member>::value_type & {
+            return member_traits<Member>::get(object, member, std::forward<Args>(args)...);
+        }
+
+        template<typename T, typename Member, typename... Args>
+        constexpr auto member_traits_get(T &object, Member member, Args &&... args)
+        -> typename member_traits<Member>::value_type & {
+            return member_traits<Member>::get(object, member, std::forward<Args>(args)...);
+        }
+
+        template<typename T, typename Member, typename... Args>
+        void member_traits_set(T &object, Member member, Args &&... args) {
+            member_traits<Member>::set(object, member, std::forward<Args>(args)...);
+        }
+
+        template<std::size_t Hash>
+        struct no_symbol_for_hash {
+        };
+
     }
 
-    template<typename Obj>
-    static constexpr value_type& get(Obj& object, pointer_type member)
-    {
-        return object.*member;
+    template<typename Symbol, typename T, typename... Args>
+    constexpr const typename Symbol::template value_type<T> &get_member_value(const T &object, Args &&... args) {
+        static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
+        return ctti::detail::member_traits_get(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
     }
 
-    template<typename Obj, typename Value>
-    static void set(Obj& object, pointer_type member, Value&& value)
-    {
-        get(object, member) = std::forward<Value>(value);
-    }
-};
-
-template<typename T, typename Class, typename... Args>
-struct member_traits<T (Class::*)(Args...)>
-{
-    using value_type = T;
-    using pointer_type = T (Class::*)(Args...);
-
-    template<typename Obj, typename... _Args>
-    static constexpr value_type get(const Obj& object, pointer_type member, _Args&&... args)
-    {
-        return (object.*member)(std::forward<_Args>(args)...);
+    template<typename Symbol, typename T, typename... Args>
+    typename Symbol::template value_type<T> &
+    get_member_value(T &object, Args &&... args) {
+        static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
+        return ctti::detail::member_traits_get(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
     }
 
-    template<typename Obj, typename... _Args>
-    static void set(Obj& object, pointer_type member, _Args&&... args)
-    {
-        get(object, member, std::forward<_Args>(args)...);
+    template<typename Symbol, typename T, typename... Args>
+    void set_member_value(const T &object, Args &&... args) {
+        static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
+        ctti::detail::member_traits_set(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
     }
-};
 
-template<typename Class, typename Arg>
-struct member_traits<void (Class::*)(Arg)>
-{
-    using pointer_type = void (Class::*)(Arg);
-    using value_type = ctti::meta::decay_t<Arg>;
-
-    template<typename Obj, typename _Arg>
-    static void set(Obj& object, pointer_type member, _Arg&& arg)
-    {
-        (object.*member)(std::forward<_Arg>(arg));
+    template<typename Symbol, typename T, typename... Args>
+    void set_member_value(T &object, Args &&... args) {
+        static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
+        ctti::detail::member_traits_set(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
     }
-};
-
-template<typename T, typename Class, typename... Args>
-struct member_traits<T (Class::*)(Args...) const>
-{
-    using value_type = T;
-    using pointer_type = T (Class::*)(Args...) const;
-
-    template<typename Obj, typename... _Args>
-    static constexpr value_type get(const Obj& object, pointer_type member, _Args&&... args)
-    {
-        return (object.*member)(std::forward<_Args>(args)...);
-    }
-};
-
-template<typename T, typename Member, typename... Args>
-constexpr auto member_traits_get(const T& object, Member member, Args&&... args)
-    -> const typename member_traits<Member>::value_type&
-{
-    return member_traits<Member>::get(object, member, std::forward<Args>(args)...);
-}
-
-template<typename T, typename Member, typename... Args>
-constexpr auto member_traits_get(T& object, Member member, Args&&... args)
-    -> typename member_traits<Member>::value_type&
-{
-    return member_traits<Member>::get(object, member, std::forward<Args>(args)...);
-}
-
-template<typename T, typename Member, typename... Args>
-void member_traits_set(T& object, Member member, Args&&... args)
-{
-    member_traits<Member>::set(object, member, std::forward<Args>(args)...);
-}
-
-template<std::size_t Hash>
-struct no_symbol_for_hash {};
-
-}
-
-template<typename Symbol, typename T, typename... Args>
-constexpr const typename Symbol::template value_type<T>& get_member_value(const T& object, Args&&... args)
-{
-    static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
-    return ctti::detail::member_traits_get(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
-}
-
-template<typename Symbol, typename T, typename... Args>
-typename Symbol::template value_type<T>&
-get_member_value(T& object, Args&&... args)
-{
-    static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
-    return ctti::detail::member_traits_get(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
-}
-
-template<typename Symbol, typename T, typename... Args>
-void set_member_value(const T& object, Args&&... args)
-{
-    static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
-    ctti::detail::member_traits_set(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
-}
-
-template<typename Symbol, typename T, typename... Args>
-void set_member_value(T& object, Args&&... args)
-{
-    static_assert(Symbol::template is_member_of<T>(), "not a member of the class");
-    ctti::detail::member_traits_set(object, Symbol::template get_member<T>(), std::forward<Args>(args)...);
-}
 
 }
 

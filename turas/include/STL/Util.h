@@ -1,10 +1,10 @@
 #ifndef TURAS_STL_UTIL_H
 #define TURAS_STL_UTIL_H
+
 #include <utility>
 #include <cmath>
 
-namespace turas
-{
+namespace turas {
     inline static float FAbs(float f) {
         return std::abs(f);
     }

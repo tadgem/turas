@@ -8,8 +8,7 @@ namespace CTTI_HASH_LITERAL_NAMESPACE
 {
 #endif // CTTI_HASH_LITERAL_NAMESPACE
 
-constexpr std::uint64_t operator"" _sh(const char* str, std::size_t length)
-{
+constexpr std::uint64_t operator "" _sh(const char *str, std::size_t length) {
     return ctti::detail::cstring{str, length}.hash();
 }
 

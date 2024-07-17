@@ -3,8 +3,7 @@
 
 #include <future>
 
-namespace turas
-{
+namespace turas {
     template<typename T>
     using Future = std::future<T>;
     using FutureStatus = std::future_status;

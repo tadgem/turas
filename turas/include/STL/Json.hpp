@@ -4,20 +4,22 @@
 
 #ifndef CONCORD_ALL_JSON_HPP
 #define CONCORD_ALL_JSON_HPP
+
 #include "ThirdParty/nlohmann_json.hpp"
+
 #define GLM_ENABLE_EXPERIMENTAL
+
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 
-namespace turas
-{
+namespace turas {
     using Json = nlohmann::json;
 }
 
 namespace glm {
     inline void to_json(turas::Json &j, const glm::vec2 &v) {
         j = turas::Json{{"x", v.x},
-                          {"y", v.y}};
+                        {"y", v.y}};
     }
 
     inline void from_json(const turas::Json &j, glm::vec2 &v) {
@@ -27,8 +29,8 @@ namespace glm {
 
     inline void to_json(turas::Json &j, const glm::vec3 &v) {
         j = turas::Json{{"x", v.x},
-                          {"y", v.y},
-                          {"z", v.z}};
+                        {"y", v.y},
+                        {"z", v.z}};
     }
 
     inline void from_json(const turas::Json &j, glm::vec3 &v) {
@@ -39,9 +41,9 @@ namespace glm {
 
     inline void to_json(turas::Json &j, const glm::vec4 &v) {
         j = turas::Json{{"x", v.x},
-                          {"y", v.y},
-                          {"z", v.z},
-                          {"w", v.w}};
+                        {"y", v.y},
+                        {"z", v.z},
+                        {"w", v.w}};
     }
 
     inline void from_json(const turas::Json &j, glm::vec4 &v) {
@@ -94,9 +96,9 @@ namespace glm {
 
     inline void to_json(turas::Json &j, const glm::quat &v) {
         j = turas::Json{{"x", v.x},
-                          {"y", v.y},
-                          {"z", v.z},
-                          {"w", v.w}};
+                        {"y", v.y},
+                        {"z", v.z},
+                        {"w", v.w}};
     }
 
     inline void from_json(const turas::Json &j, glm::quat &v) {

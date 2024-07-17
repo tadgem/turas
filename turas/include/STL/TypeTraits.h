@@ -3,21 +3,18 @@
 
 #include <type_traits>
 
-namespace turas
-{
-	template<typename A, typename B>
-	using IsBaseOf = std::is_base_of<A, B>;
+namespace turas {
+    template<typename A, typename B>
+    using IsBaseOf = std::is_base_of<A, B>;
 
 
-    template< class T >
-    constexpr T&& Forward(std::remove_reference_t<T>& t) noexcept
-    {
+    template<class T>
+    constexpr T &&Forward(std::remove_reference_t<T> &t) noexcept {
         return std::forward<T>(t);
     }
 
-    template< class T >
-    constexpr T&& Forward(std::remove_reference_t<T>&& t) noexcept
-    {
+    template<class T>
+    constexpr T &&Forward(std::remove_reference_t<T> &&t) noexcept {
         return std::forward<T>(t);
     }
 

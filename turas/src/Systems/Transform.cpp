@@ -24,8 +24,7 @@ void turas::TransformSystem::OnUpdate(Scene *scene) {
     ZoneScoped;
     auto view = GetSceneRegistry(scene).view<TransformComponent>();
 
-    for(auto [ent, t] : view.each())
-    {
+    for (auto [ent, t]: view.each()) {
         t.m_ModelMatrix = glm::translate(glm::mat4(1), t.m_Position);
         glm::vec3 radians = glm::radians(t.m_Rotation);
         t.m_ModelMatrix *= glm::mat4_cast(glm::quat(radians));
@@ -37,8 +36,7 @@ void turas::TransformSystem::OnShutdown() {
     ZoneScoped;
 }
 
-turas::TransformSystem::TransformSystem() : System(GetTypeHash<TransformSystem>())
-{
+turas::TransformSystem::TransformSystem() : System(GetTypeHash<TransformSystem>()) {
     ZoneScoped;
 }
 
@@ -49,14 +47,13 @@ void turas::TransformSystem::SerializeSceneBinary(Scene *scene, BinaryOutputArch
     s_CurrentSerializingScene = nullptr;
 }
 
-void turas::TransformSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArchive &input)
-{
+void turas::TransformSystem::DeserializeSceneBinary(Scene *scene, BinaryInputArchive &input) {
     ZoneScoped;
     s_CurrentSerializingScene = scene;
     input(*this);
     s_CurrentSerializingScene = nullptr;
 }
 
-turas::Vector<turas::AssetHandle> turas::TransformSystem::GetRequiredAssets(Scene* scene) {
+turas::Vector<turas::AssetHandle> turas::TransformSystem::GetRequiredAssets(Scene *scene) {
     return turas::Vector<AssetHandle>();
 }

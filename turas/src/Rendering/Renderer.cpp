@@ -19,7 +19,7 @@ void turas::Renderer::Shutdown() {
 void turas::Renderer::PreFrame() {
     ZoneScoped;
     m_VK.PreFrame();
-    VkCommandBuffer& cmd = m_VK.BeginGraphicsCommands(m_VK.GetFrameIndex());
+    VkCommandBuffer &cmd = m_VK.BeginGraphicsCommands(m_VK.GetFrameIndex());
 }
 
 void turas::Renderer::PostFrame() {
@@ -28,10 +28,10 @@ void turas::Renderer::PostFrame() {
     m_VK.PostFrame();
 }
 
-bool turas::Renderer::AddPipelineTemplate(turas::u64 hash, const turas::CreatePipelineCallback& pipelineTemplateFunction) {
+bool
+turas::Renderer::AddPipelineTemplate(turas::u64 hash, const turas::CreatePipelineCallback &pipelineTemplateFunction) {
     ZoneScoped;
-    if(p_CreatePipelineCallbacks.find(hash) != p_CreatePipelineCallbacks.end())
-    {
+    if (p_CreatePipelineCallbacks.find(hash) != p_CreatePipelineCallbacks.end()) {
         return false;
     }
 
@@ -41,7 +41,7 @@ bool turas::Renderer::AddPipelineTemplate(turas::u64 hash, const turas::CreatePi
 
 bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash) {
     ZoneScoped;
-    if(p_CreatePipelineCallbacks.find(hash) == p_CreatePipelineCallbacks.end())    {
+    if (p_CreatePipelineCallbacks.find(hash) == p_CreatePipelineCallbacks.end()) {
         return false;
     }
 
@@ -51,23 +51,22 @@ bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash) {
 
 turas::View *turas::Renderer::CreateView(const turas::String &name, turas::u64 pipelineHash) {
     ZoneScoped;
-    if(p_CreatePipelineCallbacks.find(pipelineHash) == p_CreatePipelineCallbacks.end()) {
+    if (p_CreatePipelineCallbacks.find(pipelineHash) == p_CreatePipelineCallbacks.end()) {
         // cant create a pipeline for this view
         return nullptr;
     }
 
-    Pipeline* p = p_CreatePipelineCallbacks[pipelineHash]((Renderer*)this);
+    Pipeline *p = p_CreatePipelineCallbacks[pipelineHash]((Renderer *) this);
     u64 viewNameHash = Utils::Hash(name);
 
-    p_ViewData.emplace(viewNameHash, ViewData {CreateUnique<View>(name), UPtr<Pipeline>(p)});
+    p_ViewData.emplace(viewNameHash, ViewData{CreateUnique<View>(name), UPtr<Pipeline>(p)});
     return p_ViewData[viewNameHash].m_View.get();
 }
 
 bool turas::Renderer::DestroyView(const turas::String &name) {
     ZoneScoped;
     u64 hash = Utils::Hash(name);
-    if(p_ViewData.find(hash) == p_ViewData.end())
-    {
+    if (p_ViewData.find(hash) == p_ViewData.end()) {
         return false;
     }
 
@@ -76,15 +75,14 @@ bool turas::Renderer::DestroyView(const turas::String &name) {
     return true;
 }
 
-turas::View *turas::Renderer::GetView(const turas::String& name) {
+turas::View *turas::Renderer::GetView(const turas::String &name) {
     ZoneScoped;
     return GetView(Utils::Hash(name));
 }
 
 turas::View *turas::Renderer::GetView(turas::u64 nameHash) {
     ZoneScoped;
-    if(p_ViewData.find(nameHash) == p_ViewData.end())
-    {
+    if (p_ViewData.find(nameHash) == p_ViewData.end()) {
         return nullptr;
     }
 
@@ -93,8 +91,7 @@ turas::View *turas::Renderer::GetView(turas::u64 nameHash) {
 
 turas::Pipeline *turas::Renderer::GetViewPipeline(turas::u64 nameHash) {
     ZoneScoped;
-    if(p_ViewData.find(nameHash) == p_ViewData.end())
-    {
+    if (p_ViewData.find(nameHash) == p_ViewData.end()) {
         return nullptr;
     }
 
@@ -110,19 +107,16 @@ turas::Pipeline *turas::Renderer::GetViewPipeline(const turas::String &name) {
 void turas::Renderer::LoadShaderBinaries() {
     // Load all files ending in .spv in the shaders directory (recursively)
     Vector<String> shaders = Utils::GetFilesInDirectory("shaders/");
-    for(auto& path : shaders)
-    {
-        if(path.find(".spv") < path.size())
-        {
+    for (auto &path: shaders) {
+        if (path.find(".spv") < path.size()) {
             // load the shader
             Vector<u8> binary = Utils::LoadBinaryFromPath(path);
             lvk::ShaderStage::Type stage = lvk::ShaderStage::Type::Unknown;
-            if(path.find(".vert") < path.size()) stage = lvk::ShaderStage::Type::Vertex;
-            if(path.find(".frag") < path.size()) stage = lvk::ShaderStage::Type::Fragment;
-            if(path.find(".comp") < path.size()) stage = lvk::ShaderStage::Type::Compute;
+            if (path.find(".vert") < path.size()) stage = lvk::ShaderStage::Type::Vertex;
+            if (path.find(".frag") < path.size()) stage = lvk::ShaderStage::Type::Fragment;
+            if (path.find(".comp") < path.size()) stage = lvk::ShaderStage::Type::Compute;
 
-            if(stage == lvk::ShaderStage::Type::Unknown)
-            {
+            if (stage == lvk::ShaderStage::Type::Unknown) {
                 log::error("Renderer : Failed to load stage at path {}, unkown shader stage.", path);
                 continue;
             }
@@ -136,12 +130,9 @@ void turas::Renderer::LoadShaderBinaries() {
 }
 
 void turas::Renderer::OnImGui() {
-    if(ImGui::Begin("Renderer Debug"))
-    {
-        if(ImGui::CollapsingHeader("Loaded Shaders"))
-        {
-            for(auto& [name, stage] : p_ShaderStages)
-            {
+    if (ImGui::Begin("Renderer Debug")) {
+        if (ImGui::CollapsingHeader("Loaded Shaders")) {
+            for (auto &[name, stage]: p_ShaderStages) {
                 ImGui::TextUnformatted(name.c_str());
             }
         }

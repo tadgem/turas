@@ -3,8 +3,8 @@
 //
 #include "Systems/Camera.h"
 #include "Core/Utils.h"
-turas::CameraSystem::CameraSystem() : System(GetTypeHash<CameraSystem>())
-{
+
+turas::CameraSystem::CameraSystem() : System(GetTypeHash<CameraSystem>()) {
     ZoneScoped;
 }
 

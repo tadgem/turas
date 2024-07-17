@@ -9,8 +9,7 @@
 turas::u64 turas::Utils::Hash(const String &string) {
     ZoneScoped;
     u64 ret = 0;
-    for(auto& c : string)
-    {
+    for (auto &c: string) {
         ret ^= 2305 * c;
     }
     return ret;
@@ -28,8 +27,7 @@ turas::Vector<turas::u8> turas::Utils::LoadBinaryFromPath(const turas::String &p
     return bytes;
 }
 
-turas::String turas::Utils::GetDirectoryFromFilename(const turas::String &fname)
-{
+turas::String turas::Utils::GetDirectoryFromFilename(const turas::String &fname) {
     size_t pos = fname.find_last_of("\\/");
     return (String::npos == pos)
            ? ""
@@ -37,8 +35,8 @@ turas::String turas::Utils::GetDirectoryFromFilename(const turas::String &fname)
 }
 
 turas::Vector<turas::String> turas::Utils::GetFilesInDirectory(const turas::String &path) {
-    auto ret =  turas::Vector<turas::String>();
-    for (const auto & entry : fs::directory_iterator("./" + path)) {
+    auto ret = turas::Vector<turas::String>();
+    for (const auto &entry: fs::directory_iterator("./" + path)) {
         ret.push_back(entry.path().string());
     }
     return ret;
@@ -52,15 +50,13 @@ turas::String turas::Utils::GetFilenameFromPath(const turas::String &fname) {
 }
 
 
-turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input))
-{
+turas::HashString::HashString(const turas::String &input) : m_Value(Utils::Hash(input)) {
     ZoneScoped;
 #ifdef TURAS_TRACK_HASHSTRINGS
     Utils::s_OriginalStrings.emplace(*this, input);
 #endif
 }
 
-turas::HashString::HashString(u64 input) : m_Value(input)
-{
+turas::HashString::HashString(u64 input) : m_Value(input) {
     ZoneScoped;
 }

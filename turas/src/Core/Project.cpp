@@ -1,13 +1,11 @@
 #include "Core/Project.h"
 
-turas::Project::Project(const turas::String &name) : m_Name(name)
-{
+turas::Project::Project(const turas::String &name) : m_Name(name) {
 
 }
 
 bool turas::Project::AddScene(const turas::String &name, const turas::String &path) {
-    if(m_SerializedScenes.find(name) != m_SerializedScenes.end())
-    {
+    if (m_SerializedScenes.find(name) != m_SerializedScenes.end()) {
         return false;
     }
     m_SerializedScenes.emplace(name, path);
@@ -15,8 +13,7 @@ bool turas::Project::AddScene(const turas::String &name, const turas::String &pa
 }
 
 bool turas::Project::RemoveScene(const turas::String &name) {
-    if(m_SerializedScenes.find(name) == m_SerializedScenes.end())
-    {
+    if (m_SerializedScenes.find(name) == m_SerializedScenes.end()) {
         return false;
     }
     m_SerializedScenes.erase(name);
@@ -24,8 +21,7 @@ bool turas::Project::RemoveScene(const turas::String &name) {
 }
 
 bool turas::Project::UpdateScene(const turas::String &name, const turas::String &path) {
-    if(m_SerializedScenes.find(name) == m_SerializedScenes.end())
-    {
+    if (m_SerializedScenes.find(name) == m_SerializedScenes.end()) {
         return false;
     }
     m_SerializedScenes[name] = path;
@@ -33,8 +29,7 @@ bool turas::Project::UpdateScene(const turas::String &name, const turas::String 
 }
 
 bool turas::Project::SetDefaultScene(const turas::String &name) {
-    if(m_SerializedScenes.find(name) == m_SerializedScenes.end())
-    {
+    if (m_SerializedScenes.find(name) == m_SerializedScenes.end()) {
         return false;
     }
     m_DefaultScene = name;

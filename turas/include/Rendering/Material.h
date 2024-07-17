@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "Core/Types.h"
 #include "STL/HashMap.h"
 #include "Rendering/Texture.h"
