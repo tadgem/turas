@@ -59,24 +59,24 @@ namespace turas {
         inline static Engine *INSTANCE = nullptr;
 
         // Subsystems of the engine, used to have ProgramComponents and Systems, roll them into a system
-        Vector<UPtr<System>> m_EngineSubSystems;
+        Vector<UPtr<System>>    m_EngineSubSystems;
         // Collection of all running scenes, each ECS in this collection will be processed + rendered each frame
-        Vector<UPtr<Scene>> m_ActiveScenes;
+        Vector<UPtr<Scene>>     m_ActiveScenes;
         // Scenes not yet loaded due to remaining asset load tasks
-        Vector<Scene *> m_PendingScenes;
+        Vector<Scene *>         m_PendingScenes;
         // main service for retrieving data from disk
-        AssetManager m_AssetManager;
+        AssetManager            m_AssetManager;
         // Renders all active views & pipelines
-        Renderer m_Renderer;
+        Renderer                m_Renderer;
         // backend for IM3D
-        lvk::LvkIm3dState m_Im3dState;
+        lvk::LvkIm3dState       m_Im3dState;
         // name + serialized scene info. Working directory is project file directory
-        UPtr<Project> m_Project;
+        UPtr<Project>           m_Project;
 
         // File watchers should be p_DebugUpdateEnabled only
-        UPtr<efsw::FileWatcher> m_FileWatcher;
-        UPtr<TurasFilesystemListener> m_UpdateListener;
-        efsw::WatchID m_GlobalProjectWatchId;
+        UPtr<efsw::FileWatcher>         m_FileWatcher;
+        UPtr<TurasFilesystemListener>   m_UpdateListener;
+        efsw::WatchID                   m_GlobalProjectWatchId;
 
         template<typename _Ty, typename ... Args>
         _Ty *AddSystem(Args &&... args) {
