@@ -15,9 +15,30 @@
 #include "Rendering/VertexLayouts.h"
 #include "Rendering/Renderer.h"
 
-inline static turas::Vector<turas::Procedure> s_Tests = {};
+inline static turas::HashMap<turas::String, turas::Procedure> s_Tests = {};
 
 #define BEGIN_TESTS() int main(int argc, char** argv) {
-#define TEST(X) s_Tests.emplace_back([]() X);
+#define TEST(NAME, X) s_Tests.emplace(NAME,[]() X);
 
-#define RUN_TESTS() for(auto& t : s_Tests) { t(); } };
+#define RUN_TESTS() begin: turas::String selection = ""; {turas::Engine e;e.Init(); while(selection.empty())\
+{\
+e.PrepFrame();\
+if(ImGui::Begin("Select Test"))\
+{                                                                                       \
+if(ImGui::Button("Run All")) {selection = "RUNALL";}                                     \
+ImGui::Separator();                                                                     \
+for(auto& [name, func] : s_Tests)                                                  \
+{\
+    if(ImGui::Button(name.c_str())){selection = name;}\
+}}\
+ImGui::End();\
+e.SubmitFrame();\
+} \
+e.Shutdown();}                                                                          \
+if(selection == "RUNALL")                                                          \
+{                                                                                       \
+for(auto& [name, t] : s_Tests) { t();}}else {\
+\
+s_Tests[selection]();}                                                                                      \
+goto begin;                                                                                                            \
+}

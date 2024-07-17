@@ -1,7 +1,7 @@
 #include "test.h"
 #include <filesystem>
 BEGIN_TESTS()
-TEST(
+TEST("Engine Init & Shutdown",
     {
         turas::Engine e;
         e.Init();
@@ -9,7 +9,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("sync wait asset",
     {
         turas::Engine e;
         e.Init();
@@ -21,7 +21,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Asset unloads sync",
     {
         turas::Engine e;
         e.Init();
@@ -39,7 +39,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Asset unloads async",
     {
         turas::Engine e;
         e.Init();
@@ -60,7 +60,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Asset loads async",
     {
         turas::Engine e;
         e.Init();
@@ -96,7 +96,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Check GPU submitted objects for Model",
     {
         turas::Engine e;
         e.Init();
@@ -121,7 +121,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Model Asset is valid",
     {
         turas::Engine e;
         e.Init();
@@ -135,7 +135,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Texture asset is valid",
     {
         turas::Engine e;
         e.Init();
@@ -147,7 +147,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Texture submitted to GPU async",
     {
         turas::Engine e;
         e.Init();
@@ -169,7 +169,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Scene is destroyed",
     {
         turas::Engine e;
         e.Init();
@@ -181,7 +181,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Correct number of scenes closed",
     {
         turas::Engine e;
         e.Init();
@@ -195,18 +195,7 @@ TEST(
     }
 )
 
-TEST(
-    {
-        turas::Engine e;
-        e.Init();
-        turas::Scene* s1 = e.CreateScene("Test");
-        turas::Scene* s2 = e.CreateScene("Test2 ");
-        e.CloseAllScenes();
-        assert(e.m_ActiveScenes.empty());
-        e.Shutdown();
-    }
-)
-TEST(
+TEST("Scene basic entity tests",
     {
         turas::Engine e;
         e.Init();
@@ -222,7 +211,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Transform system successfully added",
     {
         turas::Engine e;
         auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
@@ -233,7 +222,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Can add transform component to entity",
     {
         turas::Engine e;
         auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
@@ -250,7 +239,7 @@ TEST(
 )
 
 
-TEST(
+TEST("Can remove transform component from entity",
     {
         turas::Engine e;
         auto* transformSystem  = e.AddSystem<turas::TransformSystem>();
@@ -267,7 +256,7 @@ TEST(
     }
 )
 
-TEST(
+TEST("Transform system serialization check 1",
     {
     turas::Engine e;
     auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
@@ -282,7 +271,7 @@ TEST(
     e.Shutdown();
 });
 
-TEST(
+TEST("Transform system serialization check 2",
 {
     turas::Engine e;
     auto &transformSystem = *e.AddSystem<turas::TransformSystem>();
@@ -318,7 +307,7 @@ TEST(
 });
 
 
-TEST(
+TEST("Camera system serialization check 1",
     {
         turas::Engine e;
         auto &transformSystem = *e.AddSystem<turas::CameraSystem>();
@@ -353,7 +342,7 @@ TEST(
         e.Shutdown();
     });
 
-TEST(
+TEST("Mesh system populates component GPU handles",
 {
     turas::Engine e;
     auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
@@ -376,7 +365,7 @@ TEST(
     e.Shutdown();
 });
 
-TEST(
+TEST("Transform system serialization : GPU handles populated systemically",
 {
     turas::Engine e;
     auto &meshSystem = *e.AddSystem<turas::MeshSystem>();
@@ -423,7 +412,7 @@ TEST(
 });
 
 
-TEST(
+TEST("VertexLayoutDataBuilder test",
 {
     turas::Engine e;
     e.Init();
@@ -455,7 +444,7 @@ TEST(
 }
 )
 
-TEST(
+TEST("Pipeline template test",
     {
         turas::Engine e;
         e.Init();
@@ -469,7 +458,4 @@ TEST(
     }
 )
 
-
-
 RUN_TESTS()
-
