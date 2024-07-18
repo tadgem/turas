@@ -1,0 +1,1 @@
+https://learn.microsoft.com/en-us/cpp/build/linking-an-executable-to-a-dll?view=msvc-170
