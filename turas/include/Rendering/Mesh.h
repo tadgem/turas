@@ -10,6 +10,8 @@
 
 namespace turas {
 
+    using DefaultStaticMeshLayout = lvk::VertexDataPosNormalUv;
+
     struct AABB {
         glm::vec3 m_Min;
         glm::vec3 m_Max;

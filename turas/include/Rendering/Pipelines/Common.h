@@ -4,9 +4,17 @@
 
 #pragma once
 #include "Rendering/Pipeline.h"
+#include "Rendering/View.h"
 
 namespace turas {
     namespace Common {
+
+        struct MVPPushConstData
+        {
+            glm::mat4   m_Model;
+            glm::mat4   m_View;
+            glm::mat4   m_Proj;
+        };
 
         class BuiltInGBufferCommandDispatcher : public PipelineCommandDispatcher
         {
@@ -27,5 +35,7 @@ namespace turas {
                 lvk::Framebuffer* fb,
                 VkPolygonMode polyMode = VK_POLYGON_MODE_FILL, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT,
                 VkCompareOp depthCompareOp = VK_COMPARE_OP_LESS, bool enableMSAA = false);
+
+        static void DispatchStaticMeshDrawCommands(View* view, u64 shaderHash, lvk::VkPipelineData pipelineData, Scene* scene);
     };
 }

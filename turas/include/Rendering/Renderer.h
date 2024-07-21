@@ -21,7 +21,7 @@ namespace turas {
     class Renderer {
     public:
 
-        struct ViewData {
+        struct  ViewData {
             UPtr<View> m_View;
             UPtr<Pipeline> m_Pipeline;
 

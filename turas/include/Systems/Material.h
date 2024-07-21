@@ -6,10 +6,12 @@
 #define TURAS_ALL_MATERIAL_H
 
 #include "STL/Memory.h"
+#include "Core/Types.h"
 
 namespace turas {
     struct MaterialComponent {
         TURAS_IMPL_ALLOC(MaterialComponent)
+        u64 m_ShaderHash;
     };
 }
 

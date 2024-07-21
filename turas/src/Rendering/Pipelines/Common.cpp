@@ -1,7 +1,10 @@
 #include "Rendering/Pipelines/Common.h"
 #include "Rendering/VertexLayouts.h"
 #include "STL/Array.h"
-
+#include "Core/ECS.h"
+#include "Systems/Transform.h"
+#include "Systems/Mesh.h"
+#include "Systems/Material.h"
 
 lvk::VkPipelineData turas::Common::CreateStaticPipeline(lvk::VulkanAPI& vk,
         lvk::ShaderProgram& prog, lvk::Framebuffer* fb,
@@ -66,12 +69,27 @@ void turas::Common::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuf
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
         // set push consts
         // vkCmdPushConstants(commandBuffer, m_PipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PCViewData), &pcData);
-
+        auto view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
         // despatch scene render
+        for(auto [e, transform, mesh, material] : view.each())
+        {
+        }
 //        for (auto& renderable : renderables)
 //        {
 //            renderable.RecordGraphicsCommands(commandBuffer);
 //        }
         vkCmdEndRenderPass(commandBuffer);
 
+}
+
+void turas::Common::DispatchStaticMeshDrawCommands(View* view, turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
+{
+    auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
+    // dispatch scene render
+    for(auto [e, transform, mesh, material] : scene_view.each())
+    {
+        // we should probably think of a better way to do this, so we dont need to iterate over the entire list of draws
+        if(material.m_ShaderHash != shaderHash) continue;
+        view->
+    }
 }

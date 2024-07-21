@@ -64,13 +64,14 @@ namespace turas {
             return p_Registry.get<_Ty>(entity.m_Handle);
         }
 
+        inline entt::registry& GetRegistry() { return p_Registry;}
+
         HashMap<u64, String> SaveBinary();
 
         TURAS_IMPL_ALLOC(Scene)
 
     protected:
         friend class System;
-
         friend class Engine;
 
         void LoadBinary(HashMap<u64, String> &sceneData);
