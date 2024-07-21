@@ -146,6 +146,51 @@ void turas::Renderer::OnImGui() {
 
 }
 
+turas::Shader *turas::Renderer::CreateShaderVF(const turas::String &vertName, const turas::String &fragName,
+                                               const turas::String &shaderName) {
+    if( p_ShaderStages.find(vertName) == p_ShaderStages.end() ||
+        p_ShaderStages.find(fragName) == p_ShaderStages.end())
+    {
+        return nullptr;
+    }
+
+    if(p_ShaderPrograms.find(shaderName) != p_ShaderPrograms.end())
+    {
+        return p_ShaderPrograms[shaderName].get();
+    }
+
+    lvk::ShaderStage& vertStage = p_ShaderStages[vertName];
+    lvk::ShaderStage& fragStage = p_ShaderStages[fragName];
+
+    lvk::ShaderProgram prog = lvk::ShaderProgram::Create(m_VK, vertStage, fragStage);
+
+    p_ShaderPrograms.emplace(shaderName, CreateUnique<Shader>(Shader {
+        shaderName, Utils::Hash(shaderName),prog, {vertName, fragName}
+    }));
+
+    return p_ShaderPrograms[shaderName].get();
+}
+
+bool turas::Renderer::DestroyShader(const turas::String &shaderName) {
+    if(p_ShaderPrograms.find(shaderName) == p_ShaderPrograms.end())
+    {
+        return false;
+    }
+
+    p_ShaderPrograms[shaderName]->m_ShaderProgram.Free(m_VK);
+    p_ShaderPrograms[shaderName].reset();
+    p_ShaderPrograms.erase(shaderName);
+    return true;
+}
+
+turas::Shader *turas::Renderer::GetShader(const turas::String &shaderName) {
+    if(p_ShaderPrograms.find(shaderName) == p_ShaderPrograms.end())
+    {
+        return nullptr;
+    }
+    return p_ShaderPrograms[shaderName].get();
+}
+
 void turas::Renderer::ViewData::Free(lvk::VulkanAPI &vk) {
     ZoneScoped;
 }

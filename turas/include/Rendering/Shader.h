@@ -12,8 +12,9 @@ namespace turas {
 
     class Shader {
     public:
-        String m_ShaderName;
-        lvk::ShaderProgram m_ShaderProgram;
-        Vector<String> m_StagePaths;
+        String              m_ShaderName;
+        u64                 m_ShaderHash;
+        lvk::ShaderProgram  m_ShaderProgram;
+        Vector<String>      m_StagePaths;
     };
 }

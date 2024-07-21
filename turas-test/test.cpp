@@ -531,18 +531,50 @@ TEST("VertexLayoutDataBuilder test",
 }
 )
 
-TEST("Pipeline template test",
+TEST("Can load built in shader binaries",
     {
         turas::Engine e;
         e.Init();
-        e.m_Renderer.AddPipelineTemplate(turas::Utils::Hash("Sample"), [](turas::Renderer* vk) -> turas::Pipeline*
-        {
-            return nullptr;
-        });
-
-
+        auto* shader = e.m_Renderer.CreateShaderVF("gbuffer-standard.vert", "gbuffer-standard.frag", "gbuffer-standard");
+        assert(shader != nullptr);
         e.Shutdown();
     }
+)
+
+TEST("Can successfully link shader binaries",
+ {
+     turas::Engine e;
+     e.Init();
+     auto* shader = e.m_Renderer.CreateShaderVF("gbuffer-standard.vert", "gbuffer-standard.frag", "gbuffer-standard");
+     assert(shader->m_ShaderProgram.m_DescriptorSetLayout != VK_NULL_HANDLE);
+     e.Shutdown();
+ }
+)
+
+
+TEST("Can destroy shader",
+ {
+     turas::Engine e;
+     e.Init();
+     auto* shader = e.m_Renderer.CreateShaderVF("gbuffer-standard.vert", "gbuffer-standard.frag", "gbuffer-standard");
+     assert(shader != nullptr);
+     shader = nullptr;
+     e.m_Renderer.DestroyShader("gbuffer-standard");
+     shader = e.m_Renderer.GetShader("gbuffer-standard");
+     assert(shader == nullptr);
+     e.Shutdown();
+ }
+)
+
+
+TEST("Unloaded shaders returns null object",
+ {
+     turas::Engine e;
+     e.Init();
+     auto* shader = e.m_Renderer.CreateShaderVF("gbuffer-standard2.vert", "gbuffer-standard2.frag", "gbuffer-standard2");
+     assert(shader == nullptr);
+     e.Shutdown();
+ }
 )
 
 RUN_TESTS()

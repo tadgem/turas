@@ -54,6 +54,12 @@ namespace turas {
 
         Pipeline *GetViewPipeline(u64 nameHash);
 
+        Shader* CreateShaderVF(const String& vertName, const String& fragName, const String& shaderName);
+
+        bool    DestroyShader(const String& shaderName);
+
+        Shader* GetShader(const String& shaderName);
+
         TURAS_IMPL_ALLOC(Renderer)
 
         // interface to GPU (vulkan)
@@ -61,9 +67,14 @@ namespace turas {
         lvk::LvkIm3dState m_Im3dState;
 
     protected:
-        HashMap<u64, CreatePipelineCallback> p_CreatePipelineCallbacks;
-        HashMap<u64, ViewData> p_ViewData;
-        HashMap<String, lvk::ShaderStage> p_ShaderStages;
+        // callbacks to construct named pipelines
+        HashMap<u64, CreatePipelineCallback>    p_CreatePipelineCallbacks;
+        // active view data
+        HashMap<u64, ViewData>                  p_ViewData;
+        // all loaded shader stage binaries
+        HashMap<String, lvk::ShaderStage>       p_ShaderStages;
+        // all 'linked' shader programs
+        HashMap<String, UPtr<Shader>>           p_ShaderPrograms;
 
         friend class Engine;
 

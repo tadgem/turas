@@ -39,7 +39,7 @@ bool shouldRun = e.m_Renderer.m_VK.ShouldRun();e.Shutdown();if(!shouldRun) {goto
                                                                                                        \
 if(selection == "RUNALL")                                                          \
 {                                                                                       \
-for(auto& [name, t] : s_Tests) { spdlog::info("Running Test : {}\n", name);t();}}else {\
+for(auto& [name, t] : s_Tests) { spdlog::info("----- END TEST -----", name);spdlog::info("----- BEGIN TEST : {} -----", name);t();}spdlog::info("ALL TESTS COMPLETED SUCCESSFULLY :)");}else {\
 \
 s_Tests[selection]();}                                                                                      \
 goto begin;end: return 1;                                                                                      \
