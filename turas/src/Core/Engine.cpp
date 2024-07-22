@@ -229,11 +229,11 @@ void turas::Engine::DebugUpdate()
 
 void turas::Engine::DebugInit()
 {
+  InitImGuiStyle();
   if (!p_DebugUpdateEnabled)
   {
     return;
   }
-  InitImGuiStyle();
   m_FileWatcher = CreateUnique<efsw::FileWatcher>();
   m_UpdateListener = CreateUnique<TurasFilesystemListener>();
   m_GlobalProjectWatchId =

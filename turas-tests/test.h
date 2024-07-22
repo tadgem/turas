@@ -24,14 +24,24 @@ inline static turas::HashMap<turas::String, turas::Procedure> s_Tests = {};
 e.m_Renderer.m_VK.ShouldRun())\
 {\
 e.PrepFrame();\
+auto& io = ImGui::GetIO();\
+ImGui::SetNextWindowSize(ImVec2{io.DisplaySize.x, io.DisplaySize.y});\
+ImGui::SetNextWindowPos(ImVec2{0.0f, 0.0f});\
 if(ImGui::Begin("Select Test"))\
 {                                                                                       \
 if(ImGui::Button("Run All")) {selection = "RUNALL";}                                     \
-ImGui::Separator();                                                                     \
+ImGui::Separator();\
+ImGui::BeginGroup();\
+int currentWidth = 0;\
 for(auto& [name, func] : s_Tests)                                                  \
 {\
+    auto textSize = ImGui::CalcTextSize(name.c_str());\
+    currentWidth += static_cast<int>(textSize.x + 40.0f);\
+    auto windowWidth = ImGui::GetWindowWidth() - 200.0f;\
+    if(currentWidth > windowWidth) {currentWidth = 0;} else {ImGui::SameLine();}\
     if(ImGui::Button(name.c_str())){selection = name;}\
 }}\
+ImGui::EndGroup();\
 ImGui::End();\
 e.SubmitFrame();\
 } \

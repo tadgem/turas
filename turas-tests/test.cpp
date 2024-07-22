@@ -1,4 +1,3 @@
-iMgUI
 #include "test.h"
 #include <filesystem>
 BEGIN_TESTS()
@@ -552,4 +551,4 @@ BEGIN_TESTS()
          e.Shutdown();
          })
 
-RUN_TESTS()
+RUN_TESTS();

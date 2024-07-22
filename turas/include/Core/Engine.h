@@ -27,7 +27,7 @@ namespace turas
   class Engine
   {
   public:
-    Engine(bool enableDebugUpdate = true);
+    Engine(bool enableDebugUpdate = false);
 
     void Init();
 
