@@ -90,6 +90,5 @@ void turas::Common::DispatchStaticMeshDrawCommands(View* view, turas::u64 shader
     {
         // we should probably think of a better way to do this, so we dont need to iterate over the entire list of draws
         if(material.m_ShaderHash != shaderHash) continue;
-        view->
     }
 }

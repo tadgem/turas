@@ -106,6 +106,8 @@ namespace turas {
         bool p_DebugUpdateEnabled;
         String p_OriginalWorkingDir;
 
+        void InitImGuiStyle();
+
         void DebugInit();
 
         void DebugUpdate();

@@ -10,6 +10,7 @@
 #include "glm/glm.hpp"
 #include "Core/Serialization.h"
 #include "Debug/Profile.h"
+#include "Core/ECS.h"
 
 namespace turas {
 
@@ -40,9 +41,16 @@ namespace turas {
 
     class View {
     public:
+        enum class Type
+        {
+          Game,
+          Debug
+        };
 
-        String m_Name;
-        u64 m_Hash;
+        String  m_Name;
+        u64     m_Hash;
+        Type    m_Type;
+        Entity  m_CameraEntity;
 
         View(const String &name);
 
