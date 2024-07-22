@@ -1,120 +1,121 @@
 #pragma once
 
-#include <type_traits>
+#include "Assets/AssetManager.h"
+#include "Core/Project.h"
+#include "Core/System.h"
+#include "Debug/Profile.h"
+#include "Im3D/im3d_lvk.h"
+#include "Rendering/Renderer.h"
 #include "STL/Memory.h"
 #include "STL/Vector.h"
-#include "Core/System.h"
-#include "Core/Project.h"
-#include "Assets/AssetManager.h"
-#include "Debug/Profile.h"
-#include "Rendering/Renderer.h"
-#include "Im3D/im3d_lvk.h"
 #include "VulkanAPI_SDL.h"
 #include "efsw/efsw.hpp"
+#include <type_traits>
 
 namespace turas {
-    class Scene;
+class Scene;
 
-    class TurasFilesystemListener : public efsw::FileWatchListener {
-    public:
-        void handleFileAction(efsw::WatchID watchid, const std::string &dir,
-                              const std::string &filename, efsw::Action action,
-                              std::string oldFilename) override;
-    };
+class TurasFilesystemListener : public efsw::FileWatchListener {
+public:
+  void handleFileAction(efsw::WatchID watchid, const std::string &dir,
+                        const std::string &filename, efsw::Action action,
+                        std::string oldFilename) override;
+};
 
-    class Engine {
-    public:
-        Engine(bool enableDebugUpdate = true);
+class Engine {
+public:
+  Engine(bool enableDebugUpdate = true);
 
-        void Init();
+  void Init();
 
-        void Shutdown();
+  void Shutdown();
 
-        void Run();
+  void Run();
 
-        bool LoadProject(const String &path);
+  bool LoadProject(const String &path);
 
-        bool CreateProject(const String &name, const String &projectDir);
+  bool CreateProject(const String &name, const String &projectDir);
 
-        bool SaveProject();
+  bool SaveProject();
 
-        Scene*  CreateScene(const String &name);
+  Scene *CreateScene(const String &name);
 
-        Scene*  LoadSceneFromArchive(BinaryInputArchive &archive);
+  Scene *LoadSceneFromArchive(BinaryInputArchive &archive);
 
-        Scene*  LoadSceneFromPath(const String& path);
+  Scene *LoadSceneFromPath(const String &path);
 
-        Scene*  LoadSceneFromName(const String& name);
+  Scene *LoadSceneFromName(const String &name);
 
-        bool    SaveScene(Scene* s);
+  bool SaveScene(Scene *s);
 
-        void CloseScene(Scene *scene);
+  void CloseScene(Scene *scene);
 
-        void CloseAllScenes();
+  void CloseAllScenes();
 
-        AssetLoadProgress GetSceneLoadProgress(Scene *scene);
+  AssetLoadProgress GetSceneLoadProgress(Scene *scene);
 
-        TURAS_IMPL_ALLOC(Engine)
+  TURAS_IMPL_ALLOC(Engine)
 
-        inline static Engine *INSTANCE = nullptr;
+  inline static Engine *INSTANCE = nullptr;
 
-        // Subsystems of the engine, used to have ProgramComponents and Systems, roll them into a system
-        Vector<UPtr<System>>    m_EngineSubSystems;
-        // Collection of all running scenes, each ECS in this collection will be processed + rendered each frame
-        Vector<UPtr<Scene>>     m_ActiveScenes;
-        // Scenes not yet loaded due to remaining asset load tasks
-        Vector<Scene *>         m_PendingScenes;
-        // main service for retrieving data from disk
-        AssetManager            m_AssetManager;
-        // Renders all active views & pipelines
-        Renderer                m_Renderer;
-        // backend for IM3D
-        lvk::LvkIm3dState       m_Im3dState;
-        // name + serialized scene info. Working directory is project file directory
-        UPtr<Project>           m_Project;
+  // Subsystems of the engine, used to have ProgramComponents and Systems, roll
+  // them into a system
+  Vector<UPtr<System>> m_EngineSubSystems;
+  // Collection of all running scenes, each ECS in this collection will be
+  // processed + rendered each frame
+  Vector<UPtr<Scene>> m_ActiveScenes;
+  // Scenes not yet loaded due to remaining asset load tasks
+  Vector<Scene *> m_PendingScenes;
+  // main service for retrieving data from disk
+  AssetManager m_AssetManager;
+  // Renders all active views & pipelines
+  Renderer m_Renderer;
+  // backend for IM3D
+  lvk::LvkIm3dState m_Im3dState;
+  // name + serialized scene info. Working directory is project file directory
+  UPtr<Project> m_Project;
 
-        // File watchers should be p_DebugUpdateEnabled only
-        UPtr<efsw::FileWatcher>         m_FileWatcher;
-        UPtr<TurasFilesystemListener>   m_UpdateListener;
-        efsw::WatchID                   m_GlobalProjectWatchId;
+  // File watchers should be p_DebugUpdateEnabled only
+  UPtr<efsw::FileWatcher> m_FileWatcher;
+  UPtr<TurasFilesystemListener> m_UpdateListener;
+  efsw::WatchID m_GlobalProjectWatchId;
 
-        template<typename _Ty, typename ... Args>
-        _Ty *AddSystem(Args &&... args) {
-            ZoneScoped;
-            static_assert(std::is_base_of<System, _Ty>());
-            return static_cast<_Ty *>(m_EngineSubSystems.emplace_back(
-                    std::move(CreateUnique<_Ty>(std::forward<Args>(args)...))).get());
-        }
+  template <typename _Ty, typename... Args> _Ty *AddSystem(Args &&...args) {
+    ZoneScoped;
+    static_assert(std::is_base_of<System, _Ty>());
+    return static_cast<_Ty *>(m_EngineSubSystems
+                                  .emplace_back(std::move(CreateUnique<_Ty>(
+                                      std::forward<Args>(args)...)))
+                                  .get());
+  }
 
-        // Internal update loop, public for test: skoosh
-        void PrepFrame();
+  // Internal update loop, public for test: skoosh
+  void PrepFrame();
 
-        void SubmitFrame();
+  void SubmitFrame();
 
-        void SystemsUpdate();
+  void SystemsUpdate();
 
-        void PendingScenes();
+  void PendingScenes();
 
-        inline bool IsDebugEnabled() { return p_DebugUpdateEnabled; }
+  inline bool IsDebugEnabled() { return p_DebugUpdateEnabled; }
 
-    protected:
+protected:
+  void ChangeWorkingDirectory(const String &newDirectory);
 
-        void ChangeWorkingDirectory(const String &newDirectory);
+  void CopyShadersToProject();
 
-        void CopyShadersToProject();
+  bool p_DebugUpdateEnabled;
+  String p_OriginalWorkingDir;
 
-        bool p_DebugUpdateEnabled;
-        String p_OriginalWorkingDir;
+  void InitImGuiStyle();
 
-        void InitImGuiStyle();
+  void DebugInit();
 
-        void DebugInit();
-
-        void DebugUpdate();
+  void DebugUpdate();
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
-        DebugMemoryTracker p_DebugMemoryTracker;
+  DebugMemoryTracker p_DebugMemoryTracker;
 #endif
-
-    };
-}
+};
+} // namespace turas

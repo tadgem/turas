@@ -34,9 +34,10 @@ add_subdirectory(turas)
 message("-- Configuring Turas Editor")
 add_subdirectory(turas-editor)
 message("-- Configuring Turas Test Suite")
-add_subdirectory(turas-test)
+add_subdirectory(turas-tests)
 
 message("-- Configuring Turas Depedencies")
 add_dependencies(turas-editor turas)
-add_dependencies(turas-test turas)
+add_dependencies(turas-engine-tests turas)
+add_dependencies(turas-imgui-style-test turas)
 
