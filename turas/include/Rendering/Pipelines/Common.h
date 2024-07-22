@@ -36,6 +36,6 @@ namespace turas {
                 VkPolygonMode polyMode = VK_POLYGON_MODE_FILL, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT,
                 VkCompareOp depthCompareOp = VK_COMPARE_OP_LESS, bool enableMSAA = false);
 
-        static void DispatchStaticMeshDrawCommands(View* view, u64 shaderHash, lvk::VkPipelineData pipelineData, Scene* scene);
+        static void DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex, View* view, u64 shaderHash, lvk::VkPipelineData pipelineData, Scene* scene);
     };
 }

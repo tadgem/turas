@@ -71,19 +71,27 @@ void turas::Common::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuf
         // vkCmdPushConstants(commandBuffer, m_PipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PCViewData), &pcData);
         auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
         // despatch scene render
-        DispatchStaticMeshDrawCommands(view, m_ShaderHash, m_PipelineData, scene);
+        DispatchStaticMeshDrawCommands(commandBuffer, frameIndex, view, m_ShaderHash, m_PipelineData, scene);
 
         vkCmdEndRenderPass(commandBuffer);
 
 }
 
-void turas::Common::DispatchStaticMeshDrawCommands(View* view, turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
+void turas::Common::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex,View* view, turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
 {
     auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
     // dispatch scene render
     for(auto [e, transform, mesh, material] : scene_view.each())
     {
         // we should probably think of a better way to do this, so we dont need to iterate over the entire list of draws
-        if(material.m_ShaderHash != shaderHash) continue;
+        if(material.m_ShaderHash != shaderHash || material.m_Material == nullptr) continue;
+
+        VkBuffer vertexBuffers[]{ mesh.m_MeshAsset->m_LvkMesh.m_VertexBuffer };
+        VkDeviceSize sizes[] = { 0 };
+
+        vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, sizes);
+        vkCmdBindIndexBuffer(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineData.m_PipelineLayout, 0, 1, &material.m_Material->m_DescriptorSets[0].m_Sets[frameIndex], 0, nullptr);
+        vkCmdDrawIndexed(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexCount, 1, 0, 0, 0);
     }
 }

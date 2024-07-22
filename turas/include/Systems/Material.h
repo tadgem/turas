@@ -13,7 +13,7 @@ namespace turas {
     struct MaterialComponent {
         TURAS_IMPL_ALLOC(MaterialComponent)
         u64             m_ShaderHash;
-        lvk::Material*  m_Material;
+        lvk::Material*  m_Material = nullptr;
     };
 }
 
