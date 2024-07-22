@@ -4,38 +4,49 @@
 #include "Debug/Profile.h"
 
 turas::Renderer::Renderer(bool enableDebugValidation)
-    : m_VK(enableDebugValidation) {}
+  : m_VK(enableDebugValidation)
+{
+}
 
-void turas::Renderer::Start() {
+void turas::Renderer::Start()
+{
   ZoneScoped;
   m_VK.Start("Turas", 1280, 720);
   m_Im3dState = lvk::LoadIm3D(m_VK);
   LoadShaderBinaries();
 }
 
-void turas::Renderer::Shutdown() {
+void turas::Renderer::Shutdown()
+{
   ZoneScoped;
   lvk::FreeIm3d(m_VK, m_Im3dState);
   m_VK.Cleanup();
 }
 
-void turas::Renderer::PreFrame() {
+void turas::Renderer::PreFrame()
+{
   ZoneScoped;
   m_VK.PreFrame();
-  VkCommandBuffer &cmd = m_VK.BeginGraphicsCommands(m_VK.GetFrameIndex());
 }
 
-void turas::Renderer::PostFrame() {
+void turas::Renderer::PostFrame()
+{
   ZoneScoped;
-  m_VK.EndGraphicsCommands(m_VK.GetFrameIndex());
+  for(u32 i = 0; i < lvk::MAX_FRAMES_IN_FLIGHT; i++)
+  {
+    VkCommandBuffer& cmd = m_VK.BeginGraphicsCommands(i);
+    m_VK.EndGraphicsCommands(i);
+  }
   m_VK.PostFrame();
 }
 
 bool turas::Renderer::AddPipelineTemplate(
-    turas::u64 hash,
-    const turas::CreatePipelineCallback &pipelineTemplateFunction) {
+  turas::u64 hash,
+  const turas::CreatePipelineCallback& pipelineTemplateFunction)
+{
   ZoneScoped;
-  if (p_CreatePipelineCallbacks.find(hash) != p_CreatePipelineCallbacks.end()) {
+  if (p_CreatePipelineCallbacks.find(hash) != p_CreatePipelineCallbacks.end())
+  {
     return false;
   }
 
@@ -43,9 +54,11 @@ bool turas::Renderer::AddPipelineTemplate(
   return true;
 }
 
-bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash) {
+bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash)
+{
   ZoneScoped;
-  if (p_CreatePipelineCallbacks.find(hash) == p_CreatePipelineCallbacks.end()) {
+  if (p_CreatePipelineCallbacks.find(hash) == p_CreatePipelineCallbacks.end())
+  {
     return false;
   }
 
@@ -53,16 +66,18 @@ bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash) {
   return true;
 }
 
-turas::View *turas::Renderer::CreateView(const turas::String &name,
-                                         turas::u64 pipelineHash) {
+turas::View* turas::Renderer::CreateView(const turas::String& name,
+                                         turas::u64 pipelineHash)
+{
   ZoneScoped;
   if (p_CreatePipelineCallbacks.find(pipelineHash) ==
-      p_CreatePipelineCallbacks.end()) {
+    p_CreatePipelineCallbacks.end())
+  {
     // cant create a pipeline for this view
     return nullptr;
   }
 
-  Pipeline *p = p_CreatePipelineCallbacks[pipelineHash]((Renderer *)this);
+  Pipeline* p = p_CreatePipelineCallbacks[pipelineHash]((Renderer*)this);
   u64 viewNameHash = Utils::Hash(name);
 
   p_ViewData.emplace(viewNameHash,
@@ -70,10 +85,12 @@ turas::View *turas::Renderer::CreateView(const turas::String &name,
   return p_ViewData[viewNameHash].m_View.get();
 }
 
-bool turas::Renderer::DestroyView(const turas::String &name) {
+bool turas::Renderer::DestroyView(const turas::String& name)
+{
   ZoneScoped;
   u64 hash = Utils::Hash(name);
-  if (p_ViewData.find(hash) == p_ViewData.end()) {
+  if (p_ViewData.find(hash) == p_ViewData.end())
+  {
     return false;
   }
 
@@ -82,39 +99,48 @@ bool turas::Renderer::DestroyView(const turas::String &name) {
   return true;
 }
 
-turas::View *turas::Renderer::GetView(const turas::String &name) {
+turas::View* turas::Renderer::GetView(const turas::String& name)
+{
   ZoneScoped;
   return GetView(Utils::Hash(name));
 }
 
-turas::View *turas::Renderer::GetView(turas::u64 nameHash) {
+turas::View* turas::Renderer::GetView(turas::u64 nameHash)
+{
   ZoneScoped;
-  if (p_ViewData.find(nameHash) == p_ViewData.end()) {
+  if (p_ViewData.find(nameHash) == p_ViewData.end())
+  {
     return nullptr;
   }
 
   return p_ViewData[nameHash].m_View.get();
 }
 
-turas::Pipeline *turas::Renderer::GetViewPipeline(turas::u64 nameHash) {
+turas::Pipeline* turas::Renderer::GetViewPipeline(turas::u64 nameHash)
+{
   ZoneScoped;
-  if (p_ViewData.find(nameHash) == p_ViewData.end()) {
+  if (p_ViewData.find(nameHash) == p_ViewData.end())
+  {
     return nullptr;
   }
 
   return p_ViewData[nameHash].m_Pipeline.get();
 }
 
-turas::Pipeline *turas::Renderer::GetViewPipeline(const turas::String &name) {
+turas::Pipeline* turas::Renderer::GetViewPipeline(const turas::String& name)
+{
   ZoneScoped;
   return GetViewPipeline(Utils::Hash(name));
 }
 
-void turas::Renderer::LoadShaderBinaries() {
+void turas::Renderer::LoadShaderBinaries()
+{
   // Load all files ending in .spv in the shaders directory (recursively)
   Vector<String> shaders = Utils::GetFilesInDirectory("shaders/");
-  for (auto &path : shaders) {
-    if (path.find(".spv") < path.size()) {
+  for (auto& path : shaders)
+  {
+    if (path.find(".spv") < path.size())
+    {
       // load the shader
       Vector<u8> binary = Utils::LoadBinaryFromPath(path);
       lvk::ShaderStage::Type stage = lvk::ShaderStage::Type::Unknown;
@@ -125,27 +151,32 @@ void turas::Renderer::LoadShaderBinaries() {
       if (path.find(".comp") < path.size())
         stage = lvk::ShaderStage::Type::Compute;
 
-      if (stage == lvk::ShaderStage::Type::Unknown) {
+      if (stage == lvk::ShaderStage::Type::Unknown)
+      {
         log::error(
-            "Renderer : Failed to load stage at path {}, unkown shader stage.",
-            path);
+          "Renderer : Failed to load stage at path {}, unkown shader stage.",
+          path);
         continue;
       }
 
       String shaderName = Utils::GetFilenameFromPath(path);
       String cleanName = shaderName.substr(
-          0, shaderName.size() - 4); // remove .spv from filename
+        0, shaderName.size() - 4); // remove .spv from filename
       lvk::ShaderStage shaderStage =
-          lvk::ShaderStage::Create(m_VK, binary, stage);
+        lvk::ShaderStage::Create(m_VK, binary, stage);
       p_ShaderStages.emplace(cleanName, shaderStage);
     }
   }
 }
 
-void turas::Renderer::OnImGui() {
-  if (ImGui::Begin("Renderer Debug")) {
-    if (ImGui::CollapsingHeader("Loaded Shaders")) {
-      for (auto &[name, stage] : p_ShaderStages) {
+void turas::Renderer::OnImGui()
+{
+  if (ImGui::Begin("Renderer Debug"))
+  {
+    if (ImGui::CollapsingHeader("Loaded Shaders"))
+    {
+      for (auto& [name, stage] : p_ShaderStages)
+      {
         ImGui::TextUnformatted(name.c_str());
       }
     }
@@ -153,35 +184,41 @@ void turas::Renderer::OnImGui() {
   ImGui::End();
 }
 
-turas::Shader *
-turas::Renderer::CreateShaderVF(const turas::String &vertName,
-                                const turas::String &fragName,
-                                const turas::String &shaderName) {
+turas::Shader*
+turas::Renderer::CreateShaderVF(const turas::String& vertName,
+                                const turas::String& fragName,
+                                const turas::String& shaderName)
+{
   if (p_ShaderStages.find(vertName) == p_ShaderStages.end() ||
-      p_ShaderStages.find(fragName) == p_ShaderStages.end()) {
+    p_ShaderStages.find(fragName) == p_ShaderStages.end())
+  {
     return nullptr;
   }
 
-  if (p_ShaderPrograms.find(shaderName) != p_ShaderPrograms.end()) {
+  if (p_ShaderPrograms.find(shaderName) != p_ShaderPrograms.end())
+  {
     return p_ShaderPrograms[shaderName].get();
   }
 
-  lvk::ShaderStage &vertStage = p_ShaderStages[vertName];
-  lvk::ShaderStage &fragStage = p_ShaderStages[fragName];
+  lvk::ShaderStage& vertStage = p_ShaderStages[vertName];
+  lvk::ShaderStage& fragStage = p_ShaderStages[fragName];
 
   lvk::ShaderProgram prog =
-      lvk::ShaderProgram::Create(m_VK, vertStage, fragStage);
+    lvk::ShaderProgram::Create(m_VK, vertStage, fragStage);
 
   p_ShaderPrograms.emplace(
-      shaderName,
-      CreateUnique<Shader>(Shader{
-          shaderName, Utils::Hash(shaderName), prog, {vertName, fragName}}));
+    shaderName,
+    CreateUnique<Shader>(Shader{
+      shaderName, Utils::Hash(shaderName), prog, {vertName, fragName}
+    }));
 
   return p_ShaderPrograms[shaderName].get();
 }
 
-bool turas::Renderer::DestroyShader(const turas::String &shaderName) {
-  if (p_ShaderPrograms.find(shaderName) == p_ShaderPrograms.end()) {
+bool turas::Renderer::DestroyShader(const turas::String& shaderName)
+{
+  if (p_ShaderPrograms.find(shaderName) == p_ShaderPrograms.end())
+  {
     return false;
   }
 
@@ -191,11 +228,13 @@ bool turas::Renderer::DestroyShader(const turas::String &shaderName) {
   return true;
 }
 
-turas::Shader *turas::Renderer::GetShader(const turas::String &shaderName) {
-  if (p_ShaderPrograms.find(shaderName) == p_ShaderPrograms.end()) {
+turas::Shader* turas::Renderer::GetShader(const turas::String& shaderName)
+{
+  if (p_ShaderPrograms.find(shaderName) == p_ShaderPrograms.end())
+  {
     return nullptr;
   }
   return p_ShaderPrograms[shaderName].get();
 }
 
-void turas::Renderer::ViewData::Free(lvk::VulkanAPI &vk) { ZoneScoped; }
+void turas::Renderer::ViewData::Free(lvk::VulkanAPI& vk) { ZoneScoped; }

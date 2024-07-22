@@ -12,43 +12,51 @@
 #endif
 
 turas::Engine::Engine(bool enableDebugUpdate)
-    : p_DebugUpdateEnabled(enableDebugUpdate), m_Renderer(false) {
+  : p_DebugUpdateEnabled(enableDebugUpdate), m_Renderer(enableDebugUpdate)
+{
   ZoneScoped;
   INSTANCE = this;
   p_OriginalWorkingDir = std::filesystem::current_path().string();
-  if (!std::filesystem::exists("shaders")) {
+  if (!std::filesystem::exists("shaders"))
+  {
     ChangeWorkingDirectory("../");
   }
   log::info("Turas : Working Directory : {}",
             std::filesystem::current_path().string());
 }
 
-void turas::Engine::Init() {
+void turas::Engine::Init()
+{
   ZoneScoped;
   spdlog::info("Initialising Turas");
   m_Renderer.Start();
   m_Im3dState = lvk::LoadIm3D(m_Renderer.m_VK);
   DebugInit();
-  for (auto &sys : m_EngineSubSystems) {
+  for (auto& sys : m_EngineSubSystems)
+  {
     sys->OnEngineReady();
   }
 }
 
-void turas::Engine::Shutdown() {
+void turas::Engine::Shutdown()
+{
   ZoneScoped;
 
-  if (p_DebugUpdateEnabled) {
+  if (p_DebugUpdateEnabled)
+  {
     m_FileWatcher->removeWatch(m_GlobalProjectWatchId);
     // remove other watch sources;
   }
 
   CloseAllScenes();
 
-  for (auto &scene : m_ActiveScenes) {
+  for (auto& scene : m_ActiveScenes)
+  {
     scene.reset();
   }
   m_ActiveScenes.clear();
-  for (auto &sys : m_EngineSubSystems) {
+  for (auto& sys : m_EngineSubSystems)
+  {
     sys->OnShutdown();
     sys.reset();
   }
@@ -62,8 +70,10 @@ void turas::Engine::Shutdown() {
   ChangeWorkingDirectory(p_OriginalWorkingDir);
 }
 
-void turas::Engine::Run() {
-  while (m_Renderer.m_VK.ShouldRun()) {
+void turas::Engine::Run()
+{
+  while (m_Renderer.m_VK.ShouldRun())
+  {
     FrameMark;
     ZoneScopedN("Frame");
     PrepFrame();
@@ -75,28 +85,35 @@ void turas::Engine::Run() {
   }
 }
 
-turas::Scene *turas::Engine::CreateScene(const String &name) {
+turas::Scene* turas::Engine::CreateScene(const String& name)
+{
   ZoneScoped;
-  Scene *scene =
-      m_ActiveScenes.emplace_back(std::move(CreateUnique<Scene>(name))).get();
-  for (auto &sys : m_EngineSubSystems) {
+  Scene* scene =
+    m_ActiveScenes.emplace_back(std::move(CreateUnique<Scene>(name))).get();
+  for (auto& sys : m_EngineSubSystems)
+  {
     sys->OnSceneLoaded(scene);
   }
 
   return scene;
 }
 
-void turas::Engine::CloseScene(turas::Scene *scene) {
+void turas::Engine::CloseScene(turas::Scene* scene)
+{
   ZoneScoped;
   int index = -1;
-  for (int i = 0; i < m_ActiveScenes.size(); i++) {
-    if (m_ActiveScenes[i].get() == scene) {
+  for (int i = 0; i < m_ActiveScenes.size(); i++)
+  {
+    if (m_ActiveScenes[i].get() == scene)
+    {
       index = i;
     }
   }
 
-  if (index >= 0) {
-    for (auto &sys : m_EngineSubSystems) {
+  if (index >= 0)
+  {
+    for (auto& sys : m_EngineSubSystems)
+    {
       sys->OnSceneClosed(m_ActiveScenes[index].get());
     }
     m_ActiveScenes[index].reset();
@@ -104,11 +121,14 @@ void turas::Engine::CloseScene(turas::Scene *scene) {
   }
 }
 
-void turas::Engine::CloseAllScenes() {
+void turas::Engine::CloseAllScenes()
+{
   ZoneScoped;
-  for (auto &scene : m_ActiveScenes) {
+  for (auto& scene : m_ActiveScenes)
+  {
     // sys scene cleanup logic
-    for (auto &sys : m_EngineSubSystems) {
+    for (auto& sys : m_EngineSubSystems)
+    {
       sys->OnSceneClosed(scene.get());
     }
     scene.reset();
@@ -117,63 +137,78 @@ void turas::Engine::CloseAllScenes() {
   m_ActiveScenes.clear();
 }
 
-void turas::Engine::PrepFrame() {
+void turas::Engine::PrepFrame()
+{
   ZoneScoped;
   m_Renderer.PreFrame();
   Im3d::NewFrame();
 }
 
-void turas::Engine::SubmitFrame() {
+void turas::Engine::SubmitFrame()
+{
   ZoneScoped;
   Im3d::EndFrame();
   m_Renderer.PostFrame();
 }
 
-void turas::Engine::SystemsUpdate() {
+void turas::Engine::SystemsUpdate()
+{
   ZoneScoped;
-  for (auto &sys : m_EngineSubSystems) {
-    for (auto &scene : m_ActiveScenes) {
+  for (auto& sys : m_EngineSubSystems)
+  {
+    for (auto& scene : m_ActiveScenes)
+    {
       sys->OnUpdate(scene.get());
     }
   }
 }
 
-void turas::Engine::PendingScenes() {
-  if (m_AssetManager.AnyAssetsLoading()) {
+void turas::Engine::PendingScenes()
+{
+  if (m_AssetManager.AnyAssetsLoading())
+  {
     return;
   }
 
-  if (m_PendingScenes.empty()) {
+  if (m_PendingScenes.empty())
+  {
     return;
   }
 
-  for (auto *pendingScene : m_PendingScenes) {
+  for (auto* pendingScene : m_PendingScenes)
+  {
     // Turn raw scene ptr to a UPtr so it will be
     // freed when the scene is removed from list of active scenes
     m_ActiveScenes.push_back(UPtr<Scene>(pendingScene));
-    for (auto &sys : m_EngineSubSystems) {
+    for (auto& sys : m_EngineSubSystems)
+    {
       sys->OnSceneLoaded(pendingScene);
     }
   }
   m_PendingScenes.clear();
 }
 
-turas::Scene *turas::Engine::LoadSceneFromArchive(BinaryInputArchive &archive) {
-  auto *s = new Scene("empty");
+turas::Scene* turas::Engine::LoadSceneFromArchive(BinaryInputArchive& archive)
+{
+  auto* s = new Scene("empty");
   s->LoadBinaryFromArchive(archive);
   m_PendingScenes.push_back(s);
   return s;
 }
 
 turas::AssetLoadProgress
-turas::Engine::GetSceneLoadProgress(turas::Scene *scene) {
+turas::Engine::GetSceneLoadProgress(turas::Scene* scene)
+{
   if (std::find(m_PendingScenes.begin(), m_PendingScenes.end(), scene) !=
-      m_PendingScenes.end()) {
+    m_PendingScenes.end())
+  {
     return AssetLoadProgress::Loading;
   }
 
-  for (auto &activeScene : m_ActiveScenes) {
-    if (activeScene.get() == scene) {
+  for (auto& activeScene : m_ActiveScenes)
+  {
+    if (activeScene.get() == scene)
+    {
       return AssetLoadProgress::Loaded;
     }
   }
@@ -181,8 +216,10 @@ turas::Engine::GetSceneLoadProgress(turas::Scene *scene) {
   return turas::AssetLoadProgress::NotLoaded;
 }
 
-void turas::Engine::DebugUpdate() {
-  if (!p_DebugUpdateEnabled) {
+void turas::Engine::DebugUpdate()
+{
+  if (!p_DebugUpdateEnabled)
+  {
     return;
   }
 
@@ -190,21 +227,25 @@ void turas::Engine::DebugUpdate() {
   StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
 }
 
-void turas::Engine::DebugInit() {
-  if (!p_DebugUpdateEnabled) {
+void turas::Engine::DebugInit()
+{
+  if (!p_DebugUpdateEnabled)
+  {
     return;
   }
   InitImGuiStyle();
   m_FileWatcher = CreateUnique<efsw::FileWatcher>();
   m_UpdateListener = CreateUnique<TurasFilesystemListener>();
   m_GlobalProjectWatchId =
-      m_FileWatcher->addWatch(".", m_UpdateListener.get(), true);
+    m_FileWatcher->addWatch(".", m_UpdateListener.get(), true);
   // Perhaps other sources of watch?
   m_FileWatcher->watch();
 }
 
-bool turas::Engine::LoadProject(const turas::String &path) {
-  if (m_Project.get() != nullptr) {
+bool turas::Engine::LoadProject(const turas::String& path)
+{
+  if (m_Project.get() != nullptr)
+  {
     return false;
   }
   m_Project = CreateUnique<Project>("It doesnt matter");
@@ -221,7 +262,8 @@ bool turas::Engine::LoadProject(const turas::String &path) {
   // change working directory to project dir
   ChangeWorkingDirectory(dir);
   // if debug copy shaders to directory
-  if (p_DebugUpdateEnabled) {
+  if (p_DebugUpdateEnabled)
+  {
     CopyShadersToProject();
   }
   // update renderer to reload all shaders
@@ -229,14 +271,17 @@ bool turas::Engine::LoadProject(const turas::String &path) {
   return true;
 }
 
-bool turas::Engine::CreateProject(const turas::String &name,
-                                  const turas::String &projectDir) {
-  if (m_Project.get() != nullptr) {
+bool turas::Engine::CreateProject(const turas::String& name,
+                                  const turas::String& projectDir)
+{
+  if (m_Project.get() != nullptr)
+  {
     return false;
   }
   m_Project = CreateUnique<Project>(name);
 
-  if (!std::filesystem::exists(projectDir)) {
+  if (!std::filesystem::exists(projectDir))
+  {
     std::filesystem::create_directory(projectDir);
   }
 
@@ -245,7 +290,8 @@ bool turas::Engine::CreateProject(const turas::String &name,
   // save project to specified path
   SaveProject();
   // if debug copy shaders to directory
-  if (p_DebugUpdateEnabled) {
+  if (p_DebugUpdateEnabled)
+  {
     CopyShadersToProject();
   }
   // update renderer to reload all shaders
@@ -253,8 +299,10 @@ bool turas::Engine::CreateProject(const turas::String &name,
   return true;
 }
 
-bool turas::Engine::SaveProject() {
-  if (m_Project.get() == nullptr) {
+bool turas::Engine::SaveProject()
+{
+  if (m_Project.get() == nullptr)
+  {
     return false;
   }
 
@@ -264,19 +312,22 @@ bool turas::Engine::SaveProject() {
     archive(*m_Project.get());
   }
   String projectFilePath = std::filesystem::current_path().string() + "/" +
-                           m_Project->m_Name + ".turasproj";
+    m_Project->m_Name + ".turasproj";
   Utils::SaveStringToPath(stream.str(), projectFilePath);
   return true;
 }
 
-void turas::Engine::ChangeWorkingDirectory(const turas::String &newDirectory) {
+void turas::Engine::ChangeWorkingDirectory(const turas::String& newDirectory)
+{
   std::filesystem::current_path(newDirectory);
 }
 
-void turas::Engine::CopyShadersToProject() {}
+void turas::Engine::CopyShadersToProject()
+{
+}
 
-bool turas::Engine::SaveScene(turas::Scene *s) {
-
+bool turas::Engine::SaveScene(turas::Scene* s)
+{
   if (!s)
     return false;
 
@@ -287,21 +338,24 @@ bool turas::Engine::SaveScene(turas::Scene *s) {
     outputArchive(data);
   }
 
-  if (!std::filesystem::exists("scenes/")) {
+  if (!std::filesystem::exists("scenes/"))
+  {
     std::filesystem::create_directory("scenes");
   }
 
   String scenePath = "scenes/" + s->m_Name + ".tbs";
   Utils::SaveStringToPath(dataStream.str(), scenePath);
 
-  if (m_Project) {
+  if (m_Project)
+  {
     m_Project->m_SerializedScenes.emplace(s->m_Name, scenePath);
   }
 
   return true;
 }
 
-turas::Scene *turas::Engine::LoadSceneFromPath(const String &path) {
+turas::Scene* turas::Engine::LoadSceneFromPath(const String& path)
+{
   if (!std::filesystem::exists(path))
     return nullptr;
 
@@ -309,34 +363,39 @@ turas::Scene *turas::Engine::LoadSceneFromPath(const String &path) {
   std::stringstream stream;
   stream << s;
   turas::BinaryInputArchive input(stream);
-  Scene *scene = LoadSceneFromArchive(input);
-  if (!m_Project) {
+  Scene* scene = LoadSceneFromArchive(input);
+  if (!m_Project)
+  {
     return scene;
   }
 
   if (m_Project->m_SerializedScenes.find(scene->m_Name) ==
-      m_Project->m_SerializedScenes.end()) {
+    m_Project->m_SerializedScenes.end())
+  {
     m_Project->m_SerializedScenes.emplace(scene->m_Name, path);
   }
   return scene;
 }
 
-turas::Scene *turas::Engine::LoadSceneFromName(const turas::String &name) {
+turas::Scene* turas::Engine::LoadSceneFromName(const turas::String& name)
+{
   if (!m_Project)
     return nullptr;
   if (m_Project->m_SerializedScenes.find(name) ==
-      m_Project->m_SerializedScenes.end()) {
+    m_Project->m_SerializedScenes.end())
+  {
     return nullptr;
   }
 
   return LoadSceneFromPath(m_Project->m_SerializedScenes[name]);
 }
-void turas::Engine::InitImGuiStyle() {
 
-  ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void *)&dm_sans_ttf_bin[0],
-                                             DM_SANS_TTF_SIZE, 16.0f);
+void turas::Engine::InitImGuiStyle()
+{
+  ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)&dm_sans_ttf_bin[0],
+                                             static_cast<u32>(DM_SANS_TTF_SIZE), 18.0f);
 
-  ImVec4 *colors = ImGui::GetStyle().Colors;
+  ImVec4* colors = ImGui::GetStyle().Colors;
   colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
   colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
   colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
@@ -393,7 +452,7 @@ void turas::Engine::InitImGuiStyle() {
   colors[ImGuiCol_NavWindowingDimBg] = ImVec4(1.00f, 0.00f, 0.00f, 0.20f);
   colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.00f, 0.00f, 0.35f);
 
-  ImGuiStyle &style = ImGui::GetStyle();
+  ImGuiStyle& style = ImGui::GetStyle();
   style.WindowPadding = ImVec2(8.00f, 8.00f);
   style.FramePadding = ImVec2(5.00f, 2.00f);
   style.CellPadding = ImVec2(6.00f, 6.00f);
@@ -419,24 +478,26 @@ void turas::Engine::InitImGuiStyle() {
 }
 
 void turas::TurasFilesystemListener::handleFileAction(
-    efsw::WatchID watchid, const std::string &dir, const std::string &filename,
-    efsw::Action action, std::string oldFilename) {
-  switch (action) {
+  efsw::WatchID watchid, const std::string& dir, const std::string& filename,
+  efsw::Action action, std::string oldFilename)
+{
+  switch (action)
+  {
   case efsw::Actions::Add:
     std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Added"
-              << std::endl;
+      << std::endl;
     break;
   case efsw::Actions::Delete:
     std::cout << "DIR (" << dir << ") FILE (" << filename
-              << ") has event Delete" << std::endl;
+      << ") has event Delete" << std::endl;
     break;
   case efsw::Actions::Modified:
     std::cout << "DIR (" << dir << ") FILE (" << filename
-              << ") has event Modified" << std::endl;
+      << ") has event Modified" << std::endl;
     break;
   case efsw::Actions::Moved:
     std::cout << "DIR (" << dir << ") FILE (" << filename
-              << ") has event Moved from (" << oldFilename << ")" << std::endl;
+      << ") has event Moved from (" << oldFilename << ")" << std::endl;
     break;
   default:
     std::cout << "Should never happen!" << std::endl;

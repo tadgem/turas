@@ -8,7 +8,7 @@ function(add_shaders DEPENDENCY_TARGET SHADERS_DIR)
             "${SHADERS_DIR}/*.comp"
     )
 
-    foreach(GLSL ${GLSL_SOURCE_FILES})
+    foreach (GLSL ${GLSL_SOURCE_FILES})
         get_filename_component(FILE_NAME ${GLSL} NAME)
         set(SPIRV "${SHADERS_DIR}/${FILE_NAME}.spv")
         add_custom_command(
@@ -17,7 +17,7 @@ function(add_shaders DEPENDENCY_TARGET SHADERS_DIR)
                 COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
                 DEPENDS ${GLSL})
         list(APPEND SPIRV_BINARY_FILES ${SPIRV})
-    endforeach(GLSL)
+    endforeach (GLSL)
 
     add_custom_target(
             Shaders

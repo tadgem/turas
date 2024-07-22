@@ -6,17 +6,20 @@
 #include "Debug/Profile.h"
 #include <fstream>
 
-turas::u64 turas::Utils::Hash(const String &string) {
+turas::u64 turas::Utils::Hash(const String& string)
+{
   ZoneScoped;
   u64 ret = 0;
-  for (auto &c : string) {
+  for (auto& c : string)
+  {
     ret ^= 2305 * c;
   }
   return ret;
 }
 
 turas::Vector<turas::u8>
-turas::Utils::LoadBinaryFromPath(const turas::String &path) {
+turas::Utils::LoadBinaryFromPath(const turas::String& path)
+{
   ZoneScoped;
   std::ifstream input(path, std::ios::binary);
 
@@ -28,36 +31,43 @@ turas::Utils::LoadBinaryFromPath(const turas::String &path) {
 }
 
 turas::String
-turas::Utils::GetDirectoryFromFilename(const turas::String &fname) {
+turas::Utils::GetDirectoryFromFilename(const turas::String& fname)
+{
   size_t pos = fname.find_last_of("\\/");
   return (String::npos == pos) ? "" : fname.substr(0, pos);
 }
 
 turas::Vector<turas::String>
-turas::Utils::GetFilesInDirectory(const turas::String &path) {
+turas::Utils::GetFilesInDirectory(const turas::String& path)
+{
   auto ret = turas::Vector<turas::String>();
-  for (const auto &entry : fs::directory_iterator("./" + path)) {
+  for (const auto& entry : fs::directory_iterator("./" + path))
+  {
     ret.push_back(entry.path().string());
   }
   return ret;
 }
 
-turas::String turas::Utils::GetFilenameFromPath(const turas::String &fname) {
+turas::String turas::Utils::GetFilenameFromPath(const turas::String& fname)
+{
   size_t pos = fname.find_last_of("\\/");
   return (String::npos == pos) ? "" : fname.substr(pos + 1, fname.size() - 1);
 }
 
-void turas::Utils::SaveStringToPath(const turas::String &str,
-                                    const turas::String &path) {
+void turas::Utils::SaveStringToPath(const turas::String& str,
+                                    const turas::String& path)
+{
   std::ofstream out(path);
   out << str;
   out.close();
 }
 
-turas::String turas::Utils::LoadStringFromPath(const turas::String &path) {
+turas::String turas::Utils::LoadStringFromPath(const turas::String& path)
+{
   std::ifstream in(path);
   std::stringstream stream;
-  if (!in.is_open()) {
+  if (!in.is_open())
+  {
     return "";
   }
 
@@ -65,8 +75,9 @@ turas::String turas::Utils::LoadStringFromPath(const turas::String &path) {
   return stream.str();
 }
 
-turas::HashString::HashString(const turas::String &input)
-    : m_Value(Utils::Hash(input)) {
+turas::HashString::HashString(const turas::String& input)
+  : m_Value(Utils::Hash(input))
+{
   ZoneScoped;
 #ifdef TURAS_TRACK_HASHSTRINGS
   Utils::s_OriginalStrings.emplace(*this, input);

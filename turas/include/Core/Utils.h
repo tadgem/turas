@@ -12,66 +12,79 @@
 #include <iostream>
 
 namespace fs = std::filesystem;
-namespace turas {
-template <typename T> String GetTypeName() { return ctti::type_id<T>().name(); }
 
-template <typename T> u64 GetTypeHash() { return ctti::type_id<T>().hash(); }
+namespace turas
+{
+  template <typename T>
+  String GetTypeName() { return ctti::type_id<T>().name(); }
 
-struct HashString {
-  HashString() { m_Value = 0; }
+  template <typename T>
+  u64 GetTypeHash() { return ctti::type_id<T>().hash(); }
 
-  HashString(const String &input);
+  struct HashString
+  {
+    HashString() { m_Value = 0; }
 
-  HashString(u64 value);
+    HashString(const String& input);
 
-  template <typename T> HashString() : m_Value(GetTypeHash<T>()) {
+    HashString(u64 value);
+
+    template <typename T>
+    HashString() : m_Value(GetTypeHash<T>())
+    {
 #ifdef TURAS_TRACK_HASHSTRINGS
     Utils::s_OriginalStrings.emplace(*this, GetTypeName<T>());
 #endif
-  }
+    }
 
-  TURAS_IMPL_ALLOC(HashString)
+    TURAS_IMPL_ALLOC(HashString)
 
-  u64 m_Value;
+    u64 m_Value;
 
-  bool operator==(HashString const &rhs) const {
-    return m_Value == rhs.m_Value;
-  }
+    bool operator==(HashString const& rhs) const
+    {
+      return m_Value == rhs.m_Value;
+    }
 
-  bool operator<(const HashString &o) const { return m_Value < o.m_Value; };
+    bool operator<(const HashString& o) const { return m_Value < o.m_Value; };
 
-  operator u64() const { return m_Value; };
-};
+    operator u64() const { return m_Value; };
+  };
 } // namespace turas
 
 /* required to hash a container */
-template <> struct std::hash<turas::HashString> {
-  std::size_t operator()(const turas::HashString &h) const {
+template <>
+struct std::hash<turas::HashString>
+{
+  std::size_t operator()(const turas::HashString& h) const
+  {
     return std::hash<turas::u64>()(h.m_Value) ^
-           std::hash<turas::u64>()(h.m_Value);
+      std::hash<turas::u64>()(h.m_Value);
   }
 };
 
-namespace turas {
-class Utils {
-public:
+namespace turas
+{
+  class Utils
+  {
+  public:
 #define TURAS_TRACK_HASHSTRINGS
 #ifdef TURAS_TRACK_HASHSTRINGS
-  inline static HashMap<HashString, String> s_OriginalStrings = {};
+    inline static HashMap<HashString, String> s_OriginalStrings = {};
 #endif
 
-  static u64 Hash(const String &string);
+    static u64 Hash(const String& string);
 
-  static String GetDirectoryFromFilename(const String &fname);
+    static String GetDirectoryFromFilename(const String& fname);
 
-  static String GetFilenameFromPath(const String &fname);
+    static String GetFilenameFromPath(const String& fname);
 
-  static Vector<u8> LoadBinaryFromPath(const String &path);
+    static Vector<u8> LoadBinaryFromPath(const String& path);
 
-  static String LoadStringFromPath(const String &path);
+    static String LoadStringFromPath(const String& path);
 
-  static void SaveStringToPath(const String &str, const String &path);
+    static void SaveStringToPath(const String& str, const String& path);
 
-  static Vector<String> GetFilesInDirectory(const String &path);
-};
+    static Vector<String> GetFilesInDirectory(const String& path);
+  };
 } // namespace turas

@@ -12,44 +12,50 @@
 #include "STL/String.h"
 #include "glm/glm.hpp"
 
-namespace turas {
+namespace turas
+{
+  struct Camera
+  {
+    enum ProjectionType : u8 { Perspective, Orthographic };
 
-struct Camera {
-  enum ProjectionType : u8 { Perspective, Orthographic };
+    float m_FOV;
+    float m_NearPlane;
+    float m_FarPlane;
+    u32 m_Width;
+    u32 m_Height;
+    ProjectionType m_ProjectionType;
+    glm::mat4 m_ViewMatrix;
+    glm::mat4 m_ProjectionMatrix;
 
-  float m_FOV;
-  float m_NearPlane;
-  float m_FarPlane;
-  u32 m_Width;
-  u32 m_Height;
-  ProjectionType m_ProjectionType;
-  glm::mat4 m_ViewMatrix;
-  glm::mat4 m_ProjectionMatrix;
+    template <typename Archive>
+    void serialize(Archive& ar)
+    {
+      ZoneScoped;
+      ar(m_FOV, m_NearPlane, m_FarPlane, m_Width, m_Height, m_ProjectionType);
+    }
 
-  template <typename Archive> void serialize(Archive &ar) {
-    ZoneScoped;
-    ar(m_FOV, m_NearPlane, m_FarPlane, m_Width, m_Height, m_ProjectionType);
-  }
+    TURAS_IMPL_ALLOC(Camera)
+  };
 
-  TURAS_IMPL_ALLOC(Camera)
-};
+  class View
+  {
+  public:
+    enum class Type { Game, Debug };
 
-class View {
-public:
-  enum class Type { Game, Debug };
+    String m_Name;
+    u64 m_Hash;
+    Type m_Type;
+    Entity m_CameraEntity;
 
-  String m_Name;
-  u64 m_Hash;
-  Type m_Type;
-  Entity m_CameraEntity;
+    View(const String& name);
 
-  View(const String &name);
+    template <typename Archive>
+    void serialize(Archive& ar)
+    {
+      ZoneScoped;
+      ar(m_Name);
+    }
 
-  template <typename Archive> void serialize(Archive &ar) {
-    ZoneScoped;
-    ar(m_Name);
-  }
-
-  TURAS_IMPL_ALLOC(View)
-};
+    TURAS_IMPL_ALLOC(View)
+  };
 } // namespace turas
