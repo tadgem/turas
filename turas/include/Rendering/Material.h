@@ -20,9 +20,4 @@ namespace turas {
         String m_ShaderName;
         HashMap<Texture::MapType, String> m_AvailableMaterialMaps;
     };
-
-    struct MaterialComponent
-    {
-        u64 m_ShaderHash;
-    };
 }

@@ -8,6 +8,7 @@
 #include "Core/Types.h"
 #include "STL/Memory.h"
 #include "STL/Vector.h"
+#include "Rendering/View.h"
 
 namespace turas {
 
@@ -20,7 +21,7 @@ namespace turas {
     // function will add objects to pipeline and configure command dispatcher to record necessary commands
     class PipelineCommandDispatcher {
     public:
-        virtual void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, Scene *scene) = 0;
+        virtual void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, View* view, Scene *scene) = 0;
     };
 
     // use this to update uniform or any other kind of per frame buffers

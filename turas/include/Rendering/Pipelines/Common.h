@@ -19,11 +19,11 @@ namespace turas {
         class BuiltInGBufferCommandDispatcher : public PipelineCommandDispatcher
         {
         public:
-            BuiltInGBufferCommandDispatcher(lvk::Framebuffer* framebuffer, lvk::VkPipelineData pipelineData);
+            BuiltInGBufferCommandDispatcher(u64 shaderHash, lvk::Framebuffer* framebuffer, lvk::VkPipelineData pipelineData);
             lvk::Framebuffer*       m_GBuffer;
             lvk::VkPipelineData     m_PipelineData;
-
-            void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, Scene *scene) override;
+            const u64 m_ShaderHash;
+            void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, View* view, Scene *scene) override;
 
         public:
 

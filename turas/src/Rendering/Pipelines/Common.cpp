@@ -23,14 +23,14 @@ lvk::VkPipelineData turas::Common::CreateStaticPipeline(lvk::VulkanAPI& vk,
 }
 
 
-turas::Common::BuiltInGBufferCommandDispatcher::BuiltInGBufferCommandDispatcher(lvk::Framebuffer *framebuffer, lvk::VkPipelineData pipelineData) :
-m_GBuffer(framebuffer), m_PipelineData(pipelineData)
+turas::Common::BuiltInGBufferCommandDispatcher::BuiltInGBufferCommandDispatcher(u64 shaderHash, lvk::Framebuffer *framebuffer, lvk::VkPipelineData pipelineData) :
+m_GBuffer(framebuffer), m_PipelineData(pipelineData), m_ShaderHash(shaderHash)
 {
 
 }
 
 void turas::Common::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuffer commandBuffer, turas::u32 frameIndex,
-                                                                    turas::Scene *scene) {
+                                                                    View* view, turas::Scene *scene) {
 
         Array<VkClearValue, 4> clearValues{};
         clearValues[0].color = { {0.0f, 0.0f, 0.0f, 1.0f} };
@@ -69,15 +69,10 @@ void turas::Common::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuf
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
         // set push consts
         // vkCmdPushConstants(commandBuffer, m_PipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PCViewData), &pcData);
-        auto view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
+        auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
         // despatch scene render
-        for(auto [e, transform, mesh, material] : view.each())
-        {
-        }
-//        for (auto& renderable : renderables)
-//        {
-//            renderable.RecordGraphicsCommands(commandBuffer);
-//        }
+        DispatchStaticMeshDrawCommands(view, m_ShaderHash, m_PipelineData, scene);
+
         vkCmdEndRenderPass(commandBuffer);
 
 }
