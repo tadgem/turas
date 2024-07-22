@@ -7,11 +7,13 @@
 
 #include "STL/Memory.h"
 #include "Core/Types.h"
+#include "Rendering/Material.h"
 
 namespace turas {
     struct MaterialComponent {
         TURAS_IMPL_ALLOC(MaterialComponent)
-        u64 m_ShaderHash;
+        u64             m_ShaderHash;
+        lvk::Material*  m_Material;
     };
 }
 

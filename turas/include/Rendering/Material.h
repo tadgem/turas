@@ -17,7 +17,8 @@ namespace turas {
     class MaterialCandidate {
     public:
 
-        String m_ShaderName;
+        String  m_ShaderName;
+        u64     m_ShaderHash;
         HashMap<Texture::MapType, String> m_AvailableMaterialMaps;
     };
 }
