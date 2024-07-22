@@ -2,7 +2,11 @@
 #include "Core/ECS.h"
 #include "Core/Log.h"
 #include "Debug/StatsWindow.h"
-#include "Debug/dm_sans.h"
+#include "Debug/FontBinaries/dm_sans.ttf.h"
+#include "Debug/FontBinaries/icons_font_awesome.h"
+#include "Debug/FontBinaries/icons_font_awesome.ttf.h"
+#include "Debug/FontBinaries/icons_kenney.h"
+#include "Debug/FontBinaries/icons_kenney.ttf.h"
 #include "STL/Memory.h"
 #include "spdlog/spdlog.h"
 
@@ -389,11 +393,28 @@ turas::Scene* turas::Engine::LoadSceneFromName(const turas::String& name)
 
   return LoadSceneFromPath(m_Project->m_SerializedScenes[name]);
 }
+struct FontRangeMerge
+{
+  const void *data;
+  size_t size;
+  ImWchar ranges[3];
+};
+
+static FontRangeMerge s_fontRangeMerge[] =
+    {
+  {s_iconsKenneyTtf,      sizeof(s_iconsKenneyTtf),      {ICON_MIN_KI, ICON_MAX_KI, 0}},
+  {s_iconsFontAwesomeTtf, sizeof(s_iconsFontAwesomeTtf), {ICON_MIN_FA, ICON_MAX_FA, 0}},
+};
 
 void turas::Engine::InitImGuiStyle()
 {
-  ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)&dm_sans_ttf_bin[0],
-                                             static_cast<u32>(DM_SANS_TTF_SIZE), 18.0f);
+  ImFontConfig config;
+  config.FontDataOwnedByAtlas = false;
+  config.MergeMode = true;
+  //config.DstFont = m_font[ImGui::Font::Regular];
+  ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)&dm_sans_ttf_bin[0], static_cast<u32>(DM_SANS_TTF_SIZE), 18.0f);
+  ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void *) s_fontRangeMerge[0].data, (int) s_fontRangeMerge[0].size, 18.0f - 4.0f, &config, s_fontRangeMerge[0].ranges);
+  ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void *) s_fontRangeMerge[1].data, (int) s_fontRangeMerge[1].size, 18.0f - 4.0f, &config, s_fontRangeMerge[1].ranges);
 
   ImVec4* colors = ImGui::GetStyle().Colors;
   colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);

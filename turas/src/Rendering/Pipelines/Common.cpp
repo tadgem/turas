@@ -6,7 +6,7 @@
 #include "Systems/Mesh.h"
 #include "Systems/Material.h"
 
-lvk::VkPipelineData turas::Common::CreateStaticPipeline(lvk::VulkanAPI& vk,
+lvk::VkPipelineData turas::Rendering::CreateStaticMeshPipeline(lvk::VulkanAPI& vk,
         lvk::ShaderProgram& prog, lvk::Framebuffer* fb,
         VkPolygonMode polyMode, VkCullModeFlags cullMode, VkCompareOp depthCompareOp, bool enableMSAA)
 {
@@ -23,13 +23,13 @@ lvk::VkPipelineData turas::Common::CreateStaticPipeline(lvk::VulkanAPI& vk,
 }
 
 
-turas::Common::BuiltInGBufferCommandDispatcher::BuiltInGBufferCommandDispatcher(u64 shaderHash, lvk::Framebuffer *framebuffer, lvk::VkPipelineData pipelineData) :
+turas::Rendering::BuiltInGBufferCommandDispatcher::BuiltInGBufferCommandDispatcher(u64 shaderHash, lvk::Framebuffer *framebuffer, lvk::VkPipelineData pipelineData) :
 m_GBuffer(framebuffer), m_PipelineData(pipelineData), m_ShaderHash(shaderHash)
 {
 
 }
 
-void turas::Common::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuffer commandBuffer, turas::u32 frameIndex,
+void turas::Rendering::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuffer commandBuffer, turas::u32 frameIndex,
                                                                     View* view, turas::Scene *scene) {
 
         Array<VkClearValue, 4> clearValues{};
@@ -77,7 +77,7 @@ void turas::Common::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommandBuf
 
 }
 
-void turas::Common::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex,View* view, turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
+void turas::Rendering::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex,View* view, turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
 {
     auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
     // dispatch scene render
@@ -91,7 +91,7 @@ void turas::Common::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t
 
         vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, sizes);
         vkCmdBindIndexBuffer(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineData.m_PipelineLayout, 0, 1, &material.m_Material->m_DescriptorSets[0].m_Sets[frameIndex], 0, nullptr);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineData.m_PipelineLayout, 0, 1, &material.m_Material->m_DescriptorSets.front().m_Sets[frameIndex], 0, nullptr);
         vkCmdDrawIndexed(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexCount, 1, 0, 0, 0);
     }
 }

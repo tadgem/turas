@@ -1,4 +1,6 @@
 #include "test.h"
+#include "Debug/FontBinaries/icons_font_awesome.h"
+#include "Debug/FontBinaries/icons_kenney.h"
 
 class ImGuiTest : public turas::System
 {
@@ -24,6 +26,16 @@ public:
     if (ImGui::Begin("Test Some Buttons"))
     {
       if(ImGui::Button("I am a button btw!"))
+      {
+
+      }
+
+      if(ImGui::Button(ICON_FA_PLAY))
+      {
+
+      }
+
+      if(ImGui::Button(ICON_KI_DPAD))
       {
 
       }

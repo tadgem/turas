@@ -7,7 +7,7 @@
 #include "Rendering/View.h"
 
 namespace turas {
-    namespace Common {
+    namespace Rendering {
 
         struct MVPPushConstData
         {
@@ -30,7 +30,7 @@ namespace turas {
         };
 
         // Create a render pipeline for static meshes
-        static lvk::VkPipelineData CreateStaticPipeline(lvk::VulkanAPI& vk,
+        static lvk::VkPipelineData CreateStaticMeshPipeline(lvk::VulkanAPI& vk,
                 lvk::ShaderProgram& prog,
                 lvk::Framebuffer* fb,
                 VkPolygonMode polyMode = VK_POLYGON_MODE_FILL, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT,
