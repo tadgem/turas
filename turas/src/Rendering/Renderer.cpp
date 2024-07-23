@@ -1,6 +1,5 @@
 #include "Rendering/Renderer.h"
 #include "Core/Log.h"
-#include "Core/Utils.h"
 #include "Debug/Profile.h"
 
 turas::Renderer::Renderer(bool enableDebugValidation)
@@ -66,24 +65,7 @@ bool turas::Renderer::RemovePipelineTemplate(turas::u64 hash)
   return true;
 }
 
-turas::View* turas::Renderer::CreateView(const turas::String& name,
-                                         turas::u64 pipelineHash)
-{
-  ZoneScoped;
-  if (p_CreatePipelineCallbacks.find(pipelineHash) ==
-    p_CreatePipelineCallbacks.end())
-  {
-    // cant create a pipeline for this view
-    return nullptr;
-  }
 
-  Pipeline* p = p_CreatePipelineCallbacks[pipelineHash]((Renderer*)this);
-  u64 viewNameHash = Utils::Hash(name);
-
-  p_ViewData.emplace(viewNameHash,
-                     ViewData{CreateUnique<View>(name), UPtr<Pipeline>(p)});
-  return p_ViewData[viewNameHash].m_View.get();
-}
 
 bool turas::Renderer::DestroyView(const turas::String& name)
 {

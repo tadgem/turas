@@ -7,6 +7,7 @@
 #include "STL/HashMap.h"
 #include "STL/Functional.h"
 #include "VulkanAPI_SDL.h"
+#include "Core/Utils.h"
 #include "Rendering/Pipeline.h"
 #include "Rendering/View.h"
 #include "Rendering/Shader.h"
@@ -43,7 +44,25 @@ namespace turas
 
         bool RemovePipelineTemplate(u64 hash);
 
-        View* CreateView(const String& name, u64 pipelineHash);
+        template<typename _ViewTy, typename ... Args>
+        _ViewTy* CreateView(const String& name, u64 pipelineHash, Args &&... args)
+        {
+            ZoneScoped;
+            static_assert(std::is_base_of<View, _ViewTy>());
+            if (p_CreatePipelineCallbacks.find(pipelineHash) ==
+              p_CreatePipelineCallbacks.end())
+            {
+                return nullptr;
+            }
+
+            Pipeline* p = p_CreatePipelineCallbacks[pipelineHash]((Renderer*)this);
+            u64 viewNameHash = Utils::Hash(name);
+
+            p_ViewData.emplace(viewNameHash,
+                               ViewData{CreateUnique<_ViewTy>(std::forward<Args>(args)...), UPtr<Pipeline>(p)});
+            return p_ViewData[viewNameHash].m_View.get();
+
+        }
 
         bool DestroyView(const String& name);
 

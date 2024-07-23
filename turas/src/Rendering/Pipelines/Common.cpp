@@ -67,9 +67,7 @@ void turas::Rendering::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommand
 
         vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-        // set push consts
-        // vkCmdPushConstants(commandBuffer, m_PipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PCViewData), &pcData);
-        auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
+
         // despatch scene render
         DispatchStaticMeshDrawCommands(commandBuffer, frameIndex, view, m_ShaderHash, m_PipelineData, scene);
 
@@ -77,21 +75,39 @@ void turas::Rendering::BuiltInGBufferCommandDispatcher::RecordCommands(VkCommand
 
 }
 
-void turas::Rendering::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex,View* view, turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
+void turas::Rendering::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex,View* view,
+    turas::u64 shaderHash, lvk::VkPipelineData pipelineData, turas::Scene* scene)
 {
     auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
     // dispatch scene render
     for(auto [e, transform, mesh, material] : scene_view.each())
     {
-        // we should probably think of a better way to do this, so we dont need to iterate over the entire list of draws
+        // TODO: should probably think of a better way to do this
+        // so we dont need to iterate over the entire list of drawables
         if(material.m_ShaderHash != shaderHash || material.m_Material == nullptr) continue;
 
         VkBuffer vertexBuffers[]{ mesh.m_MeshAsset->m_LvkMesh.m_VertexBuffer };
         VkDeviceSize sizes[] = { 0 };
 
+        struct PushConstantData {
+            glm::mat4 Model;
+            glm::mat4 View;
+            glm::mat4 Proj;
+        };
+
+        PushConstantData data { transform.m_ModelMatrix, view->GetViewMatrix(), view->GetProjectionMatrix()};
         vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, sizes);
         vkCmdBindIndexBuffer(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
-        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineData.m_PipelineLayout, 0, 1, &material.m_Material->m_DescriptorSets.front().m_Sets[frameIndex], 0, nullptr);
+        vkCmdPushConstants(cmd, pipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstantData), &data);
+        // TODO: Look at support for multiple descriptor sets in a single shader
+        vkCmdBindDescriptorSets(cmd,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pipelineData.m_PipelineLayout,
+            0,
+            1,
+            &material.m_Material->m_DescriptorSets.front().m_Sets[frameIndex],
+            0,
+            nullptr);
         vkCmdDrawIndexed(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexCount, 1, 0, 0, 0);
     }
 }

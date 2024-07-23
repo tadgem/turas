@@ -9,6 +9,7 @@
 #include "Core/Types.h"
 #include "Debug/Profile.h"
 #include "STL/Memory.h"
+#include "STL/Optional.h"
 #include "STL/String.h"
 #include "glm/glm.hpp"
 
@@ -40,22 +41,28 @@ namespace turas
   class View
   {
   public:
-    enum class Type { Game, Debug };
 
     String m_Name;
     u64 m_Hash;
-    Type m_Type;
-    Entity m_CameraEntity;
 
     View(const String& name);
 
-    template <typename Archive>
-    void serialize(Archive& ar)
-    {
-      ZoneScoped;
-      ar(m_Name);
-    }
+    virtual glm::mat4 GetViewMatrix() = 0;
+    virtual glm::mat4 GetProjectionMatrix() = 0;
 
     TURAS_IMPL_ALLOC(View)
+  };
+
+  class SceneCameraView : public View
+  {
+  public:
+
+    SceneCameraView(const String& name, Optional<Entity> e = {}, Scene* scene = nullptr);
+
+    Entity  m_CameraEntity;
+    Scene*  m_Scene;
+
+    glm::mat4 GetViewMatrix() override;
+    glm::mat4 GetProjectionMatrix() override;
   };
 } // namespace turas

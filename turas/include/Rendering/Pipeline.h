@@ -9,6 +9,7 @@
 #include "STL/Memory.h"
 #include "STL/Vector.h"
 #include "Rendering/View.h"
+#include "Rendering/Material.h"
 
 namespace turas {
 
@@ -35,6 +36,7 @@ namespace turas {
 
         Vector<UPtr<PipelineCommandDispatcher>>     m_Renderers;
         Vector<UPtr<PipelineStateUpdater>>          m_StateUpdater;
+        Vector<MaterialCandidate>                   m_MaterialCandidates;
 
         lvk::Pipeline m_LvkPipeline;
 
