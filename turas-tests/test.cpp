@@ -410,6 +410,76 @@ BEGIN_TESTS()
          e.Shutdown();
          });
 
+    TEST("Entity Data system serialization check", {
+         turas::Engine e;
+         auto &transformSystem = *e.AddSystem<turas::EntityDataSystem>();
+         e.Init();
+         auto *s = e.CreateScene("Test");
+         auto ent = s->CreateEntity();
+         auto &data = s->AddComponent<turas::EntityDataComponent>(ent);
+         data.Name = "ABC123";
+         auto sceneBinary = s->SaveBinary();
+         std::stringstream dataStream{};
+
+         {
+         turas::BinaryOutputArchive outputArchive(dataStream);
+         outputArchive(sceneBinary);
+         }
+
+         turas::BinaryInputArchive serialized_data(dataStream);
+
+         e.CloseScene(s);
+
+         auto *s2 = e.LoadSceneFromArchive(serialized_data);
+
+         while (e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded) {
+         e.m_AssetManager.OnUpdate();
+         e.PendingScenes();
+         }
+
+         assert(s2->m_Name == "Test");
+         assert(s2->HasComponent<turas::EntityDataComponent>(ent));
+         assert(s2->GetComponent<turas::EntityDataComponent>(ent).Name == "ABC123");
+         e.Shutdown();
+         });
+
+        TEST("Entity Data with Parent serialization check", {
+        turas::Engine e;
+        auto &transformSystem = *e.AddSystem<turas::EntityDataSystem>();
+        e.Init();
+        auto *s = e.CreateScene("Test");
+        auto ent = s->CreateEntity();
+        auto &data = s->AddComponent<turas::EntityDataComponent>(ent);
+        data.Name = "ABC123";
+        data.Parent = turas::Entity {entt::entity(123)};
+        auto sceneBinary = s->SaveBinary();
+        std::stringstream dataStream{};
+
+        {
+        turas::BinaryOutputArchive outputArchive(dataStream);
+        outputArchive(sceneBinary);
+        }
+
+        turas::BinaryInputArchive serialized_data(dataStream);
+
+        e.CloseScene(s);
+
+        auto *s2 = e.LoadSceneFromArchive(serialized_data);
+
+        while (e.GetSceneLoadProgress(s2) != turas::AssetLoadProgress::Loaded) {
+        e.m_AssetManager.OnUpdate();
+        e.PendingScenes();
+        }
+
+        assert(s2->m_Name == "Test");
+        assert(s2->HasComponent<turas::EntityDataComponent>(ent));
+        assert(s2->GetComponent<turas::EntityDataComponent>(ent).Name == "ABC123");
+        assert(s2->GetComponent<turas::EntityDataComponent>(ent).Parent.has_value());
+        assert(s2->GetComponent<turas::EntityDataComponent>(ent).Parent.value().m_Handle == entt::entity(123));
+
+        e.Shutdown();
+        });
+
     TEST("Mesh system populates component GPU handles", {
          turas::Engine e;
          auto &meshSystem = *e.AddSystem<turas::MeshSystem>();

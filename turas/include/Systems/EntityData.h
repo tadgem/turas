@@ -38,13 +38,12 @@ namespace turas {
 
         Vector<AssetHandle> GetRequiredAssets(Scene *) override;
 
-
         template<typename Archive>
         void save(Archive &ar) const {
             ZoneScoped;
-            auto transform_view = GetSceneRegistry(s_CurrentSerializingScene).view<EntityDataComponent>();
+            auto entity_data_view = GetSceneRegistry(s_CurrentSerializingScene).view<EntityDataComponent>();
             HashMap<u32, EntityDataComponent> datas{};
-            for (const auto &[ent, data]: transform_view.each()) {
+            for (const auto &[ent, data]: entity_data_view.each()) {
                 datas.emplace(static_cast<u32>(ent), data);
             }
             ar(datas);

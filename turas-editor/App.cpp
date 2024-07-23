@@ -5,7 +5,7 @@
 #include "Systems/Transform.h"
 #include "Systems/Mesh.h"
 #include "Systems/Camera.h"
-
+#include "Systems/EntityData.h"
 #include "Core/ECS.h"
 
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
@@ -24,10 +24,11 @@ void operator delete(void* memory, size_t size)
 
 int main(int argc, char** argv)
 {
-    turas::Engine app;
+    turas::Engine app(true);
     app.AddSystem<turas::TransformSystem>();
     app.AddSystem<turas::MeshSystem>();
     app.AddSystem<turas::CameraSystem>();
+    app.AddSystem<turas::EntityDataSystem>();
     app.Init();
     app.Run();
     app.Shutdown();

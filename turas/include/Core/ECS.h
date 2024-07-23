@@ -25,6 +25,12 @@ namespace turas
         inline operator entt::entity() { return m_Handle; }
 
         TURAS_IMPL_ALLOC(Entity)
+
+        template<typename Archive>
+        void serialize(Archive &ar) {
+            ZoneScoped;
+            ar(m_Handle);
+        }
     };
 
     class Scene
