@@ -80,7 +80,7 @@ void turas::Rendering::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint3
 {
     auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
     // dispatch scene render
-    for(auto [e, transform, mesh, material] : scene_view.each())
+    for(const auto& [e, transform, mesh, material] : scene_view.each())
     {
         // TODO: should probably think of a better way to do this
         // so we dont need to iterate over the entire list of drawables
@@ -89,16 +89,10 @@ void turas::Rendering::DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint3
         VkBuffer vertexBuffers[]{ mesh.m_MeshAsset->m_LvkMesh.m_VertexBuffer };
         VkDeviceSize sizes[] = { 0 };
 
-        struct PushConstantData {
-            glm::mat4 Model;
-            glm::mat4 View;
-            glm::mat4 Proj;
-        };
-
-        PushConstantData data { transform.m_ModelMatrix, view->GetViewMatrix(), view->GetProjectionMatrix()};
+        MVPPushConstData data { transform.m_ModelMatrix, view->GetViewMatrix(), view->GetProjectionMatrix()};
         vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, sizes);
         vkCmdBindIndexBuffer(cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
-        vkCmdPushConstants(cmd, pipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstantData), &data);
+        vkCmdPushConstants(cmd, pipelineData.m_PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MVPPushConstData), &data);
         // TODO: Look at support for multiple descriptor sets in a single shader
         vkCmdBindDescriptorSets(cmd,
             VK_PIPELINE_BIND_POINT_GRAPHICS,

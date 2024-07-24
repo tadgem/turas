@@ -28,6 +28,8 @@ namespace turas
     glm::mat4 m_ViewMatrix;
     glm::mat4 m_ProjectionMatrix;
 
+    void UpdateMatrices(glm::vec3 position, glm::vec3 eulerAngles);
+
     template <typename Archive>
     void serialize(Archive& ar)
     {
@@ -64,5 +66,21 @@ namespace turas
 
     glm::mat4 GetViewMatrix() override;
     glm::mat4 GetProjectionMatrix() override;
+
+    TURAS_IMPL_ALLOC(SceneCameraView)
+  };
+
+  class DebugCameraView : public View
+  {
+      DebugCameraView(const String& name);
+
+      Camera    m_DebugCamera;
+      glm::vec3 m_Position;
+      glm::vec3 m_Rotation;
+
+      glm::mat4 GetViewMatrix() override;
+      glm::mat4 GetProjectionMatrix() override;
+
+      TURAS_IMPL_ALLOC(DebugCameraView)
   };
 } // namespace turas

@@ -35,7 +35,6 @@ glm::mat4 turas::SceneCameraView::GetViewMatrix()
         log::warn("SceneCameraView : Entity {} does not have a camera component, can't get the camera's view matrix", (u32)m_CameraEntity.m_Handle);
         return glm::mat4(1.0);
     }
-
     return m_Scene->GetRegistry().get<CameraComponent>(m_CameraEntity.m_Handle).m_Camera.m_ViewMatrix;
 }
 
@@ -58,4 +57,24 @@ glm::mat4 turas::SceneCameraView::GetProjectionMatrix()
     }
 
     return m_Scene->GetRegistry().get<CameraComponent>(m_CameraEntity.m_Handle).m_Camera.m_ProjectionMatrix;
+}
+
+turas::DebugCameraView::DebugCameraView(const turas::String &name) : View(name)
+{
+
+}
+
+glm::mat4 turas::DebugCameraView::GetViewMatrix() {
+    m_DebugCamera.UpdateMatrices(m_Position, m_Rotation);
+    return m_DebugCamera.m_ViewMatrix;
+}
+
+glm::mat4 turas::DebugCameraView::GetProjectionMatrix() {
+    m_DebugCamera.UpdateMatrices(m_Position, m_Rotation);
+    return m_DebugCamera.m_ProjectionMatrix;
+}
+
+void turas::Camera::UpdateMatrices(glm::vec3 position, glm::vec3 eulerAngles)
+{
+
 }
