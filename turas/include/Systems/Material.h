@@ -12,8 +12,8 @@
 namespace turas {
     struct MaterialComponent {
         TURAS_IMPL_ALLOC(MaterialComponent)
-        u64             m_ShaderHash;
-        lvk::Material*  m_Material = nullptr;
+        u64             m_ShaderHash;           // Associated Material Candidate Shader Hash in renderer
+        lvk::Material*  m_Material = nullptr;   // lvk object that holds descriptor sets & buffers etc.
     };
 }
 
