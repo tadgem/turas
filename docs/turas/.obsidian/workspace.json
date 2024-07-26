@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "3f19fcc884c75491",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Rendering/Pipeline.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       },
       {
         "id": "4bf539843b0a33bd",
@@ -103,7 +116,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Assets/Asset.md",
+                "file": "Rendering/Pipeline.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -120,7 +133,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Assets/Asset.md",
+                "file": "Rendering/Pipeline.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -143,7 +156,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Assets/Asset.md"
+                "file": "Rendering/Pipeline.md"
               }
             }
           }
@@ -164,22 +177,23 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f33905874f00b7c3",
+  "active": "3f19fcc884c75491",
   "lastOpenFiles": [
-    "Notes/CMake Shader Compilation.md",
-    "Untitled.canvas",
-    "Project/CMake.md",
-    "Project",
-    "Assets/Asset.md",
-    "Assets/Asset Manager.md",
-    "ECS/Scene.md",
-    "Rendering/View.md",
     "Rendering/Vector Graphics.md",
+    "Rendering/View.md",
+    "LVK.md",
+    "Notes/CMake Shader Compilation.md",
+    "Notes/Explicit Linking.md",
+    "ECS/Scene.md",
+    "Assets/Asset Manager.md",
+    "Assets/Asset.md",
     "Rendering/Shaders.md",
     "Rendering/Renderer.md",
     "Rendering/Pipeline.md",
+    "Project/CMake.md",
+    "Untitled.canvas",
+    "Project",
     "Notes",
-    "LVK.md",
     "Shader.md",
     "ECS",
     "Assets",

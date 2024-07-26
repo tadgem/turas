@@ -31,76 +31,85 @@ turas::u32 turas::Scene::NumEntities() {
     return p_EntityCount;
 }
 
-turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary() {
-    ZoneScoped;
-    HashMap<u64, String> serialized{};
-    Vector<AssetLoadInfo> assetsToLoad{};
-
-    for (auto &sys: Engine::INSTANCE->m_EngineSubSystems) {
-        std::stringstream stream;
-        BinaryOutputArchive archive(stream);
-        sys->SerializeSceneBinary((Scene *) this, archive);
-        serialized.emplace(sys->m_Hash, stream.str());
-
-        Vector<AssetHandle> handles = sys->GetRequiredAssets((Scene *) this);
-        for (auto &handle: handles) {
-            Asset *a = Engine::INSTANCE->m_AssetManager.GetAsset(handle);
-            AssetLoadInfo loadInfo = {a->m_Path, handle.m_Type};
-
-            if (std::find(assetsToLoad.begin(), assetsToLoad.end(), loadInfo) == assetsToLoad.end()) {
-                assetsToLoad.push_back(loadInfo);
-            }
-        }
-    }
-
-    {
-        // emplace name entry
-        serialized.emplace(Utils::Hash(p_SceneHashName), m_Name);
-    }
-
-    // emplace asset entry
-    {
-        std::stringstream stream;
-        BinaryOutputArchive archive(stream);
-        archive(assetsToLoad);
-        serialized.emplace(Utils::Hash(p_AssetsHashName), stream.str());
-    }
-
-    return serialized;
+turas::HashMap<turas::u64, turas::String> turas::Scene::SaveBinary()
+{
+	ZoneScoped;
+	HashMap<u64, String>  serialized{};
+	Vector<AssetLoadInfo> assets_to_load{};
+	for (auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
+		std::stringstream	stream;
+		BinaryOutputArchive archive(stream);
+		sys->SerializeSceneBinary((Scene*)this, archive);
+		serialized.emplace(sys->m_Hash, stream.str());
+		Vector<AssetHandle> handles = sys->GetRequiredAssets((Scene*)this);
+		for (auto& handle : handles) {
+			Asset*		  a		   = Engine::INSTANCE->m_AssetManager.GetAsset(handle);
+			AssetLoadInfo loadInfo = {a->m_Path, handle.m_Type};
+			if (std::find(assets_to_load.begin(), assets_to_load.end(), loadInfo) == assets_to_load.end()) {
+				assets_to_load.push_back(loadInfo);
+			}
+		}
+	}
+	{
+		// emplace name entry
+		serialized.emplace(Utils::Hash(p_SceneHashName), m_Name);
+	}
+	// emplace asset entry
+	{
+		std::stringstream	stream;
+		BinaryOutputArchive archive(stream);
+		archive(assets_to_load);
+		serialized.emplace(Utils::Hash(p_AssetsHashName), stream.str());
+	}
+	return serialized;
 }
 
+turas::Vector<turas::AssetHandle> turas::Scene::GetRequiredAssets()
+{
+	Vector<AssetHandle> required_assets{};
+	for (auto& sys : Engine::INSTANCE->m_EngineSubSystems) {
+		sys->GetRequiredAssets((Scene*)this);
+		Vector<AssetHandle> handles = sys->GetRequiredAssets((Scene*)this);
+		for (auto& handle : handles) {
+			if (std::find(required_assets.begin(), required_assets.end(), handle) == required_assets.end()) {
+				required_assets.push_back(handle);
+			}
+		}
+	}
+	return required_assets;
+}
 
-void turas::Scene::LoadBinaryFromArchive(turas::BinaryInputArchive &sceneData) {
+void turas::Scene::LoadBinaryFromArchive(turas::BinaryInputArchive &scene_data) {
     ZoneScoped;
     HashMap<u64, turas::String> data{};
-    sceneData(data);
+    scene_data(data);
     LoadBinary(data);
 }
 
-void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String> &sceneData) {
+void turas::Scene::LoadBinary(turas::HashMap<u64, turas::String> &scene_data) {
     ZoneScoped;
 
     {
-        u64 assetsHash = Utils::Hash(p_AssetsHashName);
-        std::stringstream loadInfoStream;
-        loadInfoStream << sceneData[assetsHash];
-        BinaryInputArchive input(loadInfoStream);
+        u64 assets_hash = Utils::Hash(p_AssetsHashName);
+        std::stringstream load_info_stream;
+        load_info_stream << scene_data[assets_hash];
+        BinaryInputArchive input(load_info_stream);
 
-        Vector<AssetLoadInfo> assetsToLoad{};
-        input(assetsToLoad);
+        Vector<AssetLoadInfo> assets_to_load{};
+        input(assets_to_load);
 
-        for (auto &info: assetsToLoad) {
+        for (auto &info: assets_to_load) {
             Engine::INSTANCE->m_AssetManager.LoadAsset(info.m_Path, info.m_Type);
         }
     }
 
     {
-        u64 nameHash = Utils::Hash(p_SceneHashName);
-        m_Name = sceneData[nameHash];
+        u64 name_hash = Utils::Hash(p_SceneHashName);
+        m_Name = scene_data[name_hash];
     }
 
     for (auto &sys: Engine::INSTANCE->m_EngineSubSystems) {
-        for (auto &[hash, serialized_stream]: sceneData) {
+        for (auto &[hash, serialized_stream]: scene_data) {
             if (sys->m_Hash != hash) continue;
             std::stringstream stream{};
             stream << serialized_stream;

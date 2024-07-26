@@ -112,18 +112,18 @@ void turas::FSM::AddStateExit(int state, Function<void()> exit)
 		}
 	}
 }
-void turas::FSM::AddTrigger(int trigger, int srcState, int dstState)
+void turas::FSM::AddTrigger(int trigger, int src_state, int dst_state)
 {
 	ZoneScoped;
-	StateTransition transition{trigger, srcState, dstState};
+	StateTransition transition{trigger, src_state, dst_state};
 	p_Transitions.emplace_back(transition);
 }
-void turas::FSM::TransitionState(int newState)
+void turas::FSM::TransitionState(int new_state)
 {
 	ZoneScoped;
 	if (p_States[p_CurrentState].HasExit) {
 		p_States[p_CurrentState].m_ExitProcedure();
 	}
-	p_CurrentState = newState;
+	p_CurrentState = new_state;
 	p_RunEntry	   = false;
 }

@@ -6,7 +6,7 @@ namespace turas
 	class FSM
 	{
 	public:
-		const unsigned char MAX_TRANSITIONS_PER_PROCESS = 8;
+		const unsigned char MAX_TRANSITIONS_PER_TICK = 8;
 		class State
 		{
 		public:
@@ -34,7 +34,7 @@ namespace turas
 		void AddState(int state, Function<int()> action);
 		void AddStateEntry(int state, Function<void()> entry);
 		void AddStateExit(int state, Function<void()> exit);
-		void AddTrigger(int trigger, int srcState, int dstState);
+		void AddTrigger(int trigger, int src_state, int dst_state);
 		void Trigger(int trigger);
 		// arbitrary, can probably be done in a better way but we are in trouble if we
 		// have an FSM with more than 65000 states.
@@ -44,7 +44,7 @@ namespace turas
 		int						p_PreviousState;
 		int						p_CurrentState;
 		bool					p_RunEntry;
-		void					TransitionState(int newState);
+		void					TransitionState(int new_state);
 		Vector<State>			p_States;
 		Vector<StateTransition> p_Transitions;
 	};

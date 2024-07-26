@@ -208,6 +208,11 @@ bool turas::Engine::LoadProject(const turas::String& path)
 		CopyShadersToProject();
 	}
 	// update renderer to reload all shaders
+	AddBuiltInPipelines();
+	AddGamePipelines();
+
+	// Load Game Code from Beef
+
 	// load default scene
 	return true;
 }
@@ -249,8 +254,9 @@ bool turas::Engine::SaveProject()
 
 turas::Pipeline*	CreateBuiltInDeferredPipeline(turas::Renderer* renderer)
 {
+	using namespace turas;
 	auto& vk = renderer->m_VK;
-	auto* p = new turas::Pipeline();
+	auto* p = new Pipeline();
 	auto* gbuffer = p->m_LvkPipeline.AddFramebuffer(renderer->m_VK);
 
 	// Position
@@ -271,7 +277,7 @@ turas::Pipeline*	CreateBuiltInDeferredPipeline(turas::Renderer* renderer)
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_DEPTH_BIT);
 	gbuffer->Build(vk);
 
-	turas::Shader* gbufferShader = renderer->CreateShaderVF("gbuffer-standard.vert", "gbuffer-standard.frag", "gbuffer-standard");
+	Shader* gbufferShader = renderer->CreateShaderVF("gbuffer-standard.vert", "gbuffer-standard.frag", "gbuffer-standard");
 
 	auto* lightPassImage = p->m_LvkPipeline.AddFramebuffer(vk);
 	lightPassImage->AddColourAttachment(renderer->m_VK, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT,
@@ -279,7 +285,7 @@ turas::Pipeline*	CreateBuiltInDeferredPipeline(turas::Renderer* renderer)
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
 	lightPassImage->Build(vk);
 
-	turas::Shader* lightPassShader = renderer->CreateShaderVF("lightpass-standard.vert", "lightpass-standard.frag", "lightpass");
+	Shader* lightPassShader = renderer->CreateShaderVF("lightpass-standard.vert", "lightpass-standard.frag", "lightpass");
 	auto* lightPassMat = p->m_LvkPipeline.AddMaterial(vk, lightPassShader->m_ShaderProgram);
 	lightPassMat->SetColourAttachment(vk, "positionBufferSampler", *gbuffer, 1);
 	lightPassMat->SetColourAttachment(vk, "normalBufferSampler", *gbuffer, 2);
@@ -287,10 +293,10 @@ turas::Pipeline*	CreateBuiltInDeferredPipeline(turas::Renderer* renderer)
 
 	p->m_LvkPipeline.SetOutputFramebuffer(lightPassImage);
 
-	lvk::VkPipelineData gbufferPipelineData = turas::Rendering::CreateStaticMeshPipeline(vk, gbufferShader->m_ShaderProgram, gbuffer);
-	lvk::VkPipelineData lightPassPipelineData = turas::Rendering::CreateStaticMeshPipeline(vk, lightPassShader->m_ShaderProgram, lightPassImage,
+	lvk::VkPipelineData gbufferPipelineData = Rendering::CreateStaticMeshPipeline(vk, gbufferShader->m_ShaderProgram, gbuffer);
+	lvk::VkPipelineData lightPassPipelineData = Rendering::CreateStaticMeshPipeline(vk, lightPassShader->m_ShaderProgram, lightPassImage,
 		VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE);
-	// p->m_Renderers.push_back(turas::CreateUnique<turas::Rendering::BuiltInGBufferCommandDispatcher>())
+	p->m_Renderers.push_back(CreateUnique<Rendering::BuiltInGBufferCommandDispatcher>(gbufferShader->m_ShaderHash, gbuffer, gbufferPipelineData));
 
 	return p;
 }

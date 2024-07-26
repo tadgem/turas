@@ -2,10 +2,12 @@
 // Created by liam_ on 7/3/2024.
 //
 #pragma once
+#include "Assets/Asset.h"
 #include "Core/Serialization.h"
 #include "Debug/Profile.h"
 #include "STL/HashMap.h"
 #include "STL/Memory.h"
+#include "STL/Vector.h"
 #include "entt/entt.hpp"
 namespace turas
 {
@@ -61,12 +63,13 @@ namespace turas
 		}
 		inline entt::registry& GetRegistry() { return p_Registry; }
 		HashMap<u64, String>   SaveBinary();
+		Vector<AssetHandle>	   GetRequiredAssets();
 		TURAS_IMPL_ALLOC(Scene)
 	protected:
 		friend class System;
 		friend class Engine;
-		void		   LoadBinary(HashMap<u64, String>& sceneData);
-		void		   LoadBinaryFromArchive(BinaryInputArchive& sceneData);
+		void		   LoadBinary(HashMap<u64, String>& scene_data);
+		void		   LoadBinaryFromArchive(BinaryInputArchive& scene_data);
 		const String   p_AssetsHashName = "Assets";
 		const String   p_SceneHashName	= "SceneName";
 		entt::registry p_Registry;

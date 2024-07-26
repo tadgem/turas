@@ -19,11 +19,11 @@ namespace turas {
         class BuiltInGBufferCommandDispatcher : public PipelineCommandDispatcher
         {
         public:
-            BuiltInGBufferCommandDispatcher(u64 shaderHash, lvk::Framebuffer* framebuffer, lvk::VkPipelineData pipelineData);
+            BuiltInGBufferCommandDispatcher(u64 shader_hash, lvk::Framebuffer* framebuffer, lvk::VkPipelineData pipeline_data);
             lvk::Framebuffer*       m_GBuffer;
             lvk::VkPipelineData     m_PipelineData;
             const u64 m_ShaderHash;
-            void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, View* view, Scene *scene) override;
+            void RecordCommands(VkCommandBuffer buffer, u32 frame_index, View* view, Scene *scene) override;
 
         public:
 
@@ -33,9 +33,9 @@ namespace turas {
         lvk::VkPipelineData CreateStaticMeshPipeline(lvk::VulkanAPI& vk,
                 lvk::ShaderProgram& prog,
                 lvk::Framebuffer* fb,
-                VkPolygonMode polyMode = VK_POLYGON_MODE_FILL, VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT,
-                VkCompareOp depthCompareOp = VK_COMPARE_OP_LESS, bool enableMSAA = false);
+                VkPolygonMode poly_mode = VK_POLYGON_MODE_FILL, VkCullModeFlags cull_mode = VK_CULL_MODE_BACK_BIT,
+                VkCompareOp depth_compare_op = VK_COMPARE_OP_LESS, bool enable_msaa = false);
 
-        static void DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frameIndex, View* view, u64 shaderHash, lvk::VkPipelineData pipelineData, Scene* scene);
+        static void DispatchStaticMeshDrawCommands(VkCommandBuffer cmd, uint32_t frame_index, View* view, u64 shader_hash, lvk::VkPipelineData pipeline_data, Scene* scene);
     };
 }
