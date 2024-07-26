@@ -47,7 +47,20 @@ namespace turas
 		void			  CloseScene(Scene* scene);
 		void			  CloseAllScenes();
 		AssetLoadProgress GetSceneLoadProgress(Scene* scene);
-		TURAS_IMPL_ALLOC(Engine)
+		void		      PrepFrame();
+		void		      SubmitFrame();
+		void		      SystemsUpdate();
+		void		      PendingScenes();
+		inline bool       IsDebugEnabled() { return p_DebugUpdateEnabled; }
+
+		template <typename _Ty, typename... Args>
+		_Ty* AddSystem(Args&&... args)
+		{
+			ZoneScoped;
+			static_assert(std::is_base_of<System, _Ty>());
+			return static_cast<_Ty*>(m_EngineSubSystems.emplace_back(std::move(CreateUnique<_Ty>(std::forward<Args>(args)...))).get());
+		}
+
 		inline static Engine*		  INSTANCE = nullptr;
 		Vector<UPtr<System>>		  m_EngineSubSystems;
 		Vector<UPtr<Scene>>			  m_ActiveScenes;
@@ -59,30 +72,21 @@ namespace turas
 		UPtr<efsw::FileWatcher>		  m_FileWatcher;
 		UPtr<TurasFilesystemListener> m_UpdateListener;
 		efsw::WatchID				  m_GlobalProjectWatchId;
-		template <typename _Ty, typename... Args>
-		_Ty* AddSystem(Args&&... args)
-		{
-			ZoneScoped;
-			static_assert(std::is_base_of<System, _Ty>());
-			return static_cast<_Ty*>(m_EngineSubSystems.emplace_back(std::move(CreateUnique<_Ty>(std::forward<Args>(args)...))).get());
-		}
-		// Internal update loop, public for test: skoosh
-		void		PrepFrame();
-		void		SubmitFrame();
-		void		SystemsUpdate();
-		void		PendingScenes();
-		inline bool IsDebugEnabled() { return p_DebugUpdateEnabled; }
 
+		TURAS_IMPL_ALLOC(Engine)
 	protected:
-		void   ChangeWorkingDirectory(const String& newDirectory);
-		void   CopyShadersToProject();
-		bool   p_DebugUpdateEnabled;
-		String p_OriginalWorkingDir;
-		void   InitImGuiStyle();
-		void   DebugInit();
-		void   DebugUpdate();
+		void			AddBuiltInPipelines();
+		virtual void	AddGamePipelines();
+		void            ChangeWorkingDirectory(const String& newDirectory);
+		void            CopyShadersToProject();
+		void            InitImGuiStyle();
+		void            DebugInit();
+		void            DebugUpdate();
+
 #ifdef TURAS_ENABLE_MEMORY_TRACKING
 		DebugMemoryTracker p_DebugMemoryTracker;
 #endif
+		String          p_OriginalWorkingDir;
+		bool            p_DebugUpdateEnabled;
 	};
 } // namespace turas

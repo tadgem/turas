@@ -46,6 +46,7 @@ namespace turas
 		virtual glm::mat4 GetProjectionMatrix() = 0;
 		TURAS_IMPL_ALLOC(View)
 	};
+
 	class SceneCameraView : public View
 	{
 	public:
@@ -56,6 +57,7 @@ namespace turas
 		glm::mat4 GetProjectionMatrix() override;
 		TURAS_IMPL_ALLOC(SceneCameraView)
 	};
+
 	class DebugCameraView : public View
 	{
 		DebugCameraView(const String &name);
