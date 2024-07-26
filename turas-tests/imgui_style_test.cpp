@@ -1,6 +1,8 @@
 #include "test.h"
 #include "Debug/FontBinaries/icons_font_awesome.h"
 #include "Debug/FontBinaries/icons_kenney.h"
+#include "ImGui/ImGuiExtensions.h"
+
 
 class ImGuiTest : public turas::System
 {
@@ -39,6 +41,7 @@ public:
       {
 
       }
+    	ImGui::Spinner("Test Spinner", 30.0f, 2, ImGui::GetColorU32(ImGuiCol_PlotLines));
     }
     ImGui::End();
   }

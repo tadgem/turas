@@ -7,8 +7,10 @@
 #include "Systems/Material.h"
 
 lvk::VkPipelineData turas::Rendering::CreateStaticMeshPipeline(lvk::VulkanAPI& vk,
-        lvk::ShaderProgram& prog, lvk::Framebuffer* fb,
-        VkPolygonMode polyMode, VkCullModeFlags cullMode, VkCompareOp depthCompareOp, bool enableMSAA)
+				lvk::ShaderProgram& prog,
+				lvk::Framebuffer* fb,
+				VkPolygonMode polyMode, VkCullModeFlags cullMode,
+				VkCompareOp depthCompareOp , bool enableMSAA)
 {
     VkPipelineLayout pipelineLayout;
     auto bindingDescriptions = Vector<VkVertexInputBindingDescription>{lvk::VertexDataPosNormalUv::GetBindingDescription() };
