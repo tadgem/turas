@@ -59,5 +59,4 @@ AllowAllParametersOfDeclarationOnNextLine: false
 BinPackParameters: false
 AllowAllArgumentsOnNextLine: false
 SpaceAfterTemplateKeyword: true
-Break
 ...

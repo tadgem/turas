@@ -22,6 +22,13 @@ namespace turas
 							  efsw::Action		 action,
 							  std::string		 oldFilename) override;
 	};
+
+	/**
+	* @brief Engine
+	* @author Liam Devlin
+	*
+	* Top level container for all engine functionality
+	*/
 	class Engine
 	{
 	public:

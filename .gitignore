@@ -45,3 +45,4 @@ docs/turas/.obsidian/app.json
 /cmake-build-release
 /cmake-build-debug-visual-studio
 /cmake-build-minsizerel-visual-studio
+/docs/api
