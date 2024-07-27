@@ -12,24 +12,19 @@
 #include "glm/glm.hpp"
 namespace turas
 {
-	struct Camera
-	{
-		enum ProjectionType : u8
-		{
-			Perspective,
-			Orthographic
-		};
-		float m_FOV;
-		float m_NearPlane;
-		float m_FarPlane;
-		u32 m_Width;
-		u32 m_Height;
+	struct Camera {
+		enum ProjectionType : u8 { Perspective, Orthographic };
+		float		   m_FOV;
+		float		   m_NearPlane;
+		float		   m_FarPlane;
+		u32			   m_Width;
+		u32			   m_Height;
 		ProjectionType m_ProjectionType;
-		glm::mat4 m_ViewMatrix;
-		glm::mat4 m_ProjectionMatrix;
-		void UpdateMatrices(glm::vec3 position, glm::vec3 eulerAngles);
+		glm::mat4	   m_ViewMatrix;
+		glm::mat4	   m_ProjectionMatrix;
+		void		   UpdateMatrices(glm::vec3 position, glm::vec3 eulerAngles);
 		template <typename Archive>
-		void serialize(Archive &ar)
+		void serialize(Archive& ar)
 		{
 			ZoneScoped;
 			ar(m_FOV, m_NearPlane, m_FarPlane, m_Width, m_Height, m_ProjectionType);
@@ -39,29 +34,27 @@ namespace turas
 	class View
 	{
 	public:
-		String m_Name;
-		u64 m_Hash;
-		View(const String &name);
-		virtual glm::mat4 GetViewMatrix() = 0;
+		String			  m_Name;
+		u64				  m_Hash;
+						  View(const String& name);
+		virtual glm::mat4 GetViewMatrix()		= 0;
 		virtual glm::mat4 GetProjectionMatrix() = 0;
 		TURAS_IMPL_ALLOC(View)
 	};
-
 	class SceneCameraView : public View
 	{
 	public:
-		SceneCameraView(const String &name, Optional<Entity> e = {}, Scene *scene = nullptr);
-		Entity m_CameraEntity;
-		Scene *m_Scene;
+				  SceneCameraView(const String& name, Optional<Entity> e = {}, Scene* scene = nullptr);
+		Entity	  m_CameraEntity;
+		Scene*	  m_Scene;
 		glm::mat4 GetViewMatrix() override;
 		glm::mat4 GetProjectionMatrix() override;
 		TURAS_IMPL_ALLOC(SceneCameraView)
 	};
-
 	class DebugCameraView : public View
 	{
-		DebugCameraView(const String &name);
-		Camera m_DebugCamera;
+				  DebugCameraView(const String& name);
+		Camera	  m_DebugCamera;
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;
 		glm::mat4 GetViewMatrix() override;

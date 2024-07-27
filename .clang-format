@@ -1,6 +1,7 @@
 ---
 Language: Cpp
-BasedOnStyle: LLVM
+SeparateDefinitionBlocks: Always
+EmptyLineBeforeAccessModifier: LogicalBlock
 PointerAlignment: Left
 AccessModifierOffset: -4
 AlignConsecutiveAssignments: true
@@ -10,7 +11,7 @@ AlignTrailingComments: true
 AllowShortIfStatementsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
 AlignConsecutiveMacros: true
-BraceWrapping: 
+BraceWrapping:
   AfterCaseLabel: true
   AfterClass: true
   AfterControlStatement: true
@@ -31,7 +32,7 @@ BreakBeforeBraces: Linux
 ColumnLimit: 140
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ContinuationIndentWidth: 8
-IncludeCategories: 
+IncludeCategories:
   - Regex: '^<.*'
     Priority: 1
   - Regex: '^".*'
@@ -53,10 +54,4 @@ SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 TabWidth: 4
 UseTab: Always
-
-BinPackArguments: false
-AllowAllParametersOfDeclarationOnNextLine: false
-BinPackParameters: false
-AllowAllArgumentsOnNextLine: false
-SpaceAfterTemplateKeyword: true
 ...

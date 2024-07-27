@@ -7,6 +7,7 @@
 #include "Debug/FontBinaries/icons_kenney.h"
 #include "Debug/FontBinaries/icons_kenney.ttf.h"
 #include "Debug/StatsWindow.h"
+#include "Rendering/Pipelines/BuiltIn.h"
 #include "Rendering/Pipelines/Common.h"
 #include "STL/Memory.h"
 #include "spdlog/spdlog.h"
@@ -174,6 +175,18 @@ void turas::Engine::DebugUpdate()
 	m_Renderer.OnImGui();
 	StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
 }
+void turas::Engine::PostLoadProject()
+{
+	// if debug copy shaders to directory
+	if (p_DebugUpdateEnabled) {
+		CopyShadersToProject();
+	}
+	// update renderer to reload all shaders
+	AddBuiltInPipelines();
+	AddGamePipelines();
+	// Load Game Code from Beef
+	// load default scene
+}
 void turas::Engine::DebugInit()
 {
 	InitImGuiStyle();
@@ -203,17 +216,7 @@ bool turas::Engine::LoadProject(const turas::String& path)
 	String dir = Utils::GetDirectoryFromFilename(path);
 	// change working directory to project dir
 	ChangeWorkingDirectory(dir);
-	// if debug copy shaders to directory
-	if (p_DebugUpdateEnabled) {
-		CopyShadersToProject();
-	}
-	// update renderer to reload all shaders
-	AddBuiltInPipelines();
-	AddGamePipelines();
-
-	// Load Game Code from Beef
-
-	// load default scene
+	PostLoadProject();
 	return true;
 }
 bool turas::Engine::CreateProject(const turas::String& name, const turas::String& projectDir)
@@ -229,12 +232,7 @@ bool turas::Engine::CreateProject(const turas::String& name, const turas::String
 	ChangeWorkingDirectory(projectDir);
 	// save project to specified path
 	SaveProject();
-	// if debug copy shaders to directory
-	if (p_DebugUpdateEnabled) {
-		CopyShadersToProject();
-	}
-	// update renderer to reload all shaders
-	// create default scene
+	PostLoadProject();
 	return true;
 }
 bool turas::Engine::SaveProject()
@@ -251,59 +249,9 @@ bool turas::Engine::SaveProject()
 	Utils::SaveStringToPath(stream.str(), projectFilePath);
 	return true;
 }
-
-turas::Pipeline*	CreateBuiltInDeferredPipeline(turas::Renderer* renderer)
-{
-	using namespace turas;
-	auto& vk = renderer->m_VK;
-	auto* p = new Pipeline();
-	auto* gbuffer = p->m_LvkPipeline.AddFramebuffer(renderer->m_VK);
-
-	// Position
-	gbuffer->AddColourAttachment(vk, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT,
-		VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-	// Normal
-	gbuffer->AddColourAttachment(vk, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT,
-		VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-	// Diffuse
-	gbuffer->AddColourAttachment(vk, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT,
-		VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-	// Depth
-	gbuffer->AddDepthAttachment(vk, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT,
-		VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_DEPTH_BIT);
-	gbuffer->Build(vk);
-
-	Shader* gbufferShader = renderer->CreateShaderVF("gbuffer-standard.vert", "gbuffer-standard.frag", "gbuffer-standard");
-
-	auto* lightPassImage = p->m_LvkPipeline.AddFramebuffer(vk);
-	lightPassImage->AddColourAttachment(renderer->m_VK, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT,
-		VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-	lightPassImage->Build(vk);
-
-	Shader* lightPassShader = renderer->CreateShaderVF("lightpass-standard.vert", "lightpass-standard.frag", "lightpass");
-	auto* lightPassMat = p->m_LvkPipeline.AddMaterial(vk, lightPassShader->m_ShaderProgram);
-	lightPassMat->SetColourAttachment(vk, "positionBufferSampler", *gbuffer, 1);
-	lightPassMat->SetColourAttachment(vk, "normalBufferSampler", *gbuffer, 2);
-	lightPassMat->SetColourAttachment(vk, "colourBufferSampler", *gbuffer, 0);
-
-	p->m_LvkPipeline.SetOutputFramebuffer(lightPassImage);
-
-	lvk::VkPipelineData gbufferPipelineData = Rendering::CreateStaticMeshPipeline(vk, gbufferShader->m_ShaderProgram, gbuffer);
-	lvk::VkPipelineData lightPassPipelineData = Rendering::CreateStaticMeshPipeline(vk, lightPassShader->m_ShaderProgram, lightPassImage,
-		VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE);
-	p->m_Renderers.push_back(CreateUnique<Rendering::BuiltInGBufferCommandDispatcher>(gbufferShader->m_ShaderHash, gbuffer, gbufferPipelineData));
-
-	return p;
-}
-
 void turas::Engine::AddBuiltInPipelines()
 {
-	m_Renderer.AddPipelineTemplate(Utils::Hash("TurasDeferredBuiltin"), CreateBuiltInDeferredPipeline);
+	m_Renderer.AddPipelineTemplate(Utils::Hash("TurasDeferredBuiltin"), Rendering::BuiltIn::CreateBuiltInDeferredPipeline);
 }
 void turas::Engine::AddGamePipelines() {}
 void turas::Engine::ChangeWorkingDirectory(const turas::String& newDirectory) { std::filesystem::current_path(newDirectory); }
@@ -370,15 +318,9 @@ void turas::Engine::InitImGuiStyle()
 	config.MergeMode			= true;
 	// config.DstFont = m_font[ImGui::Font::Regular];
 	ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)&dm_sans_ttf_bin[0], static_cast<u32>(DM_SANS_TTF_SIZE), 18.0f);
-	ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)s_fontRangeMerge[0].data,
-											   (int)s_fontRangeMerge[0].size,
-											   18.0f - 4.0f,
-											   &config,
+	ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)s_fontRangeMerge[0].data, (int)s_fontRangeMerge[0].size, 18.0f - 4.0f, &config,
 											   s_fontRangeMerge[0].ranges);
-	ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)s_fontRangeMerge[1].data,
-											   (int)s_fontRangeMerge[1].size,
-											   18.0f - 4.0f,
-											   &config,
+	ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)s_fontRangeMerge[1].data, (int)s_fontRangeMerge[1].size, 18.0f - 4.0f, &config,
 											   s_fontRangeMerge[1].ranges);
 	ImVec4* colors						   = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_Text]				   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -460,11 +402,8 @@ void turas::Engine::InitImGuiStyle()
 	style.LogSliderDeadzone				   = 4;
 	style.TabRounding					   = 4;
 }
-void turas::TurasFilesystemListener::handleFileAction(efsw::WatchID		 watchid,
-													  const std::string& dir,
-													  const std::string& filename,
-													  efsw::Action		 action,
-													  std::string		 oldFilename)
+void turas::TurasFilesystemListener::handleFileAction(efsw::WatchID watchid, const std::string& dir, const std::string& filename,
+													  efsw::Action action, std::string oldFilename)
 {
 	switch (action) {
 	case efsw::Actions::Add:
