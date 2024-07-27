@@ -26,7 +26,7 @@ namespace turas
 	class PipelineStateUpdater
 	{
 	public:
-		virtual void OnUpdateState(Scene* scene) = 0;
+		virtual void OnUpdateState(Scene* scene, u32 frame_index) = 0;
 	};
 
 	class Pipeline

@@ -1,6 +1,6 @@
 #version 450
 
-#define MAX_NUM_EACH_LIGHTS 32
+#define MAX_NUM_EACH_LIGHTS 512
 
 #define ATTENUATION_CONSTANT 1.0
 #define ATTENUATION_LINEAR_CONSTANT 4.5
@@ -143,11 +143,19 @@ void main() {
     vec3 position = texture(u_PositionBufferSampler, a_FragUV).xyz;
     vec3 normal = texture(u_NormalBufferSampler, a_FragUV).xyz;
 
-    vec3 lightColour = BlinnPhong_Directional(normal, vec3(0.0f), textureColour.xyz, vec3(0.0f), 0.0f);
+    vec3 lightColour = vec3(0.0);
+    if(u_LightData.u_DirLightActive > 0)
+    {
+        lightColour = BlinnPhong_Directional(normal, vec3(0.0f), textureColour.xyz, vec3(0.0f), 0.0f);
+    }
 
-    for(int i = 0; i < MAX_NUM_EACH_LIGHTS; i++)
+    for(int i = 0; i < u_LightData.u_PointLightsActive; i++)
     {
         lightColour += BlinnPhong_Point(i, position, normal, vec3(0.0f), textureColour.xyz, vec3(0.0f), 0.0f);
+    }
+
+    for(int i = 0; i < u_LightData.u_SpotLightsActive; i++)
+    {
         lightColour += BlinnPhong_Spot(i, position, normal, vec3(0.0f), textureColour.xyz, vec3(0.0f), 0.0f);
     }
 

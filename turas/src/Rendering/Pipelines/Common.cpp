@@ -1,11 +1,12 @@
 #include "Rendering/Pipelines/Common.h"
 #include "Core/ECS.h"
 #include "Core/Engine.h"
-#include "Rendering/VertexLayouts.h"
+#include "Debug/Profile.h"
 #include "STL/Array.h"
 #include "Systems/Material.h"
 #include "Systems/Mesh.h"
 #include "Systems/Transform.h"
+
 lvk::VkPipelineData turas::Rendering::CreateStaticMeshPipeline (lvk::VulkanAPI&		vk,
 																lvk::ShaderProgram& prog,
 																lvk::Framebuffer*	fb,
@@ -14,6 +15,7 @@ lvk::VkPipelineData turas::Rendering::CreateStaticMeshPipeline (lvk::VulkanAPI&	
 																VkCompareOp			depth_compare_op,
 																bool				enable_msaa)
 {
+	ZoneScoped;
 	VkPipelineLayout pipeline_layout;
 	auto			 binding_descriptions = Vector<VkVertexInputBindingDescription> {
 		lvk::VertexDataPosNormalUv::GetBindingDescription()
@@ -33,12 +35,14 @@ turas::Rendering::BuiltInGBufferCommandDispatcher::BuiltInGBufferCommandDispatch
 	, m_PipelineData (pipeline_data)
 	, m_ShaderHash (shader_hash)
 {
+	ZoneScoped;
 }
 void turas::Rendering::BuiltInGBufferCommandDispatcher::RecordCommands (VkCommandBuffer commandBuffer,
 																		turas::u32		frame_index,
 																		View*			view,
 																		turas::Scene*	scene)
 {
+	ZoneScoped;
 	Array<VkClearValue, 4> clear_values {};
 	clear_values[0].color		 = { { 0.0f, 0.0f, 0.0f, 1.0f } };
 	clear_values[1].color		 = { { 0.0f, 0.0f, 0.0f, 1.0f } };
@@ -87,12 +91,14 @@ turas::Rendering::BuiltInLightPassCommandDispatcher::BuiltInLightPassCommandDisp
 	, m_Im3dViewState (im3d_view_state)
 	, m_LightPassMaterial (light_pass_material)
 {
+	ZoneScoped;
 }
 void turas::Rendering::BuiltInLightPassCommandDispatcher::RecordCommands (VkCommandBuffer cmd,
 																		  u32			  frame_index,
 																		  View*			  view,
 																		  Scene*		  scene)
 {
+	ZoneScoped;
 	Array<VkClearValue, 1> clearValues {};
 	clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
 	VkRenderPassBeginInfo renderPassInfo {};
@@ -135,6 +141,19 @@ void turas::Rendering::BuiltInLightPassCommandDispatcher::RecordCommands (VkComm
 				   m_Framebuffer->m_Resolution.width, m_Framebuffer->m_Resolution.width);
 	vkCmdEndRenderPass (cmd);
 }
+turas::Rendering::BuiltInLightPassStateUpdater::BuiltInLightPassStateUpdater (lvk::Material* light_pass_material) : m_LightPassMaterial (light_pass_material)
+{
+	ZoneScoped;
+}
+
+void turas::Rendering::BuiltInLightPassStateUpdater::OnUpdateState (Scene* scene, u32 frame_index)
+{
+	ZoneScoped;
+	// Update m_LightData
+
+	m_LightPassMaterial->SetBuffer (frame_index, 0, 3, &m_LightData);
+}
+
 void turas::Rendering::DispatchStaticMeshDrawCommands (VkCommandBuffer	   cmd,
 													   uint32_t			   frame_index,
 													   View*			   view,
@@ -142,6 +161,7 @@ void turas::Rendering::DispatchStaticMeshDrawCommands (VkCommandBuffer	   cmd,
 													   lvk::VkPipelineData pipeline_data,
 													   turas::Scene*	   scene)
 {
+	ZoneScoped;
 	auto scene_view = scene->GetRegistry().view<TransformComponent, MeshComponent, MaterialComponent>();
 	// dispatch scene render
 	for (const auto& [e, transform, mesh, material] : scene_view.each()) {
@@ -167,6 +187,7 @@ void turas::Rendering::DispatchStaticMeshDrawCommands (VkCommandBuffer	   cmd,
 }
 lvk::Mesh turas::Rendering::CreateScreenQuad (lvk::VulkanAPI& vk)
 {
+	ZoneScoped;
 	static Vector<lvk::VertexDataPosUv> screenQuadVerts = {
 		{ { -1.0f, -1.0f , 0.0f}, { 0.0f, 0.0f } },
 		{ {1.0f, -1.0f, 0.0f}, {1.0, 0.0f} },

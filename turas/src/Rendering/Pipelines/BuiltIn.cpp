@@ -40,8 +40,8 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 	lightPassMat->SetColourAttachment (vk, "u_PositionBufferSampler", *gbuffer, 0);
 	lightPassMat->SetColourAttachment (vk, "u_NormalBufferSampler", *gbuffer, 1);
 	lightPassMat->SetColourAttachment (vk, "u_ColourBufferSampler", *gbuffer, 2);
+	p->m_StateUpdaters.push_back (CreateUnique<BuiltInLightPassStateUpdater> (lightPassMat));
 
-	// Set scene light data from state updater 
 
 	auto* im3dViewState = p->m_LvkPipeline.AddIm3d (renderer->m_VK, Engine::INSTANCE->m_Im3dState);
 
@@ -60,6 +60,7 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 		&p->m_PresentQuad,
 		*im3dViewState,
 		lightPassMat));
+
 
 	return p;
 }
