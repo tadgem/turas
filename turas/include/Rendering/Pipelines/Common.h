@@ -13,6 +13,7 @@ namespace turas
 			glm::mat4 m_View;
 			glm::mat4 m_Proj;
 		};
+
 		class BuiltInGBufferCommandDispatcher : public PipelineCommandDispatcher
 		{
 		public:
@@ -21,9 +22,24 @@ namespace turas
 			lvk::VkPipelineData m_PipelineData;
 			const u64			m_ShaderHash;
 			void				RecordCommands(VkCommandBuffer buffer, u32 frame_index, View* view, Scene* scene) override;
-
-		public:
 		};
+
+		class BuiltInLightPassCommandDispatcher : public PipelineCommandDispatcher
+		{
+		public:
+			BuiltInLightPassCommandDispatcher(u64 shader_hash, lvk::Framebuffer* framebuffer, lvk::VkPipelineData pipeline_data,
+				lvk::Mesh* screen_quad, lvk::LvkIm3dViewState im3d_view_state, lvk::Material* light_pass_material);
+
+			lvk::Framebuffer*	    m_Framebuffer;
+			lvk::VkPipelineData     m_PipelineData;
+			const u64			    m_ShaderHash;
+			lvk::Mesh*			    m_ScreenQuad;
+			lvk::LvkIm3dViewState	m_Im3dViewState;
+			lvk::Material*			m_LightPassMaterial;
+
+			void				RecordCommands(VkCommandBuffer buffer, u32 frame_index, View* view, Scene* scene) override;
+		};
+
 		// Create a render pipeline for static meshes
 		lvk::VkPipelineData CreateStaticMeshPipeline(lvk::VulkanAPI& vk, lvk::ShaderProgram& prog, lvk::Framebuffer* fb,
 													 VkPolygonMode	 poly_mode	  = VK_POLYGON_MODE_FILL,

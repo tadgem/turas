@@ -21,7 +21,7 @@ bool ImGui::BufferingBar(const char* label, float value, const ImVec2& size_arg,
 	const float circleWidth = circleEnd - circleStart;
 	window->DrawList->AddRectFilled(bb.Min, ImVec2(pos.x + circleStart, bb.Max.y), bg_col);
 	window->DrawList->AddRectFilled(bb.Min, ImVec2(pos.x + circleStart * value, bb.Max.y), fg_col);
-	const float t	  = g.Time;
+	const float t	  = static_cast<float>(g.Time);
 	const float r	  = size.y / 2;
 	const float speed = 1.5f;
 	const float a	  = speed * 0;
@@ -52,15 +52,15 @@ bool ImGui::Spinner(const char* label, float radius, int thickness, const ImU32&
 	// Render
 	window->DrawList->PathClear();
 	float		 num_segments = 30.0f;
-	float		 s1			  = ImSin(g.Time * 1.8f);
-	int			 start		  = fabs(s1 * (num_segments - 5.0f));
+	float		 s1			  = ImSin(static_cast<float>(g.Time) * 1.8f);
+	int			 start		  = static_cast<int>(fabs(s1 * (num_segments - 5.0f)));
 	const float	 a_min		  = IM_PI * 2.0f * ((float)start) / (float)num_segments;
 	const float	 a_max		  = IM_PI * 2.0f * ((float)num_segments - 3) / (float)num_segments;
 	const ImVec2 centre		  = ImVec2(pos.x + radius, pos.y + radius + style.FramePadding.y);
 	for (int i = 0; i < num_segments; i++) {
 		const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-		window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + g.Time * 8) * radius, centre.y + ImSin(a + g.Time * 8) * radius));
+		window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + static_cast<float>(g.Time) * 8.0f) * radius, centre.y + ImSin(a + static_cast<float>(g.Time) * 8) * radius));
 	}
-	window->DrawList->PathStroke(color, false, thickness);
+	window->DrawList->PathStroke(color, false, static_cast<float>(thickness));
 	return true;
 }
