@@ -32,7 +32,7 @@ namespace turas
 	class Pipeline
 	{
 	public:
-		Vector<UPtr<PipelineCommandDispatcher>> m_Renderers;
+		Vector<UPtr<PipelineCommandDispatcher>> m_CommandDispatchers;
 		Vector<UPtr<PipelineStateUpdater>>		m_StateUpdaters;
 		Vector<MaterialCandidate>				m_MaterialCandidates;
 		lvk::Pipeline							m_LvkPipeline;

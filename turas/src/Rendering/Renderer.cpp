@@ -1,4 +1,6 @@
 #include "Rendering/Renderer.h"
+
+#include "Core/Engine.h"
 #include "Core/Log.h"
 #include "Debug/Profile.h"
 turas::Renderer::Renderer(bool enableDebugValidation) : m_VK(enableDebugValidation) {}
@@ -25,6 +27,17 @@ void turas::Renderer::PostFrame()
 	ZoneScoped;
 	for (u32 i = 0; i < lvk::MAX_FRAMES_IN_FLIGHT; i++) {
 		VkCommandBuffer& cmd = m_VK.BeginGraphicsCommands(i);
+
+		for(auto& scene : Engine::INSTANCE->m_ActiveScenes) {
+			for(auto& [hash, view_data] : p_ViewData) {
+				for(int state_updater = 0; state_updater < view_data.m_Pipeline->m_StateUpdaters.size(); state_updater++) {
+					view_data.m_Pipeline->m_StateUpdaters[state_updater]->OnUpdateState (scene.get(), i);
+				}
+				for(int dispatcher = 0; dispatcher < view_data.m_Pipeline->m_CommandDispatchers.size(); dispatcher++) {
+					view_data.m_Pipeline->m_CommandDispatchers[dispatcher]->RecordCommands (cmd, i, view_data.m_View.get(), scene.get());
+				}
+			}
+		}
 		m_VK.EndGraphicsCommands(i);
 	}
 	m_VK.PostFrame();

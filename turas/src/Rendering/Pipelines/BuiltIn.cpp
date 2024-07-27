@@ -50,10 +50,10 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 	lvk::VkPipelineData gbufferPipelineData	  = Rendering::CreateStaticMeshPipeline (vk, gbufferShader->m_ShaderProgram, gbuffer);
 	lvk::VkPipelineData lightPassPipelineData = Rendering::CreateStaticMeshPipeline (vk, lightPassShader->m_ShaderProgram, lightPassImage,
 																					 VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE);
-	p->m_Renderers.push_back (
+	p->m_CommandDispatchers.push_back (
 		CreateUnique<Rendering::BuiltInGBufferCommandDispatcher> (gbufferShader->m_ShaderHash, gbuffer, gbufferPipelineData));
 
-	p->m_Renderers.push_back (CreateUnique<Rendering::BuiltInLightPassCommandDispatcher> (
+	p->m_CommandDispatchers.push_back (CreateUnique<Rendering::BuiltInLightPassCommandDispatcher> (
 		lightPassShader->m_ShaderHash,
 		lightPassImage,
 		lightPassPipelineData,
