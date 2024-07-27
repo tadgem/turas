@@ -73,6 +73,7 @@ namespace turas
 		void		 ChangeWorkingDirectory(const String& newDirectory);
 		void		 CopyShadersToProject();
 		void		 InitImGuiStyle();
+		virtual void InitIm3dContexts();
 		void		 DebugInit();
 		void		 DebugUpdate();
 		void		 PostLoadProject();
