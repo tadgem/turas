@@ -32,30 +32,30 @@ namespace turas
 			void		   Free(lvk::VulkanAPI& vk);
 		};
 
-		Renderer(bool enableDebugValidation);
+		Renderer(bool enable_debug_validation);
 		void	  Start();
 		void	  Shutdown();
 		void	  PreFrame();
 		void	  PostFrame();
-		bool	  AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipelineTemplateFunction);
+		bool	  AddPipelineTemplate(u64 hash, const CreatePipelineCallback& pipeline_template_function);
 		bool	  RemovePipelineTemplate(u64 hash);
 		bool	  DestroyView(const String& name);
 		View*	  GetView(const String& name);
-		View*	  GetView(u64 nameHash);
+		View*	  GetView(u64 name_hash);
 		Pipeline* GetViewPipeline(const String& name);
 		Pipeline* GetViewPipeline(u64 nameHash);
-		Shader*	  CreateShaderVF(const String& vertName, const String& fragName, const String& shaderName);
-		bool	  DestroyShader(const String& shaderName);
-		Shader*	  GetShader(const String& shaderName);
+		Shader*	  CreateShaderVF(const String& vert_name, const String& frag_name, const String& shader_name);
+		bool	  DestroyShader(const String& shader_name);
+		Shader*	  GetShader(const String& shader_name);
 		template <typename _ViewTy, typename... Args>
-		_ViewTy* CreateView(const String& name, u64 pipelineHash, Args&&... args)
+		_ViewTy* CreateView(const String& name, u64 pipeline_hash, Args&&... args)
 		{
 			ZoneScoped;
 			static_assert(std::is_base_of<View, _ViewTy>());
-			if (p_CreatePipelineCallbacks.find(pipelineHash) == p_CreatePipelineCallbacks.end()) {
+			if (p_CreatePipelineCallbacks.find(pipeline_hash) == p_CreatePipelineCallbacks.end()) {
 				return nullptr;
 			}
-			Pipeline* p			   = p_CreatePipelineCallbacks[pipelineHash]((Renderer*)this);
+			Pipeline* p			   = p_CreatePipelineCallbacks[pipeline_hash]((Renderer*)this);
 			u64		  viewNameHash = Utils::Hash(name);
 			p_ViewData.emplace(viewNameHash, ViewData{CreateUnique<_ViewTy>(std::forward<Args>(args)...), UPtr<Pipeline>(p)});
 			return p_ViewData[viewNameHash].m_View.get();
