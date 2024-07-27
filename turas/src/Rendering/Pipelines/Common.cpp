@@ -165,3 +165,27 @@ void turas::Rendering::DispatchStaticMeshDrawCommands (VkCommandBuffer	   cmd,
 		vkCmdDrawIndexed (cmd, mesh.m_MeshAsset->m_LvkMesh.m_IndexCount, 1, 0, 0, 0);
 	}
 }
+lvk::Mesh turas::Rendering::CreateScreenQuad (lvk::VulkanAPI& vk)
+{
+	static Vector<lvk::VertexDataPosUv> screenQuadVerts = {
+		{ { -1.0f, -1.0f , 0.0f}, { 0.0f, 0.0f } },
+		{ {1.0f, -1.0f, 0.0f}, {1.0, 0.0f} },
+		{ {1.0f, 1.0f, 0.0f}, {1.0, 1.0} },
+		{ {-1.0f, 1.0f, 0.0f}, {0.0f, 1.0} }
+	};
+
+	static lvk::Vector<uint32_t> screenQuadIndices = {
+		0, 1, 2, 2, 3, 0
+	};
+
+	VkBuffer vertBuffer;
+	VmaAllocation vertAlloc;
+	vk.CreateVertexBuffer<lvk::VertexDataPosUv>(screenQuadVerts, vertBuffer, vertAlloc);
+
+	VkBuffer indexBuffer;
+	VmaAllocation indexAlloc;
+	vk.CreateIndexBuffer(screenQuadIndices, indexBuffer, indexAlloc);
+
+	lvk::Mesh screenQuad{ vertBuffer, vertAlloc, indexBuffer, indexAlloc, 6 };
+	return screenQuad;
+}

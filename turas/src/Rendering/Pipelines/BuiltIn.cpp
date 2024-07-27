@@ -7,6 +7,8 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 	using namespace turas;
 	auto& vk	  = renderer->m_VK;
 	auto* p		  = new Pipeline();
+	p->m_PresentQuad = Rendering::CreateScreenQuad(renderer->m_VK);
+
 	auto* gbuffer = p->m_LvkPipeline.AddFramebuffer (renderer->m_VK);
 	// Position
 	gbuffer->AddColourAttachment (vk, lvk::ResolutionScale::Full, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R16G16B16A16_SFLOAT,
@@ -49,13 +51,12 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 	p->m_Renderers.push_back (
 		CreateUnique<Rendering::BuiltInGBufferCommandDispatcher> (gbufferShader->m_ShaderHash, gbuffer, gbufferPipelineData));
 
-	// TODO: Need to get the screen quad
 	p->m_Renderers.push_back (CreateUnique<Rendering::BuiltInLightPassCommandDispatcher> (
 		lightPassShader->m_ShaderHash,
 		lightPassImage,
 		lightPassPipelineData,
-		nullptr,
-		im3dViewState,
+		&p->m_PresentQuad,
+		*im3dViewState,
 		lightPassMat));
 
 	return p;

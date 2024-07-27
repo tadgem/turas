@@ -45,6 +45,10 @@ namespace Rendering {
 												  VkCullModeFlags	  cull_mode		   = VK_CULL_MODE_BACK_BIT,
 												  VkCompareOp		  depth_compare_op = VK_COMPARE_OP_LESS,
 												  bool				  enable_msaa	   = false);
+
+
+	lvk::Mesh			CreateScreenQuad(lvk::VulkanAPI& vk);
+
 	static void			DispatchStaticMeshDrawCommands (VkCommandBuffer		cmd,
 														uint32_t			frame_index,
 														View*				view,

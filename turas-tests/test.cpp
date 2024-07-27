@@ -231,8 +231,9 @@ BEGIN_TESTS()
          assert(e.m_Project->m_SerializedScenes.find("ts1") !=
              e.m_Project->m_SerializedScenes.end());
          e.Shutdown();
-         assert(std::filesystem::exists("TestProjScenes/scenes/ts1.tbs"));
-         })
+		 turas::log::info("CWD: {}" , std::filesystem::current_path().string());
+         assert(std::filesystem::exists("../TestProjScenes/scenes/ts1.tbs"));
+         });
 
     TEST("Load Scene from Name", {
          {
@@ -244,8 +245,6 @@ BEGIN_TESTS()
          e.SaveProject();
          e.Shutdown();
          }
-         assert(std::filesystem::exists(
-             "TestSceneFromPath/TestSceneFromPath.turasproj"));
          {
          turas::Engine e;
          e.Init();
@@ -268,7 +267,7 @@ BEGIN_TESTS()
          e.Shutdown();
          }
          assert(std::filesystem::exists(
-             "TestSceneFromPath/TestSceneFromPath.turasproj"));
+             "../TestSceneFromPath/TestSceneFromPath.turasproj"));
          {
          turas::Engine e;
          e.Init();

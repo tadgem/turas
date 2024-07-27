@@ -34,6 +34,7 @@ namespace turas
 		Vector<UPtr<PipelineStateUpdater>>		m_StateUpdaters;
 		Vector<MaterialCandidate>				m_MaterialCandidates;
 		lvk::Pipeline							m_LvkPipeline;
+		lvk::Mesh								m_PresentQuad;
 		void									Free(lvk::VulkanAPI& vk);
 		TURAS_IMPL_ALLOC(Pipeline)
 	};
