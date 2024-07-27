@@ -4,9 +4,9 @@ layout(location = 0) in vec3 a_FragPosition;
 layout(location = 1) in vec3 a_FragNormal;
 layout(location = 2) in vec2 a_FragUV;
 
-layout(location = 0) out vec4 a_PixelColour;
-layout(location = 1) out vec4 a_PixelPosition;
-layout(location = 2) out vec4 a_PixelNormal;
+layout(location = 0) out vec4 a_PixelPosition;
+layout(location = 1) out vec4 a_PixelNormal;
+layout(location = 2) out vec4 a_PixelColour;
 
 layout(binding = 1) uniform sampler2D u_DiffuseSampler;
 

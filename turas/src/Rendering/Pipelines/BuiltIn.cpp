@@ -37,9 +37,11 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 
 	Shader* lightPassShader = renderer->CreateShaderVF ("lightpass-standard.vert", "lightpass-standard.frag", "lightpass");
 	auto*	lightPassMat	= p->m_LvkPipeline.AddMaterial (vk, lightPassShader->m_ShaderProgram);
-	lightPassMat->SetColourAttachment (vk, "positionBufferSampler", *gbuffer, 1);
-	lightPassMat->SetColourAttachment (vk, "normalBufferSampler", *gbuffer, 2);
-	lightPassMat->SetColourAttachment (vk, "colourBufferSampler", *gbuffer, 0);
+	lightPassMat->SetColourAttachment (vk, "u_PositionBufferSampler", *gbuffer, 0);
+	lightPassMat->SetColourAttachment (vk, "u_NormalBufferSampler", *gbuffer, 1);
+	lightPassMat->SetColourAttachment (vk, "u_ColourBufferSampler", *gbuffer, 2);
+
+	// Set scene light data from state updater 
 
 	auto* im3dViewState = p->m_LvkPipeline.AddIm3d (renderer->m_VK, Engine::INSTANCE->m_Im3dState);
 

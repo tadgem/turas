@@ -21,12 +21,14 @@ namespace turas
 	public:
 		virtual void RecordCommands(VkCommandBuffer buffer, u32 frameIndex, View* view, Scene* scene) = 0;
 	};
-	// use this to update uniform or any other kind of per frame buffers
+
+	// use this to update uniform or any per frame buffers that is driven by an ECS system, such as animations or lights
 	class PipelineStateUpdater
 	{
 	public:
 		virtual void OnUpdateState(Scene* scene) = 0;
 	};
+
 	class Pipeline
 	{
 	public:
