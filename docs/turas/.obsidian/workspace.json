@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Rendering/Pipeline.md",
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md",
                 "mode": "source",
                 "source": false
               }
@@ -116,7 +116,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Rendering/Pipeline.md",
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +133,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Rendering/Pipeline.md",
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -156,7 +156,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Rendering/Pipeline.md"
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md"
               }
             }
           }
@@ -179,6 +179,9 @@
   },
   "active": "3f19fcc884c75491",
   "lastOpenFiles": [
+    "Rendering/Pipeline.md",
+    "Rendering/Papers & Articles/Graphics Studies Website.md",
+    "Rendering/Papers & Articles",
     "Rendering/Vector Graphics.md",
     "Rendering/View.md",
     "LVK.md",
@@ -189,7 +192,6 @@
     "Assets/Asset.md",
     "Rendering/Shaders.md",
     "Rendering/Renderer.md",
-    "Rendering/Pipeline.md",
     "Project/CMake.md",
     "Untitled.canvas",
     "Project",

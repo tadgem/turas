@@ -1,0 +1,1 @@
+https://www.adriancourreges.com/blog/2020/12/29/graphics-studies-compilation/
