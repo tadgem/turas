@@ -7,7 +7,7 @@ turas::Renderer::Renderer(bool enable_debug_validation) : m_VK(enable_debug_vali
 void			 turas::Renderer::Start()
 {
 	ZoneScoped;
-	m_VK.Start("Turas", 1280, 720);
+	m_VK.Start("Turas", 1920, 1080);
 	m_Im3dState = lvk::LoadIm3D(m_VK);
 	LoadShaderBinaries();
 }

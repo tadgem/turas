@@ -7,14 +7,22 @@
 #include "Core/ECS.h"
 #include "STL/Optional.h"
 namespace turas {
+
+	enum EntityFlags : u64
+	{
+		None = 0,
+		NavMeshStatic = 1 << 0, // binary 0001
+		//B = 1 << 1, // binary 0010
+	};
     struct EntityDataComponent {
         String              Name;
         Optional<Entity>    Parent;
+		EntityFlags			Flags;
 
         template<typename Archive>
         void serialize(Archive &ar) {
             ZoneScoped;
-            ar(Name, Parent);
+            ar(Name, Parent, Flags);
         }
     };
 

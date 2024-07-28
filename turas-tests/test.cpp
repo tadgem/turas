@@ -417,6 +417,8 @@ BEGIN_TESTS()
          auto ent = s->CreateEntity();
          auto &data = s->AddComponent<turas::EntityDataComponent>(ent);
          data.Name = "ABC123";
+		 data.Flags = turas::EntityFlags::NavMeshStatic;
+
          auto sceneBinary = s->SaveBinary();
          std::stringstream dataStream{};
 
@@ -439,6 +441,8 @@ BEGIN_TESTS()
          assert(s2->m_Name == "Test");
          assert(s2->HasComponent<turas::EntityDataComponent>(ent));
          assert(s2->GetComponent<turas::EntityDataComponent>(ent).Name == "ABC123");
+		 assert(s2->GetComponent<turas::EntityDataComponent>(ent).Flags == turas::EntityFlags::NavMeshStatic);
+
          e.Shutdown();
          });
 
