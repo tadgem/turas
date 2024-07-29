@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "a3a9043b1a5fa1b8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Rendering/R&D/Parallax Corrected Cubemaps.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       },
       {
         "id": "4bf539843b0a33bd",
@@ -103,7 +116,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md",
+                "file": "Rendering/R&D/Parallax Corrected Cubemaps.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -120,7 +133,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md",
+                "file": "Rendering/R&D/Parallax Corrected Cubemaps.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -143,7 +156,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md"
+                "file": "Rendering/R&D/Parallax Corrected Cubemaps.md"
               }
             }
           }
@@ -164,8 +177,9 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f33905874f00b7c3",
+  "active": "a3a9043b1a5fa1b8",
   "lastOpenFiles": [
+    "Rendering/R&D/Parallax Corrected Cubemaps.md",
     "Rendering/Papers & Articles/Graphics Studies Website.md",
     "Rendering/Papers & Articles",
     "Assets/Asset.md",
