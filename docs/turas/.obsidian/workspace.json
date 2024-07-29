@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md",
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md",
                 "mode": "source",
                 "source": false
               }
@@ -103,7 +103,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md",
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -120,7 +120,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md",
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -143,7 +143,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Rendering/R&D/Radiance Cascades write up.md"
+                "file": "Rendering/Papers & Articles/Graphics Studies Website.md"
               }
             }
           }
@@ -166,10 +166,10 @@
   },
   "active": "f33905874f00b7c3",
   "lastOpenFiles": [
+    "Rendering/R&D/Radiance Cascades write up.md",
     "Rendering/Papers & Articles/Graphics Studies Website.md",
     "Rendering/Papers & Articles",
     "Assets/Asset.md",
-    "Rendering/R&D/Radiance Cascades write up.md",
     "Rendering/R&D",
     "Notes/CMake Shader Compilation.md",
     "Untitled.canvas",
