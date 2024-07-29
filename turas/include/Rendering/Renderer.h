@@ -7,6 +7,7 @@
 #include "Rendering/Pipeline.h"
 #include "Rendering/Shader.h"
 #include "Rendering/View.h"
+#include "Rendering/Viewport.h"
 #include "STL/Functional.h"
 #include "STL/HashMap.h"
 #include "VulkanAPI_SDL.h"
@@ -32,6 +33,12 @@ namespace turas
 			void		   Free(lvk::VulkanAPI& vk);
 		};
 
+		struct ViewportData
+		{
+			UPtr<Viewport>	m_Viewport;
+			View*			m_View = nullptr;
+		};
+
 		Renderer(bool enable_debug_validation);
 		void	  Start();
 		void	  Shutdown();
@@ -47,6 +54,11 @@ namespace turas
 		Shader*	  CreateShaderVF(const String& vert_name, const String& frag_name, const String& shader_name);
 		bool	  DestroyShader(const String& shader_name);
 		Shader*	  GetShader(const String& shader_name);
+		bool	  SetViewportView(const String& viewport_name,  View* view);
+		bool	  SetViewportView(u64 viewport_hash, View* view);
+		View*	  GetViewportView(const String& viewport_name);
+		View*	  GetViewportView(u64 viewport_hash);
+
 		template <typename _ViewTy, typename... Args>
 		_ViewTy* CreateView(const String& name, u64 pipeline_hash, Args&&... args)
 		{
@@ -60,6 +72,17 @@ namespace turas
 			p_ViewData.emplace(viewNameHash, ViewData{CreateUnique<_ViewTy>(std::forward<Args>(args)...), UPtr<Pipeline>(p)});
 			return p_ViewData[viewNameHash].m_View.get();
 		}
+
+		template <typename _ViewportTy, typename ... Args>
+		_ViewportTy*	CreateViewport(const String& name, Args&&... args)
+		{
+			ZoneScoped;
+			static_assert(std::is_base_of<View, _ViewportTy>());
+			u64 hash = Utils::Hash(name);
+			p_Viewports.emplace(hash, ViewportData{ CreateUnique<_ViewportTy>(std::forward<Args>(args)...), nullptr});
+			return p_Viewports[hash].m_Viewport.get();
+		}
+
 		TURAS_IMPL_ALLOC(Renderer)
 		// interface to GPU (vulkan)
 		lvk::VulkanAPI_SDL m_VK;
@@ -69,11 +92,14 @@ namespace turas
 		// callbacks to construct named pipelines
 		HashMap<u64, CreatePipelineCallback> p_CreatePipelineCallbacks;
 		// active view data
-		HashMap<u64, ViewData> p_ViewData;
+		HashMap<u64, ViewData> 				p_ViewData;
+		// active view ports
+		HashMap<u64, ViewportData> 			p_Viewports;
 		// all loaded shader stage binaries
-		HashMap<String, lvk::ShaderStage> p_ShaderStages;
+		HashMap<String, lvk::ShaderStage> 	p_ShaderStages;
 		// all 'linked' shader programs
-		HashMap<String, UPtr<Shader>> p_ShaderPrograms;
+		HashMap<String, UPtr<Shader>> 		p_ShaderPrograms;
+
 		friend class Engine;
 		void OnImGui();
 		void LoadShaderBinaries();
