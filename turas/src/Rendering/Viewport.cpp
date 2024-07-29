@@ -46,3 +46,9 @@ turas::PresentToImageViewport::PresentToImageViewport (VkRenderPass renderPass, 
 m_PresentRenderPass(renderPass), m_PresentFramebuffers(framebuffers)
 {
 }
+void turas::TurasImGuiViewport::Update (turas::Scene* scene, turas::View* view, turas::Pipeline* view_pipeline)
+{
+}
+void turas::TurasImGuiViewport::RecordViewportCommands (lvk::VulkanAPI& vk, VkCommandBuffer& cmd, uint32_t frame_index, turas::Scene* scene, turas::View* view, turas::Pipeline* view_pipeline)
+{
+}

@@ -33,4 +33,14 @@ namespace turas {
 		void Update (Scene* scene, View* view, Pipeline* view_pipeline) override;
 		void RecordViewportCommands (lvk::VulkanAPI& vk , VkCommandBuffer& cmd, uint32_t frame_index, Scene* scene, View* view, Pipeline* view_pipeline) override;
 	};
+
+	class TurasImGuiViewport : public Viewport
+	{
+	public:
+		void Update (Scene* scene, View* view, Pipeline* view_pipeline) override;
+		void RecordViewportCommands (lvk::VulkanAPI& vk, VkCommandBuffer& cmd, uint32_t frame_index, Scene* scene, View* view, Pipeline* view_pipeline) override;
+
+	public:
+
+	};
 }
