@@ -31,7 +31,7 @@ namespace turas
 						  Engine(bool enableDebugUpdate = false);
 		void			  Init();
 		void			  Shutdown();
-		void			  Run();
+		virtual void	  Run();
 		bool			  LoadProject(const String& path);
 		bool			  CreateProject(const String& name, const String& projectDir);
 		bool			  SaveProject();
