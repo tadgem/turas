@@ -5,6 +5,8 @@
 #include "Core/ECS.h"
 #include "Rendering/View.h"
 #include "Rendering/Pipeline.h"
+#include "Rendering/Shader.h"
+
 namespace turas {
 	struct ViewportInputState
 	{
@@ -27,11 +29,15 @@ namespace turas {
 	public:
 		VkRenderPass 										m_PresentRenderPass;
 		Array<VkFramebuffer, lvk::MAX_FRAMES_IN_FLIGHT> 	m_PresentFramebuffers;
+		lvk::Material										m_PresentMaterial;
+		lvk::VkPipelineData									m_PresentPipelineData;
 
-		PresentToImageViewport(VkRenderPass renderPass, Array<VkFramebuffer, lvk::MAX_FRAMES_IN_FLIGHT> framebuffers);
+		PresentToImageViewport(VkRenderPass render_pass, Array<VkFramebuffer, lvk::MAX_FRAMES_IN_FLIGHT> framebuffers);
 
 		void Update (Scene* scene, View* view, Pipeline* view_pipeline) override;
 		void RecordViewportCommands (lvk::VulkanAPI& vk , VkCommandBuffer& cmd, uint32_t frame_index, Scene* scene, View* view, Pipeline* view_pipeline) override;
+	protected:
+		Shader*	GetPresentShader();
 	};
 
 	class TurasImGuiViewport : public Viewport
