@@ -41,6 +41,7 @@ namespace turas
 
 		Renderer(bool enable_debug_validation);
 		void	  Start();
+		void	  Reset();
 		void	  Shutdown();
 		void	  PreFrame();
 		void	  PostFrame();

@@ -1,4 +1,6 @@
 #include "EditorEngine.h"
+
+#include "EditorMenu.h"
 turas::EditorEngine::EditorEngine() : turas::Engine(true)
 {
 }
@@ -21,6 +23,7 @@ void turas::EditorEngine::AddViewsAndViewports()
 }
 void turas::EditorEngine::OnEditor()
 {
+	EditorMenu::OnImGuiEditorMenu ((Engine*) this);
 }
 void turas::EditorEngine::InitEditorFSM()
 {

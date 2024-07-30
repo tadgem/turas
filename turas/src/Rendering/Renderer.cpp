@@ -7,13 +7,33 @@ turas::Renderer::Renderer(bool enable_debug_validation) : m_VK(enable_debug_vali
 void			 turas::Renderer::Start()
 {
 	ZoneScoped;
-	m_VK.Start("Turas", 1920, 1080);
-	m_Im3dState = lvk::LoadIm3D(m_VK);
+	m_VK.Start ("Turas", 1920, 1080);
+	m_Im3dState = lvk::LoadIm3D (m_VK);
 	LoadShaderBinaries();
+}
+void turas::Renderer::Reset()
+{
+	ZoneScoped;
+	p_ShaderStages.clear();
+	for(auto& [name, shader] : p_ShaderPrograms) {
+		shader->m_ShaderProgram.Free (m_VK);
+	}
+	p_ShaderPrograms.clear();
+
+	for(auto& [hash, view] : p_ViewData) {
+		view.Free (m_VK);
+	}
+	p_ViewData.clear();
+
+	for(auto& [hash, viewport] : p_Viewports) {
+		viewport.m_Viewport->Free (m_VK);
+	}
+	p_Viewports.clear();
 }
 void turas::Renderer::Shutdown()
 {
 	ZoneScoped;
+	Reset();
 	lvk::FreeIm3d(m_VK, m_Im3dState);
 	m_VK.Cleanup();
 }
@@ -25,7 +45,6 @@ void turas::Renderer::PreFrame()
 void turas::Renderer::PostFrame()
 {
 	ZoneScoped;
-
 	// Update each viewport before rendering current frame
 	for(auto& [hash, viewport_data] : p_Viewports)
 	{
@@ -215,4 +234,8 @@ turas::View* turas::Renderer::GetViewportView (const turas::String& viewport_nam
 {
 	return GetViewportView(Utils::Hash(viewport_name));
 }
-void turas::Renderer::ViewData::Free(lvk::VulkanAPI& vk) { ZoneScoped; }
+void turas::Renderer::ViewData::Free(lvk::VulkanAPI& vk)
+{
+	m_Pipeline->Free (vk);
+	ZoneScoped;
+}

@@ -47,7 +47,7 @@ void turas::PresentToImageViewport::RecordViewportCommands (lvk::VulkanAPI& vk, 
 	renderPassInfo.pClearValues	   = clearValues.data();
 
 	vkCmdBeginRenderPass (cmd, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PresentPipelineData.m_Pipeline);
+	vkCmdBindPipeline (cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PresentPipelineData.m_Pipeline);
 	VkViewport viewport {};
 	viewport.x		  = 0.0f;
 	viewport.x		  = 0.0f;
@@ -65,9 +65,14 @@ void turas::PresentToImageViewport::RecordViewportCommands (lvk::VulkanAPI& vk, 
 
 	vkCmdBindVertexBuffers (cmd, 0, 1, &view_pipeline->m_PresentQuad.m_VertexBuffer, sizes);
 	vkCmdBindIndexBuffer (cmd, view_pipeline->m_PresentQuad.m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
-	vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PresentPipelineData.m_PipelineLayout, 0, 1, &m_PresentMaterial.m_DescriptorSets[0].m_Sets[frame_index], 0, nullptr);
+	vkCmdBindDescriptorSets (cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PresentPipelineData.m_PipelineLayout, 0, 1, &m_PresentMaterial.m_DescriptorSets[0].m_Sets[frame_index], 0, nullptr);
 	vkCmdDrawIndexed (cmd, view_pipeline->m_PresentQuad.m_IndexCount, 1, 0, 0, 0);
 	vkCmdEndRenderPass (cmd);
+}
+void turas::PresentToImageViewport::Free (lvk::VulkanAPI& vk)
+{
+	m_PresentMaterial.Free (vk);
+	m_PresentPipelineData.Free(vk);
 }
 turas::Shader* turas::PresentToImageViewport::GetPresentShader()
 {
@@ -99,5 +104,8 @@ void turas::TurasImGuiViewport::Update ( turas::View* view, turas::Pipeline* vie
 	ImGui::End();
 }
 void turas::TurasImGuiViewport::RecordViewportCommands (lvk::VulkanAPI& vk, VkCommandBuffer& cmd, uint32_t frame_index, turas::View* view, turas::Pipeline* view_pipeline)
+{
+}
+void turas::TurasImGuiViewport::Free (lvk::VulkanAPI& vk)
 {
 }

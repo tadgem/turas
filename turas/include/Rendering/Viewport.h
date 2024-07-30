@@ -22,6 +22,7 @@ namespace turas {
 
 		virtual void Update(View* view, Pipeline* view_pipeline) = 0;
 		virtual void RecordViewportCommands(lvk::VulkanAPI& vk ,VkCommandBuffer& cmd, uint32_t frame_index, View* view, Pipeline* view_pipeline) = 0;
+		virtual void Free(lvk::VulkanAPI& vk) = 0;
 	};
 
 	class PresentToImageViewport : public Viewport
@@ -36,8 +37,10 @@ namespace turas {
 
 		void Update (View* view, Pipeline* view_pipeline) override;
 		void RecordViewportCommands (lvk::VulkanAPI& vk , VkCommandBuffer& cmd, uint32_t frame_index, View* view, Pipeline* view_pipeline) override;
+		void Free (lvk::VulkanAPI& vk) override;
 	protected:
-		Shader*	GetPresentShader();
+		Shader* GetPresentShader();
+
 	};
 
 	class TurasImGuiViewport : public Viewport
@@ -45,7 +48,7 @@ namespace turas {
 	public:
 		void Update (View* view, Pipeline* view_pipeline) override;
 		void RecordViewportCommands (lvk::VulkanAPI& vk, VkCommandBuffer& cmd, uint32_t frame_index, View* view, Pipeline* view_pipeline) override;
-
+		void Free (lvk::VulkanAPI& vk) override;
 	public:
 
 	};
