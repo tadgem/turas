@@ -70,17 +70,17 @@ namespace turas
 			Pipeline* p			   = p_CreatePipelineCallbacks[pipeline_hash]((Renderer*)this);
 			u64		  viewNameHash = Utils::Hash(name);
 			p_ViewData.emplace(viewNameHash, ViewData{CreateUnique<_ViewTy>(std::forward<Args>(args)...), UPtr<Pipeline>(p)});
-			return p_ViewData[viewNameHash].m_View.get();
+			return reinterpret_cast<_ViewTy*>(p_ViewData[viewNameHash].m_View.get());
 		}
 
 		template <typename _ViewportTy, typename ... Args>
 		_ViewportTy*	CreateViewport(const String& name, Args&&... args)
 		{
 			ZoneScoped;
-			static_assert(std::is_base_of<View, _ViewportTy>());
+			static_assert(std::is_base_of<Viewport, _ViewportTy>());
 			u64 hash = Utils::Hash(name);
 			p_Viewports.emplace(hash, ViewportData{ CreateUnique<_ViewportTy>(std::forward<Args>(args)...), nullptr});
-			return p_Viewports[hash].m_Viewport.get();
+			return reinterpret_cast<_ViewportTy*>(p_Viewports[hash].m_Viewport.get());
 		}
 
 		TURAS_IMPL_ALLOC(Renderer)

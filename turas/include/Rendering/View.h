@@ -36,6 +36,7 @@ namespace turas
 	public:
 		String			  m_Name;
 		u64				  m_Hash;
+		u32				  m_ViewWidth, m_ViewHeight;
 						  View(const String& name);
 		virtual glm::mat4 GetViewMatrix()		= 0;
 		virtual glm::mat4 GetProjectionMatrix() = 0;
@@ -53,7 +54,9 @@ namespace turas
 	};
 	class DebugCameraView : public View
 	{
+	public:
 				  DebugCameraView(const String& name);
+
 		Camera	  m_DebugCamera;
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

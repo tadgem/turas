@@ -30,7 +30,10 @@ int main(int argc, char** argv)
     app.AddSystem<turas::CameraSystem>();
     app.AddSystem<turas::EntityDataSystem>();
     app.Init();
-    app.Run();
+	// auto* view = app.m_Renderer.CreateView<turas::DebugCameraView> ("Scene View", turas::Utils::Hash("TurasDeferredBuiltin"), "Scene View");
+	// app.m_Renderer.CreateViewport<turas::TurasImGuiViewport> ("Scene Viewport");
+	// app.m_Renderer.SetViewportView ("Scene Viewport", reinterpret_cast<turas::View*>(view));
+	app.Run();
     app.Shutdown();
     return 0;
 }

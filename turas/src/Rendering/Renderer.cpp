@@ -27,16 +27,14 @@ void turas::Renderer::PostFrame()
 	ZoneScoped;
 
 	// Update each viewport before rendering current frame
-	for(auto& scene : Engine::INSTANCE->m_ActiveScenes) {
-		for(auto& [hash, viewport_data] : p_Viewports)
-		{
-			if(viewport_data.m_View == nullptr) continue;
+	for(auto& [hash, viewport_data] : p_Viewports)
+	{
+		if(viewport_data.m_View == nullptr) continue;
 
-			Pipeline* view_pipeline = p_ViewData[viewport_data.m_View->m_Hash].m_Pipeline.get();
-			if(view_pipeline == nullptr) continue;
+		Pipeline* view_pipeline = p_ViewData[viewport_data.m_View->m_Hash].m_Pipeline.get();
+		if(view_pipeline == nullptr) continue;
 
-			viewport_data.m_Viewport->Update( scene.get(), viewport_data.m_View, view_pipeline);
-		}
+		viewport_data.m_Viewport->Update(viewport_data.m_View, view_pipeline);
 	}
 
 	for (u32 i = 0; i < lvk::MAX_FRAMES_IN_FLIGHT; i++) {
@@ -52,10 +50,10 @@ void turas::Renderer::PostFrame()
 				}
 			}
 
-			for(auto& [hash, viewport_data] : p_Viewports)
-			{
-				viewport_data.m_Viewport->RecordViewportCommands(m_VK, cmd, i, scene.get(), viewport_data.m_View, p_ViewData[viewport_data.m_View->m_Hash].m_Pipeline.get());
-			}
+		}
+		for(auto& [hash, viewport_data] : p_Viewports)
+		{
+			viewport_data.m_Viewport->RecordViewportCommands(m_VK, cmd, i, viewport_data.m_View, p_ViewData[viewport_data.m_View->m_Hash].m_Pipeline.get());
 		}
 		m_VK.EndGraphicsCommands(i);
 	}
