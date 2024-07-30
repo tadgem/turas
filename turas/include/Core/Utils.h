@@ -86,5 +86,7 @@ namespace turas
     static void SaveStringToPath(const String& str, const String& path);
 
     static Vector<String> GetFilesInDirectory(const String& path);
+
+  	static turas::String TrimString(const turas::String& input);
   };
 } // namespace turas

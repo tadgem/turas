@@ -70,6 +70,7 @@ namespace turas
 	protected:
 		void		 AddBuiltInPipelines();
 		virtual void AddGamePipelines();
+		virtual void AddViewsAndViewports();
 		void		 ChangeWorkingDirectory(const String& newDirectory);
 		void		 CopyShadersToProject();
 		void		 InitImGuiStyle();

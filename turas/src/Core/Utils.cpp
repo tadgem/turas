@@ -38,16 +38,23 @@ turas::Utils::GetDirectoryFromFilename(const turas::String& fname)
 }
 
 turas::Vector<turas::String>
-turas::Utils::GetFilesInDirectory(const turas::String& path)
+turas::Utils::GetFilesInDirectory (const turas::String& path)
 {
-  auto ret = turas::Vector<turas::String>();
-  for (const auto& entry : fs::directory_iterator("./" + path))
-  {
-    ret.push_back(entry.path().string());
-  }
-  return ret;
+	auto ret = turas::Vector<turas::String>();
+	for (const auto& entry : fs::directory_iterator ("./" + path)) {
+		ret.push_back (entry.path().string());
+	}
+	return ret;
 }
-
+turas::String turas::Utils::TrimString (const turas::String& input)
+{
+	std::stringstream stream;
+	for(char c : input) {
+		if(c == 0) break;
+		stream << c;
+	}
+	return stream.str();
+}
 turas::String turas::Utils::GetFilenameFromPath(const turas::String& fname)
 {
   size_t pos = fname.find_last_of("\\/");

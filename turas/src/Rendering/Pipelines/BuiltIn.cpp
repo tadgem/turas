@@ -35,17 +35,17 @@ turas::Pipeline* turas::Rendering::BuiltIn::CreateBuiltInDeferredPipeline (turas
 										 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
 	lightPassImage->Build (vk);
 
-	Shader* lightPassShader = renderer->CreateShaderVF ("lightpass-standard.vert", "lightpass-standard.frag", "lightpass");
+	Shader* lightPassShader = renderer->CreateShaderVF ("screen-space-uv.vert", "lightpass-standard.frag", "lightpass");
 	auto*	lightPassMat	= p->m_LvkPipeline.AddMaterial (vk, lightPassShader->m_ShaderProgram);
 	lightPassMat->SetColourAttachment (vk, "u_PositionBufferSampler", *gbuffer, 0);
 	lightPassMat->SetColourAttachment (vk, "u_NormalBufferSampler", *gbuffer, 1);
 	lightPassMat->SetColourAttachment (vk, "u_ColourBufferSampler", *gbuffer, 2);
 	p->m_StateUpdaters.push_back (CreateUnique<BuiltInLightPassStateUpdater> (lightPassMat));
 
+	p->m_LvkPipeline.SetOutputFramebuffer (lightPassImage);
 
 	auto* im3dViewState = p->m_LvkPipeline.AddIm3d (renderer->m_VK, Engine::INSTANCE->m_Im3dState);
 
-	p->m_LvkPipeline.SetOutputFramebuffer (lightPassImage);
 
 	lvk::VkPipelineData gbufferPipelineData	  = Rendering::CreateStaticMeshPipeline (vk, gbufferShader->m_ShaderProgram, gbuffer);
 	lvk::VkPipelineData lightPassPipelineData = Rendering::CreateStaticMeshPipeline (vk, lightPassShader->m_ShaderProgram, lightPassImage,

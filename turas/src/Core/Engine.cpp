@@ -1,12 +1,12 @@
 #include "Core/Engine.h"
 #include "Core/ECS.h"
 #include "Core/Log.h"
+#include "Debug/DebugWindows.h"
 #include "Debug/FontBinaries/dm_sans.ttf.h"
 #include "Debug/FontBinaries/icons_font_awesome.h"
 #include "Debug/FontBinaries/icons_font_awesome.ttf.h"
 #include "Debug/FontBinaries/icons_kenney.h"
 #include "Debug/FontBinaries/icons_kenney.ttf.h"
-#include "Debug/StatsWindow.h"
 #include "Rendering/Pipelines/BuiltIn.h"
 #include "Rendering/Pipelines/Common.h"
 #include "STL/Memory.h"
@@ -173,7 +173,8 @@ void turas::Engine::DebugUpdate()
 		return;
 	}
 	m_Renderer.OnImGui();
-	StatsWindow::OnImGuiStatsWindow(m_Renderer.m_VK);
+	DebugWindows::OnImGuiPerformanceStatsWindow(m_Renderer.m_VK);
+	DebugWindows::OnImGuiProjectStatsWindow ((Engine*) this);
 }
 void turas::Engine::PostLoadProject()
 {
@@ -184,6 +185,7 @@ void turas::Engine::PostLoadProject()
 	// update renderer to reload all shaders
 	AddBuiltInPipelines();
 	AddGamePipelines();
+	AddViewsAndViewports();
 	// Load Game Code from Beef
 	// load default scene
 }
@@ -253,7 +255,8 @@ void turas::Engine::AddBuiltInPipelines()
 {
 	m_Renderer.AddPipelineTemplate(Utils::Hash("TurasDeferredBuiltin"), Rendering::BuiltIn::CreateBuiltInDeferredPipeline);
 }
-void turas::Engine::AddGamePipelines() {}
+void turas::Engine::AddGamePipelines() { }
+void turas::Engine::AddViewsAndViewports(){}
 void turas::Engine::ChangeWorkingDirectory(const turas::String& newDirectory) { std::filesystem::current_path(newDirectory); }
 void turas::Engine::CopyShadersToProject() {}
 bool turas::Engine::SaveScene(turas::Scene* s)
